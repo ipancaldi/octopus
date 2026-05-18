@@ -19,26 +19,27 @@ export const createSubscriptionPanel = ({
   ],
 } = {}) => {
   const root = document.createElement('section');
-  root.className = 'do-panel';
-  root.style.width = '780px';
+  root.className = 'do-panel do-subscription-panel';
   root.innerHTML = `
-    <header class="do-panel__header" style="display:grid;grid-template-columns:1fr auto;gap:16px;">
+    <header class="do-panel__header">
       <div>
         <h3 class="do-panel__title">${name}</h3>
-        <div style="margin-top:4px;display:flex;align-items:center;gap:12px;font-size:12px;color:var(--do-text-passive);">
+        <div class="do-subscription-panel__meta">
           <span data-status></span>
-          <span>Renews <strong style="color:var(--do-text);">${renewal}</strong></span>
+          <span>Renews <strong>${renewal}</strong></span>
           <span>${total}</span>
         </div>
       </div>
-      <div style="display:flex;align-items:center;gap:12px;">
-        <span style="display:inline-flex;align-items:center;gap:8px;font-size:12px;color:var(--do-text-passive);">
-          ${icons.autorenew}<span>Auto-renew</span><span data-toggle></span>
+      <div class="do-subscription-panel__controls">
+        <span class="do-subscription-panel__renew">
+          ${icons.sync}
+          <span class="do-subscription-panel__renew-label">Auto-renew</span>
+          <span data-toggle></span>
         </span>
         <button class="do-row__iconbtn" aria-label="Close">${icons.close}</button>
       </div>
     </header>
-    <div class="do-panel__body" style="padding:8px 16px;gap:6px;"></div>
+    <div class="do-panel__body"></div>
     <footer class="do-panel__footer"></footer>`;
   root.querySelector('[data-status]').appendChild(createTagsStatus({ status }));
   root.querySelector('[data-toggle]').appendChild(createToggle({ on: autoRenew }));

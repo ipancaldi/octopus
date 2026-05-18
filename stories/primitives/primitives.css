@@ -13,23 +13,24 @@
   user-select: none;
 }
 .do-cb__box {
-  width: 18px;
-  height: 18px;
-  border: 2px solid var(--do-text);
-  border-radius: var(--do-radius-sm);
+  width: 12px;
+  height: 12px;
+  border: 1.333px solid var(--do-text);
+  border-radius: 2.667px;
   background: var(--do-bg);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   transition: background 120ms ease, border-color 120ms ease;
+  flex-shrink: 0;
 }
 .do-cb__box::after {
   content: '';
-  width: 8px;
-  height: 4px;
+  width: 5px;
+  height: 2.5px;
   border: solid var(--do-grey-900);
-  border-width: 0 0 2px 2px;
-  transform: rotate(-45deg) translate(1px, -1px);
+  border-width: 0 0 1.5px 1.5px;
+  transform: rotate(-45deg) translate(0.5px, -1px);
   opacity: 0;
   transition: opacity 80ms ease;
 }

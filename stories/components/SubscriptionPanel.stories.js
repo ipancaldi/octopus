@@ -2,10 +2,24 @@ import { createSubscriptionPanel } from './SubscriptionPanel.js';
 
 export default {
   title: 'Components/Panels/SubscriptionPanel',
-  parameters: { layout: 'centered' },
+  parameters: { layout: 'fullscreen' },
 };
 
-export const Default = { render: () => createSubscriptionPanel() };
+const stage = (width, content) => {
+  const wrap = document.createElement('div');
+  wrap.style.cssText = `padding:24px;background:var(--do-header-bg);min-height:100vh;`;
+  const frame = document.createElement('div');
+  frame.style.cssText = `width:${width};margin:0 auto;border:1px dashed var(--do-card-stroke);border-radius:12px;`;
+  frame.appendChild(content);
+  wrap.appendChild(frame);
+  return wrap;
+};
+
+export const Default = { render: () => stage('780px', createSubscriptionPanel()) };
+
+export const Narrow = { render: () => stage('600px', createSubscriptionPanel()) };
+
+export const Mobile = { render: () => stage('360px', createSubscriptionPanel()) };
 
 export const Trial = {
   render: () => createSubscriptionPanel({

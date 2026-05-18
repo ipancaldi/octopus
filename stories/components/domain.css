@@ -826,6 +826,69 @@
   justify-content: flex-end;
   gap: 8px;
   background: var(--do-header-bg);
+  flex-wrap: wrap;
+}
+
+/* ---------- Subscription panel (responsive via container queries) ---------- */
+.do-subscription-panel {
+  width: 100%;
+  max-width: 780px;
+  margin: 0 auto;
+  container-type: inline-size;
+  container-name: subpanel;
+}
+.do-subscription-panel .do-panel__header {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 16px;
+}
+.do-subscription-panel__meta {
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-size: 12px;
+  color: var(--do-text-passive);
+}
+.do-subscription-panel__meta strong { color: var(--do-text); }
+.do-subscription-panel__controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+.do-subscription-panel__renew {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--do-text-passive);
+  white-space: nowrap;
+}
+.do-subscription-panel__renew svg { width: 16px; height: 16px; }
+.do-subscription-panel .do-panel__body {
+  padding: 8px 16px;
+  gap: 6px;
+  overflow-x: auto;
+}
+.do-subscription-panel .do-row {
+  min-width: 0;
+}
+
+@container subpanel (max-width: 720px) {
+  .do-subscription-panel .do-panel__header {
+    grid-template-columns: 1fr;
+  }
+  .do-subscription-panel__controls {
+    justify-content: space-between;
+  }
+  .do-subscription-panel__renew-label { display: none; }
+}
+
+@container subpanel (max-width: 480px) {
+  .do-subscription-panel .do-panel__footer { justify-content: stretch; }
+  .do-subscription-panel .do-panel__footer > * { flex: 1; }
 }
 
 /* ---------- Modal scrim ---------- */
