@@ -1,5 +1,5 @@
 import './domain.css';
-import { createNewToggle } from '../primitives/NewToggle.js';
+import { createToggle } from '../primitives/Toggle.js';
 import { icons } from '../primitives/icons.js';
 
 const banner = ({
@@ -50,7 +50,7 @@ const banner = ({
       <span class="do-banner-card__toggle"></span>
       <span>${immediateLabel}</span>
     </div>`;
-  aside.querySelector('.do-banner-card__toggle').appendChild(createNewToggle({ on: immediate }));
+  aside.querySelector('.do-banner-card__toggle').appendChild(createToggle({ on: immediate }));
   root.appendChild(aside);
 
   return root;

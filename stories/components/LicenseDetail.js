@@ -1,7 +1,7 @@
 import './domain.css';
 import { icons } from '../primitives/icons.js';
 import { createTagsStatus } from '../primitives/TagsStatus.js';
-import { createNewToggle } from '../primitives/NewToggle.js';
+import { createToggle } from '../primitives/Toggle.js';
 import { createSelect } from '../primitives/Select.js';
 
 const keyRow = (key) => `
@@ -68,7 +68,7 @@ export const createLicenseDetail = ({
       <button class="do-licdetail__secondary-btn">${icons.edit}<span>Modify Subscription</span></button>
     </div>`;
   root.querySelector('[data-status-slot]').appendChild(createTagsStatus({ status }));
-  root.querySelector('[data-renew-slot]').appendChild(createNewToggle({ on: autoRenew }));
+  root.querySelector('[data-renew-slot]').appendChild(createToggle({ on: autoRenew }));
   root.querySelector('[data-assignee-slot]').appendChild(createSelect({ label: assignee ?? 'Unassigned', leadingIcon: 'person' }));
   return root;
 };

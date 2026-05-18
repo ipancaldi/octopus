@@ -21,7 +21,11 @@ export const States = {
   render: () => {
     const wrap = document.createElement('div');
     wrap.style.cssText = 'display:flex;gap:16px;align-items:center;';
-    wrap.append(createToggle({ on: false }), createToggle({ on: true }), createToggle({ on: true, disabled: true }));
+    wrap.append(
+      createToggle({ on: false }),
+      createToggle({ on: true }),
+      createToggle({ on: true, disabled: true }),
+    );
     return wrap;
   },
 };

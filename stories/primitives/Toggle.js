@@ -11,7 +11,7 @@ export const createToggle = ({ on = true, disabled = false, onChange } = {}) => 
   }
   root.setAttribute('role', 'switch');
   root.setAttribute('aria-checked', String(on));
-  root.innerHTML = '<span class="do-toggle__knob"></span>';
+  root.innerHTML = '<span class="do-toggle__thumb"></span>';
   root.addEventListener('click', () => {
     if (disabled) return;
     const next = root.dataset.on !== 'true';

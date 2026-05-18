@@ -31,7 +31,7 @@ npm run build-storybook  # static build
 
 **Primitives**
 - Button (primary / secondary / ghost / accent · sm / md / lg)
-- Checkbox, Toggle, NewToggle (the canonical Figma toggle)
+- Checkbox, Toggle (the canonical Figma toggle — pink-light on / grey off)
 - Radio (+ group, filled variant)
 - Select, Tabs, Tag, TagsStatus (+ mobile)
 - TextInput, TextArea
@@ -58,7 +58,7 @@ All design values are exposed as CSS custom properties on `:root` in [`stories/t
 stories/
   tokens.css         Token primitives
   Tokens.stories.js  Foundations/Tokens
-  primitives/        Button / Checkbox / Toggle / NewToggle / Select / …
+  primitives/        Button / Checkbox / Toggle / Select / Tabs / Tag / …
   icons/             Brand + Material + Product icon stories
   components/        Cards, Rows, Panels, Modals, Nav, Filters, Menus
 assets/            Brand and product SVG/PNG assets (served via staticDirs)

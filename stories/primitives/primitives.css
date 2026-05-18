@@ -40,41 +40,11 @@
 .do-cb[data-checked="true"] .do-cb__box::after { opacity: 1; }
 .do-cb[data-disabled="true"] { opacity: 0.5; cursor: not-allowed; }
 
-/* ----- Toggle (compact) ----- */
+/* ----- Toggle (canonical Figma toggle — pink-light on / grey off, pill, larger thumb) ----- */
 .do-toggle {
   width: 40px;
-  height: 24px;
-  border: 0;
-  background: var(--do-grey-900);
-  border-radius: 999px;
-  padding: 4px;
-  display: inline-flex;
-  align-items: center;
-  cursor: pointer;
-  transition: background 120ms ease;
-}
-.do-toggle__knob {
-  width: 16px;
-  height: 16px;
-  background: var(--do-bg);
-  border-radius: 50%;
-  transform: translateX(0);
-  transition: transform 150ms ease, background 120ms ease;
-}
-.do-toggle[data-on="true"] {
-  background: var(--do-accent-pink);
-}
-.do-toggle[data-on="true"] .do-toggle__knob {
-  background: var(--do-grey-900);
-  transform: translateX(16px);
-}
-.do-toggle[data-disabled="true"] { opacity: 0.5; cursor: not-allowed; }
-
-/* ----- New Toggle (pill, larger thumb) ----- */
-.do-newtoggle {
-  width: 40px;
   height: 22px;
-  background: var(--do-accent-pink-light);
+  background: var(--do-pink-light);
   border: 0;
   border-radius: 999px;
   padding: 2px;
@@ -83,7 +53,7 @@
   cursor: pointer;
   transition: background 150ms ease;
 }
-.do-newtoggle__thumb {
+.do-toggle__thumb {
   width: 18px;
   height: 18px;
   background: var(--do-bg);
@@ -92,12 +62,13 @@
   transform: translateX(18px);
   transition: transform 150ms ease, background 150ms ease;
 }
-.do-newtoggle[data-on="false"] {
+.do-toggle[data-on="false"] {
   background: var(--do-card-stroke);
 }
-.do-newtoggle[data-on="false"] .do-newtoggle__thumb {
+.do-toggle[data-on="false"] .do-toggle__thumb {
   transform: translateX(0);
 }
+.do-toggle[data-disabled="true"] { opacity: 0.5; cursor: not-allowed; }
 
 /* ----- Select ----- */
 .do-select {
@@ -146,7 +117,7 @@
   transition: background 120ms ease, color 120ms ease;
 }
 .do-tab[aria-selected="true"] {
-  background: var(--do-accent-pink);
+  background: var(--do-pink-light);
   color: var(--do-black);
 }
 .do-tab:hover:not([aria-selected="true"]) { background: rgba(16, 24, 40, 0.04); }

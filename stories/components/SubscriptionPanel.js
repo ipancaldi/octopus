@@ -1,7 +1,7 @@
 import './domain.css';
 import { icons } from '../primitives/icons.js';
 import { createTagsStatus } from '../primitives/TagsStatus.js';
-import { createNewToggle } from '../primitives/NewToggle.js';
+import { createToggle } from '../primitives/Toggle.js';
 import { createSubscriptionRow, createProductRow, createLicenseRow } from './Rows.js';
 import { createButton } from '../primitives/Button.js';
 
@@ -41,7 +41,7 @@ export const createSubscriptionPanel = ({
     <div class="do-panel__body" style="padding:8px 16px;gap:6px;"></div>
     <footer class="do-panel__footer"></footer>`;
   root.querySelector('[data-status]').appendChild(createTagsStatus({ status }));
-  root.querySelector('[data-toggle]').appendChild(createNewToggle({ on: autoRenew }));
+  root.querySelector('[data-toggle]').appendChild(createToggle({ on: autoRenew }));
   const body = root.querySelector('.do-panel__body');
   body.appendChild(createSubscriptionRow({ name, products: hierarchy.filter((h) => h.kind === 'product').length, licenses: hierarchy.filter((h) => h.kind === 'license').length, status, renewal, total, active: true, expanded: true }));
   hierarchy.forEach((h) => {
