@@ -1,0 +1,82 @@
+/* Button primitive — derived from Figma node 494:28954 */
+.do-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--do-space-2);
+  border-radius: var(--do-radius-md);
+  padding: 10px 24px;
+  font-family: var(--do-font-body);
+  font-size: var(--do-size-tiny);
+  font-weight: 500;
+  line-height: var(--do-leading-body);
+  white-space: nowrap;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background 120ms ease, border-color 120ms ease, color 120ms ease;
+}
+
+.do-btn:focus-visible {
+  outline: 2px solid var(--do-accent-pink);
+  outline-offset: 2px;
+}
+
+.do-btn[disabled],
+.do-btn[aria-disabled="true"] {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* Variants */
+.do-btn--primary {
+  background: var(--do-grey-900);
+  color: #fff;
+  border-color: var(--do-grey-900);
+}
+.do-btn--primary:hover:not([disabled]) {
+  background: var(--do-grey-800);
+  border-color: var(--do-grey-800);
+}
+
+.do-btn--secondary {
+  background: var(--do-button-bg-subtle);
+  color: var(--do-grey-500);
+  border-color: var(--do-grey-500);
+}
+.do-btn--secondary:hover:not([disabled]) {
+  background: var(--do-button-bg);
+}
+
+.do-btn--ghost {
+  background: transparent;
+  color: var(--do-grey-700);
+  border-color: var(--do-card-stroke);
+}
+.do-btn--ghost:hover:not([disabled]) {
+  background: var(--do-header-bg);
+}
+
+.do-btn--accent {
+  background: var(--do-accent-pink-light);
+  color: var(--do-grey-900);
+  border-color: var(--do-accent-pink-light);
+}
+.do-btn--accent:hover:not([disabled]) {
+  background: var(--do-accent-pink);
+  border-color: var(--do-accent-pink);
+}
+
+/* Sizes — min-height locks the row so icon-less variants (e.g. Primary)
+   stay the same height as the icon-bearing variants. */
+.do-btn--sm { padding: 6px 12px;  font-size: var(--do-size-super-tiny); min-height: 32px; }
+.do-btn--md { padding: 10px 24px; font-size: var(--do-size-tiny);       min-height: 40px; }
+.do-btn--lg { padding: 12px 28px; font-size: var(--do-size-small);      min-height: 44px; }
+
+.do-btn__icon {
+  width: 20px;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.do-btn__icon svg { width: 100%; height: 100%; }

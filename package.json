@@ -1,0 +1,27 @@
+{
+  "name": "claude---octopus",
+  "version": "1.0.0",
+  "description": "- [Awesome Claude Skills](#awesome-claude-skills)   - [📚 Table of Contents](#-table-of-contents)   - [📄 Document Skills](#-document-skills)   - [🛠 Development \\& Code Tools](#-development--code-tools)   - [📊 Data \\& Analysis](#-data--analysis)   - [🔬 Scientific \\& Research Tools](#-scientific--research-tools)   - [✍️ Writing \\& Research](#️-writing--research)   - [📘 Learning \\& Knowledge](#-learning--knowledge)   - [🎬 Media \\& Content](#-media--content)   - [🏥 Health & Life Sciences](#-health--life-sciences)   - [🤝 Collaboration \\& Project Management](#-collaboration--project-management)   - [🛡 Security \\& Web Testing](#-security--web-testing)   - [🔧 Utility \\& Automation](#-utility--automation)   - [🗂️ Collections](#-collections)   - [🤝 Contribution](#-contribution)   - [📬 Contact](#-contact)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "devDependencies": {
+    "storybook": "^10.4.0",
+    "@storybook/html-vite": "^10.4.0",
+    "@chromatic-com/storybook": "^5.2.1",
+    "@storybook/addon-vitest": "^10.4.0",
+    "@storybook/addon-a11y": "^10.4.0",
+    "@storybook/addon-docs": "^10.4.0",
+    "vitest": "^4.1.6",
+    "playwright": "^1.60.0",
+    "@vitest/browser-playwright": "^4.1.6",
+    "@vitest/coverage-v8": "^4.1.6"
+  }
+}

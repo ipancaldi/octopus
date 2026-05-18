@@ -1,0 +1,196 @@
+/* Disguise Octopus — design tokens
+   Source: Disguise Octopus UI Kit V1 (Figma) — Color/Typography/Radius/Shadow primitives + Light/Dark/Dark-alt schemes. */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+  /* ──────────── Surfaces (light scheme defaults) ──────────── */
+  --do-bg: #ffffff;
+  --do-card-bg: #f8fafc;
+  --do-card-stroke: #d0d5dd;
+  --do-header-bg: #f9fafb;
+  --do-product-row-bg: #f2f4f7;
+  --do-subscription-row-bg: #eaecf0;
+
+  /* Semantic light scheme */
+  --do-scheme-light-bg: #f2f4f7;
+  --do-scheme-light-fg: #fcfcfd;
+  --do-scheme-light-text: #667085;
+  --do-scheme-light-border: #d0d5dd;
+  --do-scheme-light-accent: #ff6df0;
+
+  /* Semantic dark scheme */
+  --do-scheme-dark-bg: #101828;
+  --do-scheme-dark-fg: #344054;
+  --do-scheme-dark-text: #eaecf0;
+  --do-scheme-dark-border: #344054;
+  --do-scheme-dark-accent: #ff6df0;
+
+  /* Dark scheme alt (aquamarine accent) */
+  --do-scheme-dark-alt-bg: #101828;
+  --do-scheme-dark-alt-fg: #1d2939;
+  --do-scheme-dark-alt-text: #eaecf0;
+  --do-scheme-dark-alt-border: #344054;
+  --do-scheme-dark-alt-accent: #6bffdc;
+
+  /* ──────────── Text ──────────── */
+  --do-text: #344054;             /* grey 700 */
+  --do-text-passive: #667085;     /* grey 500 */
+  --do-text-deactivated: #98a2b3; /* grey 400 */
+  --do-text-strong: #101828;      /* grey 900 */
+
+  /* ──────────── Grey scale (full) ──────────── */
+  --do-grey-25:  #fcfcfd;
+  --do-grey-50:  #f9fafb;
+  --do-grey-100: #f2f4f7;
+  --do-grey-200: #eaecf0;
+  --do-grey-300: #d0d5dd;
+  --do-grey-400: #98a2b3;
+  --do-grey-500: #667085;
+  --do-grey-600: #475467;
+  --do-grey-700: #344054;
+  --do-grey-800: #1d2939;
+  --do-grey-900: #101828;
+  --do-black: #000000;
+  --do-white: #ffffff;
+
+  /* ──────────── Brand accents (full scales) ──────────── */
+  /* Blush Pink */
+  --do-pink-lightest: #fff0fd;
+  --do-pink-lighter:  #ffe1fc;
+  --do-pink-light:    #ff98f4;
+  --do-pink:          #ff6df0;
+  --do-pink-dark:     #cc57c0;
+  --do-pink-darker:   #662b60;
+  --do-pink-darkest:  #4c2048;
+
+  /* Aquamarine */
+  --do-aqua-lightest: #f0fffb;
+  --do-aqua-lighter:  #e1fff8;
+  --do-aqua-light:    #97ffe6;
+  --do-aqua:          #6bffdc;
+  --do-aqua-dark:     #55ccb0;
+  --do-aqua-darker:   #2a6658;
+  --do-aqua-darkest:  #204c42;
+
+  /* Electric Violet */
+  --do-violet-lightest: #f2e5fc;
+  --do-violet-light:    #a74cee;
+  --do-violet:          #8200e8;
+  --do-violet-dark:     #6800b9;
+  --do-violet-darker:   #34005c;
+  --do-violet-darkest:  #270045;
+  --do-violet-pale:     #e6ccfa; /* "Electric Violet Lighter" in tokens */
+
+  /* Golden Fizz */
+  --do-fizz-lightest: #feffea;
+  --do-fizz-lighter:  #feffd6;
+  --do-fizz-light:    #feff70;
+  --do-fizz:          #feff34;
+  --do-fizz-dark:     #cbcc29;
+  --do-fizz-darker:   #656614;
+  --do-fizz-darkest:  #4c4c0f;
+
+  /* Coral */
+  --do-coral-lightest: #fff2ee;
+  --do-coral-lighter:  #ffe6dd;
+  --do-coral-light:    #ffa98a;
+  --do-coral:          #ff8559;
+  --do-coral-dark:     #cc6a47;
+  --do-coral-darker:   #663523;
+  --do-coral-darkest:  #4c271a;
+
+  /* Back-compat aliases (used by older components) */
+  --do-accent-pink: var(--do-pink);
+  --do-accent-pink-light: var(--do-pink-light);
+  --do-accent-aquamarine: var(--do-aqua);
+  --do-accent-violet-light: var(--do-violet-pale);
+  --do-accent-mint-bg: var(--do-aqua-lightest);
+  --do-accent-coral-light: var(--do-coral-light);
+  --do-accent-warning: var(--do-coral-lighter);
+  --do-accent-danger-bg: var(--do-coral-lightest);
+  --do-avatar-coral: var(--do-coral-light);
+  --do-avatar-violet: var(--do-violet);
+
+  /* ──────────── Buttons ──────────── */
+  --do-button-bg: rgba(16, 24, 40, 0.08);
+  --do-button-bg-subtle: rgba(16, 24, 40, 0.03);
+  --do-button-stroke: #d0d5dd;
+  --do-button-text: #101828;
+
+  /* ──────────── Opacity tokens ──────────── */
+  --do-opacity-white-60: rgba(255, 255, 255, 0.6);
+  --do-opacity-white-20: rgba(255, 255, 255, 0.2);
+  --do-opacity-black-60: rgba(13, 7, 4, 0.6);
+  --do-opacity-transparent: rgba(255, 255, 255, 0);
+
+  /* ──────────── Typography ──────────── */
+  --do-font-body: 'Inter', system-ui, -apple-system, sans-serif;
+  --do-font-display: 'Aeonik', 'Inter', system-ui, sans-serif;
+
+  /* Body sizes */
+  --do-size-super-tiny: 10px;
+  --do-size-tiny: 12px;
+  --do-size-small: 14px;
+  --do-size-regular: 16px;
+  --do-size-medium: 18px;
+  --do-size-large: 22px;
+
+  /* Heading sizes */
+  --do-size-h1: 72px;
+  --do-size-h2: 52px;
+  --do-size-h3: 44px;
+  --do-size-h4: 36px;
+  --do-size-h5: 28px;
+  --do-size-h6: 22px;
+  --do-size-tagline: 16px;
+
+  /* Weights */
+  --do-weight-light: 300;
+  --do-weight-regular: 400;
+  --do-weight-medium: 500;
+  --do-weight-semibold: 600;
+  --do-weight-bold: 700;
+  --do-weight-extrabold: 800;
+
+  /* Line heights */
+  --do-leading-body: 1.5;
+  --do-leading-display: 1.2;
+  --do-leading-display-tight: 1.3; /* H4 */
+  --do-leading-display-h6: 1.4;
+
+  /* ──────────── Radius ──────────── */
+  --do-radius-sm: 4px;   /* Radius/Small */
+  --do-radius-md: 8px;   /* Radius/Medium */
+  --do-radius-lg: 12px;
+  --do-radius-pill: 999px;
+
+  /* ──────────── Stroke ──────────── */
+  --do-stroke-width: 2px;
+
+  /* ──────────── Shadow scale ──────────── */
+  --do-shadow-xxsmall: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --do-shadow-xsmall:  0 1px 2px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.10);
+  --do-shadow-small:   0 2px 4px -2px rgba(0, 0, 0, 0.06), 0 4px 8px -2px rgba(0, 0, 0, 0.10);
+  --do-shadow-medium:  0 4px 6px -2px rgba(0, 0, 0, 0.03), 0 12px 16px -4px rgba(0, 0, 0, 0.08);
+  --do-shadow-large:   0 8px 8px -4px rgba(0, 0, 0, 0.03), 0 20px 24px -4px rgba(0, 0, 0, 0.08);
+  --do-shadow-xlarge:  0 24px 48px -12px rgba(0, 0, 0, 0.18);
+  --do-shadow-xxlarge: 0 32px 64px -12px rgba(0, 0, 0, 0.14);
+
+  /* ──────────── Spacing scale (4px grid) ──────────── */
+  --do-space-1: 4px;
+  --do-space-2: 8px;
+  --do-space-3: 12px;
+  --do-space-4: 16px;
+  --do-space-5: 20px;
+  --do-space-6: 24px;
+  --do-space-8: 32px;
+}
+
+/* Story root — gives every story the design-system body defaults */
+.do-root {
+  font-family: var(--do-font-body);
+  font-size: var(--do-size-small);
+  line-height: var(--do-leading-body);
+  color: var(--do-text);
+  background: var(--do-bg);
+}

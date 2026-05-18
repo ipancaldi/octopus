@@ -1,0 +1,39 @@
+# Dependencies
+node_modules/
+
+# Build output
+storybook-static/
+dist/
+
+# Logs
+*.log
+debug-storybook.log
+
+# OS junk
+.DS_Store
+
+# Editor / local config
+.vscode/
+.idea/
+.claude/settings.json
+CLAUDE.md
+
+# Files belonging to the wider working folder (not part of the Storybook publish)
+*.fig
+MVP7/
+MVP8.md
+naming/
+octopus-MVP-8/
+"Production Approach"/
+Production\ Approach/
+Production\ Approach.md
+README.awesome-claude-skills.md
+Checkout\ Panel*.html
+component-library.html
+dashboard.html
+hardware-configurator.html
+subscription-management*.html
+graphify-out/
+
+# Storybook telemetry / cache
+.cache/
