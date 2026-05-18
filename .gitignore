@@ -4,6 +4,7 @@ node_modules/
 # Build output
 storybook-static/
 dist/
+build/
 
 # Logs
 *.log
