@@ -941,6 +941,7 @@
   font: 500 12px/1.5 var(--do-font-body);
   cursor: pointer;
 }
+.do-licdetail__secondary-btn svg { width: 18px; height: 18px; flex-shrink: 0; }
 
 /* ---------- Activity list ---------- */
 .do-activity { display: flex; flex-direction: column; gap: 14px; padding: 16px; font-family: var(--do-font-body); }
