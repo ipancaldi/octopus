@@ -1,0 +1,498 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Settings — Eurovision 2026</title>
+<style>
+  :root {
+    --pink:#FF98F4; --pink-soft:rgba(255,152,244,0.10); --pink-tint:rgba(255,152,244,0.05);
+    --ink:#D0D5DD;
+    --grey-0:#101828; --grey-1:#1D2939; --grey-2:#344054; --grey-3:#344054; --grey-4:#4F5F79; --grey-5:#4E5D76; --grey-6:#98A2B3; --grey-7:#D0D5DD;
+    --av-border:#101828;
+    --purple:#a855f7; --purple-soft:#270045; --purple-ink:#D8B4FE;
+    --amber-bg:#48324C; --amber-ink:#FFE6DD; --amber:#FFE6DD;
+    --red-bg:#3D1F2C; --red-ink:#FFC0CB;
+    --green-bg:#1A3D34; --green-ink:#6BFFDC;
+    --violet-bg:#270045; --violet-ink:#D8B4FE;
+    --blue-bg:#1A2E4D; --blue-ink:#93C5FD;
+    --line:#344054;
+  }
+  * { box-sizing:border-box; }
+  html, body { margin:0; padding:0; background:#0A1020; color:var(--ink); font-family:-apple-system,BlinkMacSystemFont,"Inter","SF Pro Text","Helvetica Neue",Arial,sans-serif; -webkit-font-smoothing:antialiased; font-size:14px; }
+
+  .app { display:grid; grid-template-columns:72px 280px 1fr; min-height:100vh; }
+
+  .rail { background:var(--grey-1); border-right:1px solid var(--line); padding:16px 0; display:flex; flex-direction:column; align-items:center; gap:4px; }
+  .rail .brand { width:36px; height:36px; border-radius:8px; display:grid; place-items:center; margin-bottom:12px; }
+  .rail a.icon { text-decoration:none; color:inherit; }
+  .rail .icon { width:44px; height:44px; border-radius:10px; display:grid; place-items:center; color:var(--grey-7); cursor:pointer; position:relative; }
+  .rail .icon:hover { background:var(--grey-2); color:var(--ink); }
+  .rail .icon.active { background:rgba(255,109,240,0.10); color:#FF6DF0; }
+  .rail .icon svg { width:22px; height:22px; stroke-width:1.6; }
+  .rail .spacer { flex:1; }
+  .rail .storage { font-size:10px; color:var(--grey-6); margin-top:6px; }
+  .rail .dot-notify { position:absolute; top:8px; right:10px; width:8px; height:8px; background:#FF98F4; border-radius:50%; }
+
+  .main {
+    display:flex; flex-direction:column; min-width:0;
+    background-color:#0A1020;
+    background-image: radial-gradient(circle at center, #344054 1px, transparent 1.6px);
+    background-size: 40px 40px;
+  }
+  .main-top { padding:14px 24px; border-bottom:1px solid var(--line); display:flex; align-items:center; justify-content:space-between; gap:16px; background:rgba(10,16,32,0.85); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); }
+  .breadcrumb { display:flex; align-items:center; gap:8px; color:var(--grey-6); font-size:13px; }
+  .breadcrumb .crumb { cursor:pointer; text-decoration:none; color:inherit; }
+  .breadcrumb .crumb:hover { color:var(--ink); }
+  .breadcrumb .sep { color:var(--grey-4); }
+  .breadcrumb .current { color:var(--ink); font-weight:500; }
+  .topbar-actions { display:flex; align-items:center; gap:10px; }
+  .icon-btn { width:36px; height:36px; border-radius:50%; background:transparent; display:grid; place-items:center; cursor:pointer; color:var(--grey-7); position:relative; border:none; }
+  .icon-btn:hover { background:var(--grey-2); }
+  .icon-btn svg { width:18px; height:18px; stroke-width:1.7; }
+  .badge { position:absolute; top:2px; right:2px; min-width:16px; height:16px; padding:0 4px; border-radius:8px; background:var(--pink); color:#0a0a0c; font-size:10px; font-weight:600; display:grid; place-items:center; }
+  .avatar { width:34px; height:34px; border-radius:50%; background:var(--purple); color:#fff; font-size:13px; font-weight:600; display:grid; place-items:center; }
+
+  /* Header */
+  .prod-header { padding:22px 32px 0; border-bottom:1px solid var(--line); }
+  .prod-title { display:flex; align-items:center; gap:14px; margin-bottom:6px; }
+  .prod-title h1 { font-size:24px; font-weight:600; margin:0; letter-spacing:-0.01em; }
+  .pill { padding:3px 9px; border-radius:999px; font-size:11px; font-weight:600; display:inline-flex; align-items:center; gap:6px; }
+  .pill .dot { width:6px; height:6px; border-radius:50%; background:currentColor; }
+  .pill.rehearsal { color:var(--amber-ink); background:var(--amber-bg); }
+  .prod-summary { display:flex; align-items:center; gap:18px; color:var(--grey-6); font-size:12px; margin-bottom:18px; flex-wrap:wrap; }
+  .prod-summary .summary-item { display:inline-flex; align-items:center; gap:6px; }
+  .prod-summary .summary-item svg { width:14px; height:14px; stroke-width:1.7; }
+  .avatars { display:flex; }
+  .avatars .av { width:22px; height:22px; border-radius:50%; color:#fff; font-size:9px; font-weight:600; display:grid; place-items:center; border:2px solid var(--av-border); margin-left:-7px; }
+  .avatars .av:first-child { margin-left:0; }
+  .av.c1 { background:#f97316; } .av.c2 { background:#14b8a6; } .av.c3 { background:#8b5cf6; }
+  .av.c4 { background:#ec4899; } .av.c5 { background:#0ea5e9; } .av.c6 { background:#84cc16; }
+  .av.more { background:var(--grey-3); color:var(--grey-7); }
+
+  .tabs-row { display:flex; align-items:center; gap:4px; overflow-x:auto; }
+  .tabs-row::-webkit-scrollbar { display:none; }
+  .tab { display:inline-flex; align-items:center; gap:6px; padding:12px 14px; font-size:13px; cursor:pointer; color:var(--grey-6); border-bottom:2px solid transparent; font-weight:500; white-space:nowrap; text-decoration:none; }
+  .tab:hover { color:var(--ink); }
+  .tab.active { color:var(--pink); border-bottom-color:var(--pink); }
+  .tab .count { font-size:11px; color:var(--grey-5); background:var(--grey-2); padding:1px 7px; border-radius:999px; }
+  .tab.active .count { background:var(--pink-soft); color:var(--pink); }
+
+  /* Settings page */
+  .set-page { padding:28px 40px 64px; max-width:880px; }
+  .set-card { background:var(--grey-1); border:1px solid var(--grey-3); border-radius:14px; padding:24px 28px; margin-bottom:18px; }
+  .set-card h2 { margin:0 0 4px; font-size:18px; font-weight:600; color:var(--ink); }
+  .set-card .desc { font-size:13px; color:var(--grey-6); margin-bottom:18px; }
+  .set-card.danger { border-color:rgba(255,192,203,0.40); background:linear-gradient(180deg, rgba(61,31,44,0.35), var(--grey-1)); }
+  .set-card.danger h2 { color:var(--red-ink); }
+  .set-card.danger .desc { color:rgba(255,192,203,0.75); }
+
+  .field { margin-bottom:16px; }
+  .field:last-child { margin-bottom:0; }
+  .field label { display:block; font-size:12px; font-weight:600; color:var(--grey-7); margin-bottom:6px; }
+  .field input[type="text"], .field textarea {
+    width:100%; padding:10px 14px; border:1px solid var(--grey-3); border-radius:9px; font-size:14px;
+    background:#131D2E; outline:none; font-family:inherit; color:var(--ink);
+  }
+  .field input:focus, .field textarea:focus { border-color:var(--pink); box-shadow:0 0 0 3px var(--pink-tint); }
+  .field textarea { min-height:70px; resize:vertical; }
+  .field-row { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  .hint { font-size:11px; color:var(--grey-6); margin-top:5px; }
+
+  /* Cover preview */
+  .cover-preview { display:flex; gap:14px; align-items:flex-start; flex-wrap:wrap; }
+  .cover-thumb { width:160px; height:96px; border-radius:10px; flex-shrink:0; position:relative; background:radial-gradient(ellipse at 30% 70%, #ff4dca 0%, #4c1d95 45%, #0a0118 100%); }
+  .cover-thumb::after { content:""; position:absolute; inset:0; border-radius:10px; background:radial-gradient(circle at 30% 30%, rgba(255,255,255,0.22) 0%, transparent 35%); }
+  .cover-actions { flex:1; min-width:240px; }
+  .cover-actions .btn-sm { padding:6px 12px; font-size:12px; }
+
+  /* Toggle row */
+  .toggle-row { display:flex; align-items:center; justify-content:space-between; padding:12px 0; border-bottom:1px solid var(--line); gap:14px; }
+  .toggle-row:last-child { border-bottom:none; }
+  .toggle-row .info .ttl { font-size:13px; font-weight:600; color:var(--ink); }
+  .toggle-row .info .sub { font-size:12px; color:var(--grey-6); margin-top:2px; }
+  .toggle { width:38px; height:22px; background:var(--grey-3); border-radius:999px; position:relative; cursor:pointer; flex-shrink:0; transition:background 0.15s; }
+  .toggle::after { content:""; position:absolute; top:2px; left:2px; width:18px; height:18px; background:#fff; border-radius:50%; transition:transform 0.15s; box-shadow:0 1px 3px rgba(0,0,0,0.3); }
+  .toggle.on { background:var(--pink); }
+  .toggle.on::after { transform:translateX(16px); }
+
+  /* Phase selector for lifecycle */
+  .select { display:inline-flex; align-items:center; gap:8px; padding:8px 14px; border-radius:9px; border:1px solid var(--grey-3); background:#131D2E; font-size:13px; color:var(--ink); cursor:pointer; font-family:inherit; }
+  .select svg { width:14px; height:14px; stroke-width:1.8; }
+
+  /* Status changer */
+  .status-changer { display:flex; align-items:center; gap:10px; padding:14px 16px; border-radius:10px; background:#131D2E; border:1px solid var(--grey-3); flex-wrap:wrap; }
+  .status-changer .current { display:flex; align-items:center; gap:6px; font-size:13px; color:var(--grey-7); }
+
+  /* Buttons */
+  .btn { display:inline-flex; align-items:center; gap:6px; padding:9px 16px; border-radius:9px; font-size:13px; font-weight:600; cursor:pointer; border:1px solid transparent; background:var(--grey-1); color:var(--ink); font-family:inherit; text-decoration:none; }
+  .btn:hover { background:var(--grey-2); }
+  .btn-primary { background:var(--pink); color:#0a0a0c; border-color:var(--pink); }
+  .btn-primary:hover { background:var(--pink); filter:brightness(1.05); }
+  .btn-secondary { border-color:var(--grey-3); background:#131D2E; }
+  .btn-secondary:hover { background:var(--grey-2); }
+  .btn-danger { background:transparent; border-color:rgba(255,192,203,0.45); color:var(--red-ink); }
+  .btn-danger:hover { background:rgba(255,192,203,0.08); }
+  .btn-danger-solid { background:var(--red-ink); border-color:var(--red-ink); color:#3D1F2C; }
+  .btn-danger-solid:hover { background:var(--red-ink); filter:brightness(1.05); }
+
+  .danger-row { display:flex; align-items:center; justify-content:space-between; padding:14px 0; border-bottom:1px solid rgba(255,192,203,0.18); gap:16px; }
+  .danger-row:last-child { border-bottom:none; }
+  .danger-row .info { flex:1; }
+  .danger-row .info .ttl { font-size:13px; font-weight:600; color:var(--ink); }
+  .danger-row .info .sub { font-size:12px; color:rgba(255,192,203,0.7); margin-top:2px; max-width:520px; }
+
+  /* Save bar */
+  .save-bar { position:sticky; bottom:0; background:var(--grey-1); border-top:1px solid var(--grey-3); padding:14px 20px; display:flex; align-items:center; justify-content:flex-end; gap:10px; margin-top:18px; border-radius:0 0 14px 14px; flex-wrap:wrap; }
+
+  /* Aid3n FAB */
+  .aid3n-fab { position:fixed; bottom:22px; right:22px; background:linear-gradient(135deg, #4c1d95 0%, #7b2bff 100%); color:#fff; border-radius:999px; padding:10px 16px 10px 10px; display:inline-flex; align-items:center; gap:10px; box-shadow:0 14px 30px rgba(123,43,255,0.35), 0 0 0 1px rgba(216,180,254,0.25) inset; cursor:pointer; font-size:13px; font-weight:600; z-index:100; text-decoration:none; }
+  .aid3n-fab .av { width:28px; height:28px; border-radius:50%; background:rgba(255,255,255,0.18); display:grid; place-items:center; }
+  .aid3n-fab .av svg { width:14px; height:14px; stroke-width:2; }
+  .aid3n-fab .pulse-dot { width:7px; height:7px; border-radius:50%; background:#6BFFDC; animation:fabPulse 1.8s infinite; }
+  @keyframes fabPulse { 0% { box-shadow:0 0 0 0 rgba(107,255,220,0.5); } 70% { box-shadow:0 0 0 8px rgba(107,255,220,0); } 100% { box-shadow:0 0 0 0 rgba(107,255,220,0); } }
+  /* Rail · Octopus minimised nav (additions) */
+  .rail { padding: 14px 0 12px; overflow-y: auto; }
+  .rail::-webkit-scrollbar { display: none; }
+  .rail .brand { margin-bottom: 4px; flex-shrink: 0; }
+  .rail .icon { flex-shrink: 0; }
+  .rail .icon.active { background: rgba(255, 109, 240, 0.12); color: #FF6DF0; }
+  .rail .icon.prod-launcher { padding: 0; }
+  .rail .icon.prod-launcher:hover { background: transparent; }
+  .rail .icon.prod-launcher img { width: 36px; height: 36px; border-radius: 8px; display: block; transition: transform 0.15s; }
+  .rail .icon.prod-launcher:hover img { transform: scale(1.06); }
+  .rail .spacer { flex: 1; min-height: 12px; }
+  .rail .storage { font-size: 10px; color: var(--grey-6); margin-top: 4px; flex-shrink: 0; }
+  .rail .dot-notify { top: 6px; right: 8px; }
+  .rail .rail-sep { width: 28px; height: 1px; background: var(--line); margin: 6px 0; flex-shrink: 0; }
+  .rail .rail-gap { height: 14px; flex-shrink: 0; }
+</style>
+</head>
+<body>
+<div class="app">
+
+    <!-- Icon rail · Octopus minimised nav -->
+  <div class="rail">
+    <a class="brand" href="index.html" title="Octopus · Index">
+      <svg viewBox="0 0 22 28" fill="currentColor" style="color:var(--ink);width:22px;height:28px;display:block;"><path d="M5 2.5V23.5L2 25.5V0.5L5 2.5ZM11.5 7V19L8.5 21V5L11.5 7ZM18 11.5V14.5L15 16.5V9.5L18 11.5Z"/></svg>
+    </a>
+    <a class="icon" href="index.html" title="Index · toggle sidebar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="18" height="16" rx="2" stroke-width="1.7"/><path d="M9 4v16" stroke-width="1.7" stroke-linecap="round"/><path d="M13 9l3 3-3 3" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+
+    <div class="rail-gap"></div>
+
+    <a class="icon" href="#" title="Home">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 11l9-8 9 8M5 9v11h14V9M10 20v-6h4v6" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+    <a class="icon" href="#" title="Venues">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="4" y="3" width="16" height="18" rx="1" stroke-width="1.7"/><rect x="7.3" y="6" width="3" height="3" stroke-width="1.4"/><rect x="13.7" y="6" width="3" height="3" stroke-width="1.4"/><rect x="7.3" y="11" width="3" height="3" stroke-width="1.4"/><rect x="13.7" y="11" width="3" height="3" stroke-width="1.4"/><rect x="7.3" y="16" width="3" height="3" stroke-width="1.4"/><rect x="13.7" y="16" width="3" height="3" stroke-width="1.4"/></svg>
+    </a>
+    <a class="icon" href="inventories.html" title="Software">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9L12 3z" stroke-width="1.7" stroke-linejoin="round"/><path d="M12 12l8-4.5M12 12L4 7.5M12 12v9" stroke-width="1.7"/></svg>
+    </a>
+    <a class="icon" href="#" title="Subscriptions">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="6" width="18" height="13" rx="2" stroke-width="1.7"/><path d="M3 11h18" stroke-width="1.7"/></svg>
+    </a>
+    <a class="icon" href="#" title="Imports">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 4v12M6 10l6 6 6-6M4 20h16" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+    <a class="icon active" href="productions-grid.html" title="Productions">
+      <svg viewBox="0 0 24 24" width="22" height="22"><circle cx="9" cy="10" r="5" fill="#FF98F4" opacity="0.72"/><circle cx="14" cy="14" r="5" fill="#FF6DF0" opacity="0.92"/></svg>
+    </a>
+    <a class="icon" href="#" title="Knowledge">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="4" y="3" width="16" height="18" rx="1" stroke-width="1.7"/><path d="M10 16l2-7 2 7M11 13.5h2" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+    <a class="icon" href="#" title="Support">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="9" stroke-width="1.7"/><path d="M9 9a3 3 0 116 0c0 2-3 2-3 4M12 17.5h.01" stroke-width="1.7" stroke-linecap="round"/></svg>
+    </a>
+
+    <div class="rail-sep"></div>
+
+    <a class="icon prod-launcher" href="lens-mapping-matter.html" title="Mapping Matter">
+      <img src="assets/products/mapping-matter.svg" alt=""/>
+    </a>
+    <a class="icon prod-launcher" href="#" title="Designer">
+      <img src="assets/products/designer.svg" alt=""/>
+    </a>
+    <a class="icon prod-launcher" href="#" title="Porta">
+      <img src="assets/products/porta.svg" alt=""/>
+    </a>
+    <a class="icon prod-launcher" href="#" title="RenderStream">
+      <img src="assets/products/renderstream.svg" alt=""/>
+    </a>
+
+    <div class="spacer"></div>
+
+    <a class="icon" href="#" title="Notifications">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 10a6 6 0 1112 0c0 7 3 8 3 8H3s3-1 3-8M10 21h4" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span class="dot-notify"></span>
+    </a>
+    <a class="icon" href="#" title="My subscription · billing">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="6" width="18" height="13" rx="2" stroke-width="1.7"/><path d="M3 11h18" stroke-width="1.7"/></svg>
+    </a>
+    <div class="storage">0.8%</div>
+  </div>
+
+  <aside class="side" data-prod-sidebar></aside>
+
+  <main class="main">
+
+    <div class="main-top">
+      <div class="breadcrumb">
+        <a class="crumb" href="productions-grid.html">Productions</a>
+        <span class="sep">/</span>
+        <a class="crumb" href="production-home.html">Eurovision 2026</a>
+        <span class="sep">/</span>
+        <span class="current">Settings</span>
+      </div>
+      <div class="topbar-actions">
+        <button class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="7" stroke-width="1.7"/><path d="M16 16l5 5" stroke-width="1.7" stroke-linecap="round"/></svg></button>
+        <button class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 10a6 6 0 1112 0c0 7 3 8 3 8H3s3-1 3-8M10 21h4" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="badge">3</span></button>
+        <div class="avatar">W</div>
+      </div>
+    </div>
+
+    <div class="prod-header">
+      <div class="prod-title">
+        <h1>Eurovision Song Contest 2026</h1>
+        <span class="pill rehearsal"><span class="dot"></span> Design phase</span>
+      </div>
+      <div class="prod-summary">
+        <span class="summary-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="5" width="18" height="16" rx="2" stroke-width="1.7"/><path d="M3 9h18M8 3v4M16 3v4" stroke-width="1.7"/></svg>May 8 → 16, 2026</span>
+        <span class="summary-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2c4 4 6 7 6 11a6 6 0 01-12 0c0-4 2-7 6-11z" stroke-width="1.7"/></svg>Stadthalle Vienna · 9 days to first show</span>
+        <span class="summary-item"><div class="avatars"><span class="av c1">IP</span><span class="av c4">CP</span><span class="av c2">RM</span><span class="av c6">LK</span><span class="av more">+5</span></div>9 team members</span>
+      </div>
+
+      <div class="tabs-row">
+        <a class="tab" href="production-home.html">Overview</a>
+        <a class="tab" href="prod-team.html">Team <span class="count">9</span></a>
+        <a class="tab" href="prod-schedule.html">Schedule</a>
+        <a class="tab active" href="prod-settings.html">Settings</a>
+      </div>
+    </div>
+
+    <div class="set-page">
+
+      <!-- General -->
+      <div class="set-card">
+        <h2>General</h2>
+        <div class="desc">Name, dates, venue, cover image and description for this production.</div>
+
+        <div class="field">
+          <label>Production name</label>
+          <input type="text" value="Eurovision Song Contest 2026">
+        </div>
+
+        <div class="field">
+          <label>Description</label>
+          <textarea>Eurovision 2026 broadcast production · Stadthalle Vienna · 5 live shows (2 family + 2 semi-finals + grand final) · 35 countries · live broadcast to ~180M viewers.</textarea>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label>First show</label>
+            <input type="text" value="May 8, 2026">
+          </div>
+          <div class="field">
+            <label>Grand Final</label>
+            <input type="text" value="May 16, 2026">
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Venue / location</label>
+          <input type="text" value="Stadthalle Vienna · Roland-Rainer-Platz 1, 1150 Wien, Austria">
+        </div>
+
+        <div class="field">
+          <label>Cover image</label>
+          <div class="cover-preview">
+            <div class="cover-thumb"></div>
+            <div class="cover-actions">
+              <div style="display:flex; gap:8px; margin-bottom:8px; flex-wrap:wrap;">
+                <button class="btn btn-secondary btn-sm">Upload new</button>
+                <button class="btn btn-secondary btn-sm">Use media from production</button>
+                <button class="btn btn-secondary btn-sm">Generate with Aid3n</button>
+              </div>
+              <div class="hint">Shown on the Productions list. Recommended 16:9, at least 1600×900.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Lifecycle -->
+      <div class="set-card">
+        <h2>Lifecycle &amp; status</h2>
+        <div class="desc">Move the production through its 6 phases. Status changes are logged in the Decisions log.</div>
+
+        <div class="status-changer">
+          <span class="current">Current phase:</span>
+          <span class="pill rehearsal"><span class="dot"></span> 02 · Design phase</span>
+          <span style="flex:1;"></span>
+          <button class="btn btn-secondary">← Back to Pitch</button>
+          <button class="btn btn-primary">Advance to Procurement →</button>
+        </div>
+
+        <div style="margin-top:18px;">
+          <div class="toggle-row">
+            <div class="info"><div class="ttl">Auto-advance when phase milestones complete</div><div class="sub">Move forward once every milestone in the current phase is marked done.</div></div>
+            <div class="toggle on"></div>
+          </div>
+          <div class="toggle-row">
+            <div class="info"><div class="ttl">Lock lens edits during Show phase</div><div class="sub">Designers can run shows but cannot modify MM or System Design. Owner override available.</div></div>
+            <div class="toggle on"></div>
+          </div>
+          <div class="toggle-row">
+            <div class="info"><div class="ttl">Notify team on phase change</div><div class="sub">Email + in-app notification when the production moves between phases.</div></div>
+            <div class="toggle on"></div>
+          </div>
+          <div class="toggle-row">
+            <div class="info"><div class="ttl">Auto-archive 30 days after Wrap</div><div class="sub">Moves to Archived Productions and releases hardware back to workspace pool.</div></div>
+            <div class="toggle on"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Permissions -->
+      <div class="set-card">
+        <h2>Permissions &amp; sharing</h2>
+        <div class="desc">Who can join, what role they default to, and how external sharing works.</div>
+
+        <div class="field">
+          <label>Default role for new members</label>
+          <div class="select">Designer <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 9l6 6 6-6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div class="hint">Applies when adding via team invite. Roles can always be changed after.</div>
+        </div>
+
+        <div class="toggle-row">
+          <div class="info"><div class="ttl">Anyone in workspace can request access</div><div class="sub">Workspace members see this production and can request to join as Viewer.</div></div>
+          <div class="toggle"></div>
+        </div>
+        <div class="toggle-row">
+          <div class="info"><div class="ttl">External collaborators allowed</div><div class="sub">Invite people outside your workspace by email (Viewer / Operator only).</div></div>
+          <div class="toggle on"></div>
+        </div>
+        <div class="toggle-row">
+          <div class="info"><div class="ttl">Require 2FA for Owners &amp; Designers</div><div class="sub">Enforces two-factor authentication for editing roles.</div></div>
+          <div class="toggle on"></div>
+        </div>
+        <div class="toggle-row">
+          <div class="info"><div class="ttl">Allow file download outside production</div><div class="sub">Members can download media to their local machine. Off = view-only in browser.</div></div>
+          <div class="toggle"></div>
+        </div>
+      </div>
+
+      <!-- Notifications -->
+      <div class="set-card">
+        <h2>Notifications</h2>
+        <div class="desc">Production-level defaults. Individual members can override in their profile.</div>
+
+        <div class="toggle-row">
+          <div class="info"><div class="ttl">@mentions</div><div class="sub">Notify members when @mentioned in wiki pages, takes, or comments.</div></div>
+          <div class="toggle on"></div>
+        </div>
+        <div class="toggle-row">
+          <div class="info"><div class="ttl">Takes committed</div><div class="sub">Notify the team when a Take is committed and propagates upstream.</div></div>
+          <div class="toggle on"></div>
+        </div>
+        <div class="toggle-row">
+          <div class="info"><div class="ttl">Aid3n actions</div><div class="sub">When Aid3n proposes a change inside a lens — sent to the lens owner.</div></div>
+          <div class="toggle on"></div>
+        </div>
+        <div class="toggle-row">
+          <div class="info"><div class="ttl">Cross-lens link changes</div><div class="sub">When a Mapping Matter ↔ System Design link is created or broken.</div></div>
+          <div class="toggle on"></div>
+        </div>
+        <div class="toggle-row">
+          <div class="info"><div class="ttl">Hardware status alerts</div><div class="sub">Server offline · license expiring · update available — sent to Owners and on-call Operators.</div></div>
+          <div class="toggle on"></div>
+        </div>
+        <div class="toggle-row">
+          <div class="info"><div class="ttl">Daily digest email</div><div class="sub">Once-a-day summary of activity in this production, 09:00 Vienna time.</div></div>
+          <div class="toggle"></div>
+        </div>
+      </div>
+
+      <!-- Backups -->
+      <div class="set-card">
+        <h2>Backups &amp; export</h2>
+        <div class="desc">Snapshots, off-site backups, and full-production export.</div>
+
+        <div class="toggle-row">
+          <div class="info"><div class="ttl">Auto-snapshot every 4 hours</div><div class="sub">Stores a versioned snapshot of all lenses. 30-day retention.</div></div>
+          <div class="toggle on"></div>
+        </div>
+        <div class="toggle-row">
+          <div class="info"><div class="ttl">Mirror to off-site storage</div><div class="sub">S3-compatible bucket. Configured in workspace settings.</div></div>
+          <div class="toggle on"></div>
+        </div>
+        <div class="toggle-row">
+          <div class="info"><div class="ttl">Snapshot before every Take commit</div><div class="sub">Captures state immediately before a Take propagates upstream. Useful for rollback.</div></div>
+          <div class="toggle on"></div>
+        </div>
+        <div style="display:flex;gap:10px;padding-top:14px;border-top:1px solid var(--line);margin-top:8px;flex-wrap:wrap;">
+          <button class="btn btn-secondary">📸 Take snapshot now</button>
+          <button class="btn btn-secondary">⬇ Export full production (.zip)</button>
+          <button class="btn btn-secondary">📋 Export decisions log</button>
+        </div>
+      </div>
+
+      <!-- Danger zone -->
+      <div class="set-card danger">
+        <h2>Danger zone</h2>
+        <div class="desc">Operations that affect everyone with access to this production. Some are irreversible.</div>
+
+        <div class="danger-row">
+          <div class="info">
+            <div class="ttl">Duplicate this production</div>
+            <div class="sub">Creates a new production with all lenses, files and templates copied. Team and hardware allocations are <em>not</em> copied.</div>
+          </div>
+          <button class="btn btn-secondary">Duplicate</button>
+        </div>
+
+        <div class="danger-row">
+          <div class="info">
+            <div class="ttl">Transfer ownership</div>
+            <div class="sub">Hand off the Owner role to another team member. You'll be downgraded to Designer.</div>
+          </div>
+          <button class="btn btn-secondary">Transfer →</button>
+        </div>
+
+        <div class="danger-row">
+          <div class="info">
+            <div class="ttl">Archive this production</div>
+            <div class="sub">Moves to Archived Productions. Read-only. Hardware and licenses release back to workspace pool. Can be unarchived within 90 days.</div>
+          </div>
+          <a class="btn btn-danger" href="#">Archive</a>
+        </div>
+
+        <div class="danger-row">
+          <div class="info">
+            <div class="ttl">Delete this production</div>
+            <div class="sub">All lenses, files, media, and history are moved to trash for 30 days, then permanently deleted. <strong>Cannot be undone after 30 days.</strong></div>
+          </div>
+          <button class="btn btn-danger-solid">Delete</button>
+        </div>
+      </div>
+
+      <div class="save-bar">
+        <span style="margin-right:auto;font-size:12px;color:var(--grey-6);">Last saved 2 minutes ago by Igor</span>
+        <button class="btn btn-secondary">Discard changes</button>
+        <button class="btn btn-primary">Save changes</button>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<a class="aid3n-fab" href="lens-aid3n.html">
+  <span class="av"><svg viewBox="0 0 13 17" fill="currentColor"><path d="M6.02832 0.00195312L10.7539 10.0332L12.0557 12.7949L6.02832 16.3164H6.02734L0 12.7949L1.30176 10.0332L6.02832 0V0.00195312ZM5.03516 9.55078L2.49316 10.543L5.03516 11.5352L6.02734 14.0771L7.01953 11.5352L9.5625 10.543L7.01953 9.55078L6.02734 7.00879L5.03516 9.55078Z"/></svg></span>
+  Aid3n
+  <span class="pulse-dot"></span>
+</a>
+
+<script src="assets/shared/sidebar.js" defer></script>
+<script src="assets/shared/launch-modal.js" defer></script>
+<script src="assets/shared/side-toggle.js" defer></script>
+</body>
+</html>

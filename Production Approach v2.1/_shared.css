@@ -1,0 +1,30 @@
+/* Shared design tokens + base styles for Production Approach screens */
+:root {
+  --pink: #ff3eb5;
+  --pink-soft: #ffd6ef;
+  --pink-tint: #fff0f9;
+  --ink: #0f0f10;
+  --grey-0: #ffffff;
+  --grey-1: #fafafa;
+  --grey-2: #f3f3f4;
+  --grey-3: #e8e8eb;
+  --grey-4: #d4d4d8;
+  --grey-5: #a1a1a8;
+  --grey-6: #6e6e75;
+  --grey-7: #3a3a40;
+  --purple: #a855f7;
+  --amber-bg: #fef3c7;
+  --amber-ink: #92400e;
+  --red-bg: #fde8e8;
+  --red-ink: #b91c1c;
+  --green-bg: #dcfce7;
+  --green-ink: #166534;
+  --violet-bg: #ede9fe;
+  --violet-ink: #5b21b6;
+  --blue-bg: #eff6ff;
+  --blue-ink: #1d4ed8;
+  --blue: #2563eb;
+  --line: #e8e8eb;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; background: var(--grey-0); color: var(--ink); font-family: -apple-system, BlinkMacSystemFont, "Inter", "SF Pro Text", "Helvetica Neue", Arial, sans-serif; -webkit-font-smoothing: antialiased; font-size: 14px; }

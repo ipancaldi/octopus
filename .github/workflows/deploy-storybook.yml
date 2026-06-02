@@ -1,4 +1,4 @@
-name: Deploy Storybook to GitHub Pages
+name: Deploy site to GitHub Pages
 
 on:
   push:
@@ -28,6 +28,12 @@ jobs:
       - run: npm ci
 
       - run: npm run build-storybook
+
+      # Publish the Production Approach v2.1 prototype at /Productions v2/
+      - name: Stage Productions v2 prototype
+        run: |
+          mkdir -p "storybook-static/Productions v2"
+          cp -R "Production Approach v2.1/." "storybook-static/Productions v2/"
 
       - uses: actions/configure-pages@v5
 

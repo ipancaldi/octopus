@@ -1,0 +1,1029 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Wiki — Eurovision 2026</title>
+<style>
+  :root {
+    --pink:#FF98F4; --pink-soft:rgba(255,152,244,0.10); --pink-tint:rgba(255,152,244,0.05);
+    --ink:#D0D5DD;
+    --grey-0:#101828; --grey-1:#1D2939; --grey-2:#344054; --grey-3:#344054; --grey-4:#4F5F79; --grey-5:#4E5D76; --grey-6:#98A2B3; --grey-7:#D0D5DD;
+    --av-border:#101828;
+    --purple:#a855f7; --purple-soft:#270045; --purple-ink:#D8B4FE;
+    --amber-bg:#48324C; --amber-ink:#FFE6DD;
+    --red-bg:#3D1F2C; --red-ink:#FFC0CB;
+    --green-bg:#1A3D34; --green-ink:#6BFFDC;
+    --violet-bg:#270045; --violet-ink:#D8B4FE;
+    --blue-bg:#1A2E4D; --blue-ink:#93C5FD;
+    --line:#344054;
+    --aid3n:#a74cee; --aid3n-bg:rgba(167,76,238,0.18);
+    --mm:#ff98f4;
+    --schem:#6bffdc;
+    --takes:#feff70;
+    --wiki:#e6ccfa; --wiki-bg:rgba(230,204,250,0.18);
+    --supp:#ff8559;
+  }
+  * { box-sizing:border-box; }
+  html,body { margin:0; padding:0; background:#0A1020; color:var(--ink); font-family:-apple-system,BlinkMacSystemFont,"Inter","SF Pro Text","Helvetica Neue",Arial,sans-serif; -webkit-font-smoothing:antialiased; font-size:14px; }
+  .mono { font-family:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,monospace; }
+
+  .app { display:grid; grid-template-columns:72px 280px 1fr; min-height:100vh; height:100vh; }
+
+  /* Icon rail · Octopus minimised nav */
+  .rail { background:var(--grey-1); border-right:1px solid var(--line); padding:14px 0 12px; display:flex; flex-direction:column; align-items:center; gap:4px; overflow-y:auto; }
+  .rail::-webkit-scrollbar { display:none; }
+  .rail .brand { width:36px; height:36px; border-radius:8px; display:grid; place-items:center; margin-bottom:4px; flex-shrink:0; }
+  .rail a.icon { text-decoration:none; color:inherit; }
+  .rail .icon { width:44px; height:44px; border-radius:10px; display:grid; place-items:center; color:var(--grey-6); cursor:pointer; position:relative; flex-shrink:0; }
+  .rail .icon:hover { background:var(--grey-2); color:var(--ink); }
+  .rail .icon.active { background:rgba(255,109,240,0.12); color:#FF6DF0; }
+  .rail .icon svg { width:22px; height:22px; stroke-width:1.6; }
+  .rail .icon.prod-launcher { padding:0; }
+  .rail .icon.prod-launcher:hover { background:transparent; }
+  .rail .icon.prod-launcher img { width:36px; height:36px; border-radius:8px; display:block; transition:transform 0.15s; }
+  .rail .icon.prod-launcher:hover img { transform:scale(1.06); }
+  .rail .spacer { flex:1; min-height:12px; }
+  .rail .storage { font-size:10px; color:var(--grey-6); margin-top:4px; flex-shrink:0; }
+  .rail .dot-notify { position:absolute; top:6px; right:8px; width:8px; height:8px; background:#FF98F4; border-radius:50%; }
+  .rail .rail-sep { width:28px; height:1px; background:var(--line); margin:6px 0; flex-shrink:0; }
+  .rail .rail-gap { height:14px; flex-shrink:0; }
+
+  /* Production sidebar */
+  .side { background:#131D2E; border-right:1px solid var(--line); padding:24px 18px; display:flex; flex-direction:column; gap:4px; overflow-y:auto; }
+  .side .back { display:inline-flex; align-items:center; gap:8px; color:var(--grey-6); font-size:12px; cursor:pointer; margin-bottom:14px; text-decoration:none; }
+  .side .back:hover { color:var(--ink); }
+  .side .back svg { width:14px; height:14px; stroke-width:1.8; }
+  .side .prod-name { font-size:17px; font-weight:600; line-height:1.25; margin-bottom:8px; }
+  .pill { padding:3px 9px; border-radius:999px; font-size:11px; font-weight:600; display:inline-flex; align-items:center; gap:6px; }
+  .pill .dot { width:6px; height:6px; border-radius:50%; background:currentColor; }
+  .pill.rehearsal { color:var(--amber-ink); background:var(--amber-bg); }
+  .side .prod-sub { font-size:12px; color:var(--grey-6); margin-top:8px; line-height:1.5; }
+  .side hr { border:none; border-top:1px solid var(--line); margin:16px 0; }
+  .group-label { font-size:10px; color:var(--grey-5); letter-spacing:0.08em; text-transform:uppercase; padding:0 8px 8px; font-weight:600; display:flex; align-items:center; justify-content:space-between; }
+  .nav-list { display:flex; flex-direction:column; gap:1px; margin-bottom:6px; }
+  .nav-list .item { display:flex; align-items:center; gap:10px; padding:8px 10px; border-radius:8px; cursor:pointer; font-size:13px; color:var(--grey-7); text-decoration:none; }
+  .nav-list .item:hover { background:var(--grey-2); }
+  .nav-list .item.active { background:var(--pink-soft); color:var(--ink); font-weight:500; }
+  .nav-list .item.locked { color:var(--grey-5); cursor:not-allowed; }
+  .nav-list .item .ico { width:18px; height:18px; display:grid; place-items:center; flex-shrink:0; }
+  .nav-list .item .ico svg { width:18px; height:18px; stroke-width:1.6; }
+  .nav-list .item .count { margin-left:auto; font-size:11px; color:var(--grey-5); }
+  .nav-list .item .lock { margin-left:auto; font-size:10px; color:var(--grey-5); display:inline-flex; align-items:center; }
+  .nav-list .item .lock svg { width:11px; height:11px; stroke-width:2; }
+  .nav-list .item .pico { width:18px; height:18px; border-radius:4px; flex-shrink:0; }
+
+  /* Main · canvas-dark with dot pattern */
+  .main { display:flex; flex-direction:column; min-width:0; background-color:#0A1020; min-height:0; overflow:hidden; }
+  .main-top { padding:14px 24px; border-bottom:1px solid var(--line); display:flex; align-items:center; justify-content:space-between; gap:16px; background:rgba(10,16,32,0.85); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); flex-shrink:0; }
+  .breadcrumb { display:flex; align-items:center; gap:8px; color:var(--grey-6); font-size:13px; flex:1; min-width:0; overflow-x:auto; white-space:nowrap; scrollbar-width:none; }
+  .breadcrumb::-webkit-scrollbar { display:none; }
+  .breadcrumb .crumb { cursor:pointer; text-decoration:none; color:inherit; flex-shrink:0; }
+  .breadcrumb .crumb:hover { color:var(--ink); }
+  .breadcrumb .sep { color:var(--grey-4); flex-shrink:0; }
+  .breadcrumb .current { color:var(--ink); font-weight:500; flex-shrink:0; overflow:hidden; text-overflow:ellipsis; max-width:280px; }
+
+  /* Top-bar wiki search */
+  .topbar-search {
+    display:flex; align-items:center; gap:8px;
+    padding:6px 12px; border-radius:8px;
+    background:var(--grey-1); border:1px solid var(--grey-3);
+    min-width:280px;
+    transition:border-color 0.15s, background 0.15s;
+  }
+  .topbar-search:focus-within { border-color:var(--wiki); background:rgba(230,204,250,0.04); }
+  .topbar-search svg { width:14px; height:14px; stroke-width:1.7; color:var(--grey-5); flex-shrink:0; }
+  .topbar-search input {
+    flex:1; background:transparent; border:none; outline:none;
+    font-size:12px; color:var(--ink); font-family:inherit;
+  }
+  .topbar-search input::placeholder { color:var(--grey-5); }
+  .topbar-search kbd {
+    font-family:"JetBrains Mono",monospace;
+    font-size:10px; padding:1px 5px;
+    background:var(--grey-2); border:1px solid var(--grey-3); border-radius:3px;
+    color:var(--grey-6);
+  }
+
+  /* ───────────────── Wiki layout ───────────────── */
+  .wiki {
+    flex:1;
+    display:grid;
+    grid-template-columns: 1fr 280px;
+    min-height:0;
+    overflow:hidden;
+  }
+
+  /* Page content (center) */
+  .wiki__main {
+    overflow-y:auto;
+    background:#0A1020;
+    background-image: radial-gradient(circle at center, #344054 1px, transparent 1.6px);
+    background-size: 40px 40px;
+  }
+  .wiki__breadcrumbs {
+    padding:14px 64px; border-bottom:1px solid var(--line);
+    display:flex; align-items:center; gap:8px;
+    font-size:12px; color:var(--grey-6);
+    background:rgba(10,16,32,0.75); backdrop-filter:blur(8px);
+    position:sticky; top:0; z-index:10;
+  }
+  .wiki__breadcrumbs svg { width:11px; height:11px; stroke-width:2; color:var(--grey-5); }
+  .wiki__breadcrumbs .current { color:var(--ink); font-weight:500; }
+  .wiki__breadcrumbs [data-jump] { cursor:pointer; }
+  .wiki__breadcrumbs [data-jump]:hover { color:var(--ink); }
+
+  .wiki__page {
+    max-width:820px;
+    margin:0 auto;
+    padding:48px 64px 96px;
+  }
+  .wiki__page-icon {
+    width:56px; height:56px;
+    border-radius:14px;
+    background:var(--wiki-bg);
+    color:var(--wiki);
+    display:grid; place-items:center;
+    margin-bottom:18px;
+    border:1px solid rgba(230,204,250,0.16);
+  }
+  .wiki__page-icon svg { width:30px; height:30px; stroke-width:1.6; }
+  .wiki__page-title {
+    font-size:38px; font-weight:600; letter-spacing:-0.02em;
+    line-height:1.15; margin:0 0 14px; color:var(--ink);
+  }
+  .wiki__page-byline {
+    display:flex; align-items:center; gap:8px;
+    flex-wrap:wrap;
+    font-size:13px; color:var(--grey-6);
+    margin-bottom:28px;
+    padding-bottom:20px; border-bottom:1px solid var(--line);
+  }
+  .wiki__byline-av { width:22px; height:22px; border-radius:50%; color:#fff; font-size:9px; font-weight:600; display:grid; place-items:center; }
+  .wiki__byline-av.magenta { background:#FF6DF0; }
+  .wiki__byline-av.aqua { background:#6BFFDC; color:#0a0a0c; }
+  .wiki__byline-av.violet { background:#a74cee; }
+  .wiki__byline-av.coral { background:#FF8559; }
+  .wiki__byline-name { color:var(--ink); font-weight:500; }
+  .wiki__byline-sep { color:var(--grey-5); }
+  .wiki__byline-extra { display:inline-flex; align-items:center; gap:6px; }
+  .wiki__byline-extra .dot-aid { width:6px; height:6px; border-radius:50%; background:var(--aid3n); }
+  .wiki__byline-extra .dot-data { width:6px; height:6px; border-radius:50%; background:var(--green-ink); }
+
+  /* Aid3n summary callout */
+  .wiki__aid-callout {
+    display:flex; gap:14px;
+    background:linear-gradient(135deg, rgba(167,76,238,0.14), rgba(255,109,240,0.08));
+    border:1px solid rgba(167,76,238,0.30);
+    border-radius:12px;
+    padding:18px 20px;
+    margin-bottom:24px;
+  }
+  .wiki__aid-av {
+    width:36px; height:36px; border-radius:50%;
+    background:rgba(0,0,0,0.25);
+    border:1px solid rgba(255,255,255,0.06);
+    display:grid; place-items:center;
+    flex-shrink:0;
+  }
+  .wiki__aid-av svg { width:18px; height:23px; display:block; }
+  .wiki__aid-body { flex:1; min-width:0; }
+  .wiki__aid-head {
+    display:flex; align-items:center; gap:9px;
+    margin-bottom:8px;
+  }
+  .wiki__aid-head b { color:var(--ink); font-size:13px; font-weight:600; }
+  .wiki__aid-badge {
+    font-size:10px; padding:2px 7px; border-radius:4px;
+    background:var(--aid3n-bg); color:var(--aid3n);
+    font-family:"JetBrains Mono",monospace; font-weight:700;
+    letter-spacing:0.04em; text-transform:uppercase;
+  }
+  .wiki__aid-quote {
+    color:var(--aid3n); font-style:italic; line-height:1.5; font-size:14px;
+    margin:0 0 12px;
+  }
+  .wiki__aid-actions { display:flex; gap:8px; flex-wrap:wrap; }
+  .wiki__aid-btn {
+    padding:7px 14px; border-radius:7px; font-size:12px; font-weight:600;
+    border:1px solid transparent; cursor:pointer; font-family:inherit;
+    transition:filter 0.15s, background 0.15s, border-color 0.15s;
+  }
+  .wiki__aid-btn-primary {
+    background:var(--aid3n); color:#fff;
+    box-shadow:0 4px 12px -4px var(--aid3n);
+  }
+  .wiki__aid-btn-primary:hover { filter:brightness(1.08); }
+  .wiki__aid-btn-secondary {
+    background:transparent; border-color:rgba(167,76,238,0.4);
+    color:var(--purple-ink);
+  }
+  .wiki__aid-btn-secondary:hover { background:rgba(167,76,238,0.10); border-color:var(--aid3n); }
+
+  /* Body prose */
+  .wiki__body { color:var(--ink); font-size:15px; line-height:1.65; }
+  .wiki__body p { margin:0 0 16px; }
+  .wiki__body h2 { font-size:20px; font-weight:600; letter-spacing:-0.01em; margin:32px 0 12px; color:var(--ink); }
+  .wiki__body h3 { font-size:16px; font-weight:600; margin:24px 0 8px; color:var(--ink); }
+  .wiki__body ul, .wiki__body ol { padding-left:22px; margin:0 0 16px; }
+  .wiki__body li { margin-bottom:6px; }
+  .wiki__body a { color:var(--wiki); text-decoration:underline; text-decoration-color:rgba(230,204,250,0.4); text-underline-offset:2px; }
+  .wiki__body strong { color:var(--ink); font-weight:600; }
+  .wiki__body em { color:var(--grey-6); font-style:italic; }
+
+  /* Live binding data chip */
+  .data-chip {
+    display:inline-flex; align-items:center; gap:5px;
+    padding:2px 8px; border-radius:5px;
+    background:rgba(107,255,220,0.10);
+    border:1px solid rgba(107,255,220,0.25);
+    color:var(--green-ink); font-weight:600; font-size:13px;
+    font-family:"JetBrains Mono",monospace;
+    vertical-align:baseline;
+    cursor:help;
+  }
+  .data-chip::before {
+    content:""; width:5px; height:5px; border-radius:50%;
+    background:var(--green-ink); flex-shrink:0;
+  }
+  .data-chip:hover { background:rgba(107,255,220,0.15); }
+
+  /* Link chip — references another lens */
+  .wiki__chip-link {
+    display:inline-flex; align-items:center; gap:5px;
+    padding:2px 8px; border-radius:5px;
+    background:rgba(255,255,255,0.04);
+    border:1px solid var(--grey-3);
+    color:var(--ink); font-size:13px; font-weight:500;
+    text-decoration:none;
+    vertical-align:baseline;
+  }
+  .wiki__chip-link:hover { background:rgba(255,255,255,0.06); border-color:var(--grey-4); }
+  .wiki__chip-link svg { width:12px; height:12px; stroke-width:2; }
+  .wiki__chip-link.mm { color:var(--mm); border-color:rgba(255,152,244,0.30); }
+  .wiki__chip-link.schem { color:var(--schem); border-color:rgba(107,255,220,0.30); }
+  .wiki__chip-link.takes { color:var(--takes); border-color:rgba(254,255,112,0.30); }
+
+  /* Callout */
+  .wiki__callout {
+    display:flex; gap:12px;
+    padding:14px 16px; border-radius:10px;
+    margin:18px 0;
+    font-size:14px; line-height:1.55;
+  }
+  .wiki__callout svg { width:18px; height:18px; flex-shrink:0; margin-top:1px; }
+  .wiki__callout strong { display:block; margin-bottom:4px; font-size:13px; }
+  .wiki__callout p { margin:0; color:var(--ink); }
+  .wiki__callout.info { background:rgba(167,76,238,0.10); border:1px solid rgba(167,76,238,0.25); color:var(--aid3n); }
+  .wiki__callout.warn { background:rgba(255,133,89,0.10); border:1px solid rgba(255,133,89,0.25); color:var(--supp); }
+  .wiki__callout.success { background:rgba(107,255,220,0.10); border:1px solid rgba(107,255,220,0.25); color:var(--green-ink); }
+
+  /* Table */
+  .wiki__table {
+    width:100%; border-collapse:collapse;
+    margin:14px 0 20px; font-size:13px;
+    background:rgba(19,29,46,0.4);
+    border:1px solid var(--line); border-radius:10px;
+    overflow:hidden;
+  }
+  .wiki__table th, .wiki__table td {
+    padding:10px 12px; text-align:left;
+    border-bottom:1px solid var(--line);
+  }
+  .wiki__table th {
+    font-size:11px; font-weight:600;
+    color:var(--grey-6); text-transform:uppercase; letter-spacing:0.04em;
+    background:rgba(255,255,255,0.02);
+  }
+  .wiki__table tr:last-child td { border-bottom:none; }
+  .wiki__table td { color:var(--ink); }
+
+  /* Panels (at-a-glance) */
+  .wiki__panels {
+    display:grid; grid-template-columns:repeat(2, 1fr);
+    gap:10px; margin:14px 0 20px;
+  }
+  .wiki__panel {
+    background:rgba(19,29,46,0.5);
+    border:1px solid var(--line); border-radius:10px;
+    padding:14px 16px;
+  }
+  .wiki__panel-ico {
+    width:28px; height:28px; border-radius:7px;
+    color:var(--wiki); background:var(--wiki-bg);
+    display:grid; place-items:center;
+    margin-bottom:8px;
+  }
+  .wiki__panel-ico svg { width:16px; height:16px; stroke-width:1.7; }
+  .wiki__panel-title { font-size:11px; font-weight:600; color:var(--grey-6); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:4px; }
+  .wiki__panel-body { font-size:13px; color:var(--ink); }
+
+  /* Page-link tile */
+  .wiki__pagelinks { display:flex; flex-direction:column; gap:8px; margin:8px 0 20px; }
+  .wiki__pagelink {
+    display:flex; align-items:center; gap:12px;
+    padding:12px 14px; border-radius:8px;
+    background:rgba(19,29,46,0.5); border:1px solid var(--line);
+    cursor:pointer; transition:border-color 0.15s, background 0.15s;
+    text-decoration:none; color:inherit;
+  }
+  .wiki__pagelink:hover { border-color:var(--wiki); background:rgba(230,204,250,0.04); }
+  .wiki__pagelink-ico {
+    width:32px; height:32px; border-radius:8px;
+    background:var(--wiki-bg); color:var(--wiki);
+    display:grid; place-items:center;
+    flex-shrink:0;
+  }
+  .wiki__pagelink-ico svg { width:18px; height:18px; stroke-width:1.7; }
+  .wiki__pagelink-title { font-size:14px; font-weight:600; color:var(--ink); margin-bottom:2px; }
+  .wiki__pagelink-meta { font-size:11px; color:var(--grey-6); }
+
+  /* Contribute composer at bottom of every wiki page */
+  .wiki__contribute {
+    margin-top:56px; padding-top:24px;
+    border-top:1px solid var(--line);
+  }
+  .wiki__contribute-label {
+    font-size:10px; color:var(--grey-5); letter-spacing:0.08em;
+    text-transform:uppercase; font-weight:700;
+    font-family:"JetBrains Mono",monospace;
+    margin-bottom:12px;
+    display:flex; align-items:center; gap:8px;
+  }
+  .wiki__contribute-label .count { font-family:inherit; color:var(--grey-6); }
+  .wiki__contribute-card {
+    background:rgba(19,29,46,0.5);
+    border:1px solid var(--grey-3);
+    border-radius:12px;
+    padding:14px 18px;
+    transition:border-color 0.15s;
+  }
+  .wiki__contribute-card:focus-within { border-color:var(--wiki); }
+  .wiki__contribute-head { display:flex; gap:12px; align-items:flex-start; }
+  .wiki__contribute-av {
+    width:32px; height:32px; border-radius:50%;
+    background:var(--purple); color:#fff;
+    font-size:11px; font-weight:600;
+    display:grid; place-items:center;
+    flex-shrink:0;
+  }
+  .wiki__contribute-stack { flex:1; min-width:0; }
+  .wiki__contribute-input {
+    width:100%;
+    padding:8px 0;
+    background:transparent; border:none; outline:none;
+    color:var(--ink); font-family:inherit; font-size:14px;
+    resize:vertical; min-height:24px; max-height:240px;
+    line-height:1.5;
+  }
+  .wiki__contribute-input::placeholder { color:var(--grey-5); }
+  .wiki__contribute-meta {
+    font-size:11px; color:var(--grey-6);
+    margin-top:6px; display:flex; align-items:center; gap:6px;
+  }
+  .wiki__contribute-tools {
+    display:flex; gap:6px; align-items:center;
+    margin-top:14px; padding-top:12px;
+    border-top:1px solid var(--line);
+  }
+  .wiki__contribute-tool {
+    background:transparent; border:none;
+    color:var(--grey-6); font-size:12px;
+    cursor:pointer; padding:6px 10px; border-radius:6px;
+    display:inline-flex; align-items:center; gap:6px;
+    font-family:inherit;
+  }
+  .wiki__contribute-tool:hover { background:var(--grey-2); color:var(--ink); }
+  .wiki__contribute-tool svg { width:14px; height:14px; stroke-width:1.7; }
+  .wiki__contribute-aid {
+    color:var(--aid3n); margin-left:auto;
+  }
+  .wiki__contribute-aid:hover { background:rgba(167,76,238,0.10); color:var(--aid3n); }
+  .wiki__contribute-submit {
+    padding:8px 14px; border-radius:8px;
+    background:var(--wiki); color:#0a0a0c;
+    font-size:12px; font-weight:600; border:none; cursor:pointer;
+    font-family:inherit;
+    transition:filter 0.15s;
+  }
+  .wiki__contribute-submit:hover { filter:brightness(1.06); }
+  .wiki__contribute-submit:disabled { opacity:0.5; cursor:not-allowed; }
+
+  /* ── Right: page tree ── */
+  .wiki__tree-col {
+    border-left:1px solid var(--line);
+    background:rgba(19,29,46,0.45);
+    padding:18px 14px;
+    display:flex; flex-direction:column; gap:10px;
+    overflow-y:auto;
+  }
+  .wiki__search {
+    display:flex; align-items:center; gap:8px;
+    background:var(--grey-1); border:1px solid var(--grey-3);
+    border-radius:8px; padding:7px 10px;
+  }
+  .wiki__search svg { width:14px; height:14px; stroke-width:1.7; color:var(--grey-5); flex-shrink:0; }
+  .wiki__search input { flex:1; background:transparent; border:none; outline:none; font-size:12px; color:var(--ink); font-family:inherit; }
+  .wiki__search input::placeholder { color:var(--grey-5); }
+  .wiki__newpage {
+    display:flex; align-items:center; gap:8px;
+    padding:7px 10px; border-radius:8px;
+    background:rgba(230,204,250,0.10); color:var(--wiki);
+    border:1px solid rgba(230,204,250,0.25);
+    font-size:12px; font-weight:600; cursor:pointer;
+    font-family:inherit;
+    transition:background 0.15s, border-color 0.15s;
+  }
+  .wiki__newpage:hover { background:rgba(230,204,250,0.18); border-color:var(--wiki); }
+  .wiki__newpage svg { width:14px; height:14px; stroke-width:2; }
+  .wiki__tree-section {
+    display:flex; align-items:center; gap:6px;
+    padding:6px 4px; font-size:11px;
+    font-family:"JetBrains Mono",monospace;
+    font-weight:600; letter-spacing:0.06em;
+    text-transform:uppercase; color:var(--grey-5);
+  }
+  .wiki__tree-section svg { width:11px; height:11px; stroke-width:2; }
+  .wiki__tree-list { list-style:none; padding:0; margin:0; flex:1; }
+  .wiki__tree-list ul { list-style:none; padding:0; margin:0; }
+  .wiki__tree-row {
+    display:flex; align-items:center; gap:7px;
+    padding:6px 8px; border-radius:6px;
+    cursor:pointer; font-size:13px; color:var(--grey-7);
+    transition:background 0.12s;
+  }
+  .wiki__tree-row:hover { background:var(--grey-2); }
+  .wiki__tree-row.is-active {
+    background:rgba(230,204,250,0.14);
+    color:var(--wiki);
+    font-weight:500;
+  }
+  .wiki__tree-toggle { display:inline-flex; align-items:center; justify-content:center; width:14px; height:14px; flex-shrink:0; color:var(--grey-5); transition:transform 0.15s; }
+  .wiki__tree-toggle svg { width:10px; height:10px; stroke-width:2.5; }
+  .wiki__tree-toggle.collapsed { transform:rotate(-90deg); }
+  .wiki__tree-spacer { width:14px; height:14px; flex-shrink:0; }
+  .wiki__tree-ico {
+    width:16px; height:16px; flex-shrink:0;
+    color:var(--grey-6);
+    display:inline-flex; align-items:center; justify-content:center;
+  }
+  .wiki__tree-ico svg { width:15px; height:15px; stroke-width:1.7; }
+  .wiki__tree-row.is-active .wiki__tree-ico { color:var(--wiki); }
+  .wiki__tree-label { flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .wiki__sidebar-foot {
+    display:flex; align-items:center; gap:8px;
+    padding:8px 10px; border-radius:6px;
+    color:var(--grey-5); font-size:12px; cursor:pointer;
+    margin-top:auto; border-top:1px solid var(--line); padding-top:14px;
+  }
+  .wiki__sidebar-foot:hover { color:var(--ink); }
+  .wiki__sidebar-foot svg { width:14px; height:14px; stroke-width:1.7; }
+
+  /* Aid3n FAB */
+  .aid3n-fab { position:fixed; bottom:22px; right:22px; background:linear-gradient(135deg, #4c1d95 0%, #7b2bff 100%); color:#fff; border-radius:999px; padding:10px 16px 10px 10px; display:inline-flex; align-items:center; gap:10px; box-shadow:0 14px 30px rgba(123,43,255,0.35), 0 0 0 1px rgba(216,180,254,0.25) inset; cursor:pointer; font-size:13px; font-weight:600; z-index:100; text-decoration:none; }
+  .aid3n-fab .av { width:28px; height:28px; border-radius:50%; background:rgba(255,255,255,0.18); display:grid; place-items:center; }
+  .aid3n-fab .av svg { width:14px; height:14px; }
+  .aid3n-fab .pulse-dot { width:7px; height:7px; border-radius:50%; background:#6BFFDC; animation:fabPulse 1.8s infinite; }
+  @keyframes fabPulse { 0% { box-shadow:0 0 0 0 rgba(107,255,220,0.5); } 70% { box-shadow:0 0 0 8px rgba(107,255,220,0); } 100% { box-shadow:0 0 0 0 rgba(107,255,220,0); } }
+
+  @media (max-width: 1100px) {
+    .wiki { grid-template-columns: 1fr 240px; }
+    .wiki__page { padding:40px 36px 80px; }
+    .wiki__breadcrumbs { padding:14px 36px; }
+  }
+  @media (max-width: 900px) {
+    .wiki { grid-template-columns: 1fr; }
+    .wiki__tree-col { display:none; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- Icon rail · Octopus minimised nav -->
+  <div class="rail">
+    <a class="brand" href="index.html" title="Octopus · Index">
+      <svg viewBox="0 0 22 28" fill="currentColor" style="color:var(--ink);width:22px;height:28px;display:block;"><path d="M5 2.5V23.5L2 25.5V0.5L5 2.5ZM11.5 7V19L8.5 21V5L11.5 7ZM18 11.5V14.5L15 16.5V9.5L18 11.5Z"/></svg>
+    </a>
+    <a class="icon" href="index.html" title="Index · toggle sidebar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="18" height="16" rx="2" stroke-width="1.7"/><path d="M9 4v16" stroke-width="1.7" stroke-linecap="round"/><path d="M13 9l3 3-3 3" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+    <div class="rail-gap"></div>
+    <a class="icon" href="#" title="Home">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 11l9-8 9 8M5 9v11h14V9M10 20v-6h4v6" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+    <a class="icon" href="#" title="Venues">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="4" y="3" width="16" height="18" rx="1" stroke-width="1.7"/><rect x="7.3" y="6" width="3" height="3" stroke-width="1.4"/><rect x="13.7" y="6" width="3" height="3" stroke-width="1.4"/><rect x="7.3" y="11" width="3" height="3" stroke-width="1.4"/><rect x="13.7" y="11" width="3" height="3" stroke-width="1.4"/><rect x="7.3" y="16" width="3" height="3" stroke-width="1.4"/><rect x="13.7" y="16" width="3" height="3" stroke-width="1.4"/></svg>
+    </a>
+    <a class="icon" href="inventories.html" title="Software">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9L12 3z" stroke-width="1.7" stroke-linejoin="round"/><path d="M12 12l8-4.5M12 12L4 7.5M12 12v9" stroke-width="1.7"/></svg>
+    </a>
+    <a class="icon" href="#" title="Subscriptions">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="6" width="18" height="13" rx="2" stroke-width="1.7"/><path d="M3 11h18" stroke-width="1.7"/></svg>
+    </a>
+    <a class="icon" href="#" title="Imports">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 4v12M6 10l6 6 6-6M4 20h16" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+    <a class="icon active" href="productions-grid.html" title="Productions">
+      <svg viewBox="0 0 24 24" width="22" height="22"><circle cx="9" cy="10" r="5" fill="#FF98F4" opacity="0.72"/><circle cx="14" cy="14" r="5" fill="#FF6DF0" opacity="0.92"/></svg>
+    </a>
+    <a class="icon" href="#" title="Knowledge">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="4" y="3" width="16" height="18" rx="1" stroke-width="1.7"/><path d="M10 16l2-7 2 7M11 13.5h2" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+    <a class="icon" href="#" title="Support">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="9" stroke-width="1.7"/><path d="M9 9a3 3 0 116 0c0 2-3 2-3 4M12 17.5h.01" stroke-width="1.7" stroke-linecap="round"/></svg>
+    </a>
+    <div class="rail-sep"></div>
+    <a class="icon prod-launcher" href="lens-mapping-matter.html" title="Mapping Matter">
+      <img src="assets/products/mapping-matter.svg" alt=""/>
+    </a>
+    <a class="icon prod-launcher" href="#" title="Designer">
+      <img src="assets/products/designer.svg" alt=""/>
+    </a>
+    <a class="icon prod-launcher" href="#" title="Porta">
+      <img src="assets/products/porta.svg" alt=""/>
+    </a>
+    <a class="icon prod-launcher" href="#" title="RenderStream">
+      <img src="assets/products/renderstream.svg" alt=""/>
+    </a>
+    <div class="spacer"></div>
+    <a class="icon" href="#" title="Notifications">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 10a6 6 0 1112 0c0 7 3 8 3 8H3s3-1 3-8M10 21h4" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span class="dot-notify"></span>
+    </a>
+    <a class="icon" href="#" title="My subscription · billing">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="6" width="18" height="13" rx="2" stroke-width="1.7"/><path d="M3 11h18" stroke-width="1.7"/></svg>
+    </a>
+    <div class="storage">0.8%</div>
+  </div>
+
+  <!-- Production sidebar · injected by assets/shared/sidebar.js -->
+  <aside class="side" data-prod-sidebar></aside>
+
+  <!-- Main · Wiki -->
+  <main class="main">
+
+    <div class="main-top">
+      <div class="breadcrumb" id="wikiTopbar"></div>
+      <label class="topbar-search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="7"/><path d="M16 16l5 5" stroke-linecap="round"/></svg>
+        <input id="wikiSearch" placeholder="Search this wiki…"/>
+        <kbd>⌘ K</kbd>
+      </label>
+    </div>
+
+    <div class="wiki">
+
+      <!-- ── Center: page content ── -->
+      <main class="wiki__main">
+        <article class="wiki__page">
+          <div class="wiki__page-icon" id="wikiPageIcon"></div>
+          <h1 class="wiki__page-title" id="wikiTitle">Stage layout &amp; set pieces</h1>
+          <div class="wiki__page-byline" id="wikiByline"></div>
+          <div id="wikiContent"></div>
+
+          <!-- Contribute composer -->
+          <section class="wiki__contribute" id="wikiContribute">
+            <div class="wiki__contribute-label">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" style="width:12px;height:12px;stroke-width:2;color:var(--grey-5);"><path d="M21 12a9 9 0 11-3.5-7.1L21 3v6h-6"/></svg>
+              Contribute · <span class="count" id="wikiCommentCount">0 comments yet — be the first.</span>
+            </div>
+            <div class="wiki__contribute-card">
+              <div class="wiki__contribute-head">
+                <div class="wiki__contribute-av">PK</div>
+                <div class="wiki__contribute-stack">
+                  <textarea
+                    class="wiki__contribute-input"
+                    id="wikiContributeInput"
+                    placeholder="Add a comment, suggest an edit, or ask a question…"
+                    rows="1"></textarea>
+                  <div class="wiki__contribute-meta">
+                    Posting as <strong style="color:var(--ink);">Peter Kirkup</strong> · Producer
+                  </div>
+                </div>
+              </div>
+              <div class="wiki__contribute-tools">
+                <button class="wiki__contribute-tool" title="Attach file">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M10 13a5 5 0 007 0l3-3a5 5 0 00-7-7l-1 1M14 11a5 5 0 00-7 0l-3 3a5 5 0 007 7l1-1" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  Attach
+                </button>
+                <button class="wiki__contribute-tool" title="Mention a team member">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="4"/><path d="M16 8v5a3 3 0 006 0v-1a10 10 0 10-4 8" stroke-linecap="round"/></svg>
+                  Mention
+                </button>
+                <button class="wiki__contribute-tool" title="Suggest a Take">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="2"/><circle cx="6" cy="18" r="2"/><circle cx="18" cy="12" r="2"/><path d="M6 8v8M8 6c6 0 8 4 8 6"/></svg>
+                  Propose Take
+                </button>
+                <button class="wiki__contribute-tool wiki__contribute-aid" title="Ask Aid3n to draft this">
+                  <svg viewBox="0 0 13 17" fill="currentColor" style="width:11px; height:14px;"><path d="M6.02832 0.00195312L10.7539 10.0332L12.0557 12.7949L6.02832 16.3164H6.02734L0 12.7949L1.30176 10.0332L6.02832 0V0.00195312ZM5.03516 9.55078L2.49316 10.543L5.03516 11.5352L6.02734 14.0771L7.01953 11.5352L9.5625 10.543L7.01953 9.55078L6.02734 7.00879L5.03516 9.55078Z"/></svg>
+                  Aid3n draft
+                </button>
+                <button class="wiki__contribute-submit" id="wikiContributeSubmit" disabled>Comment</button>
+              </div>
+            </div>
+          </section>
+        </article>
+      </main>
+
+      <!-- ── Right: page tree ── -->
+      <aside class="wiki__tree-col">
+        <button class="wiki__newpage">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 5v14M5 12h14" stroke-linecap="round"/></svg>
+          New page
+        </button>
+        <div class="wiki__tree-section">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Eurovision 2026
+        </div>
+        <ul class="wiki__tree-list" id="wikiTree"></ul>
+        <div class="wiki__sidebar-foot">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 7h14l-1 13H6L5 7zM9 7V4h6v3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Trash
+        </div>
+      </aside>
+
+    </div>
+  </main>
+</div>
+
+<a class="aid3n-fab" href="lens-aid3n.html">
+  <span class="av"><svg viewBox="0 0 13 17" fill="currentColor"><path d="M6.02832 0.00195312L10.7539 10.0332L12.0557 12.7949L6.02832 16.3164H6.02734L0 12.7949L1.30176 10.0332L6.02832 0V0.00195312ZM5.03516 9.55078L2.49316 10.543L5.03516 11.5352L6.02734 14.0771L7.01953 11.5352L9.5625 10.543L7.01953 9.55078L6.02734 7.00879L5.03516 9.55078Z"/></svg></span>
+  Aid3n
+  <span class="pulse-dot"></span>
+</a>
+
+<script>
+  // ───────── Brand OS icon set ─────────
+  const SVG = {
+    document:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M14 3v5h5M5 21h14V8l-5-5H5z" stroke-linejoin="round"/><path d="M9 12h6M9 16h4" stroke-linecap="round"/></svg>',
+    cube:      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9L12 3z" stroke-linejoin="round"/><path d="M12 12l8-4.5M12 12L4 7.5M12 12v9"/></svg>',
+    bolt:      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z" stroke-linejoin="round"/></svg>',
+    lan:       '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="3" width="6" height="6"/><rect x="15" y="3" width="6" height="6"/><rect x="9" y="15" width="6" height="6"/><path d="M12 9v6M6 9v3h12V9"/></svg>',
+    groups:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3 2.5-5 6-5s6 2 6 5" stroke-linecap="round"/><circle cx="17" cy="9" r="2.5"/><path d="M17 14c2.5 0 4.5 2 4.5 4.5" stroke-linecap="round"/></svg>',
+    broadcast: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="18" r="2"/><path d="M8.5 14.5a5 5 0 017 0M5 11a10 10 0 0114 0M1.5 7.5a15 15 0 0121 0"/></svg>',
+    play:      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9"/><path d="M10 8l6 4-6 4V8z" stroke-linejoin="round" fill="currentColor"/></svg>',
+    branch:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v5h5M5 21h14V8l-5-5H5z"/><path d="M9 12c0 2 2 2 4 2s4 0 4 2"/><path d="M9 17v-5M17 16v-2"/></svg>',
+    projector: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="8" width="14" height="10" rx="2"/><circle cx="10" cy="13" r="3"/><path d="M17 11l4-1v6l-4-1M6 18v2M14 18v2" stroke-linecap="round"/></svg>',
+    target:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/></svg>',
+    mappin:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 2c4 4 6 7 6 11a6 6 0 01-12 0c0-4 2-7 6-11z" stroke-linejoin="round"/><circle cx="12" cy="11" r="2.5"/></svg>',
+    calendar:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg>',
+    person:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg>',
+    info:      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="9" stroke-width="1.7"/><path d="M12 8v5M12 16.5h.01" stroke-width="1.7" stroke-linecap="round"/></svg>',
+    warn:      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 9v4M12 17h.01M10.3 3.9L2 18a2 2 0 001.7 3h16.6a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    success:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 12l5 5L20 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/></svg>',
+    schemMini: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="6" height="6"/><rect x="15" y="3" width="6" height="6"/><rect x="9" y="15" width="6" height="6"/><path d="M9 6h6M6 9v6h6M18 9v6h-6"/></svg>',
+    mmMini:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="6" height="6"/><rect x="15" y="3" width="6" height="6"/><rect x="9" y="15" width="6" height="6"/><path d="M9 6h6M6 9v6h6M18 9v6h-6"/></svg>',
+    takesMini: '<svg viewBox="0 0 20 21" fill="currentColor"><path d="M17.4446 19.1187V20.6187H2.8137V19.1187H17.4446ZM17.9446 18.6187V10.5854H2.3137V18.6187C2.3137 18.8948 2.53756 19.1187 2.8137 19.1187V20.6187L2.6096 20.6079C1.66805 20.5125 0.919901 19.7643 0.824444 18.8228L0.813702 18.6187V9.08545H19.4446V18.6187L19.4338 18.8228C19.3384 19.7642 18.5901 20.5123 17.6487 20.6079L17.4446 20.6187V19.1187C17.7206 19.1185 17.9446 18.8947 17.9446 18.6187Z"/><path d="M16.6158 1.87062C16.5443 1.60396 16.2701 1.44575 16.0034 1.51706L1.87109 5.30381C1.60435 5.37528 1.44606 5.64945 1.51753 5.91618L1.87442 7.2481L16.9727 3.20254L16.6158 1.87062ZM18.8098 4.2632L0.813702 9.08545L0.0686447 6.30441C-0.217239 5.23748 0.415927 4.1408 1.48286 3.85492L15.6152 0.0681738L15.8151 0.0257246C16.8158 -0.136424 17.7966 0.482106 18.0647 1.48239L18.8098 4.2632Z"/><path d="M1.73454 4.01073L3.66639 3.4931L2.8393 8.49343L0.907445 9.01107L1.73454 4.01073Z"/><path d="M6.16725 2.8717L8.0991 2.35406L7.27201 7.3544L5.34016 7.87204L6.16725 2.8717Z"/><path d="M10.4182 1.73267L12.35 1.21503L11.5229 6.21537L9.59108 6.733L10.4182 1.73267Z"/><path d="M14.6691 0.59364L16.6009 0.0760022L15.7739 5.07633L13.842 5.59397L14.6691 0.59364Z"/></svg>',
+    aid3nGrad: '<svg viewBox="0 0 13 17" fill="none"><path d="M6.02832 0.00195312L10.7539 10.0332L12.0557 12.7949L6.02832 16.3164H6.02734L0 12.7949L1.30176 10.0332L6.02832 0V0.00195312ZM5.03516 9.55078L2.49316 10.543L5.03516 11.5352L6.02734 14.0771L7.01953 11.5352L9.5625 10.543L7.01953 9.55078L6.02734 7.00879L5.03516 9.55078Z" fill="url(#aid3n-grad-wiki)"/><defs><linearGradient id="aid3n-grad-wiki" x1="13.69" y1="11.73" x2="1.89" y2="5.64" gradientUnits="userSpaceOnUse"><stop stop-color="#6BFFDC"/><stop offset="0.5" stop-color="#FF6DF0"/><stop offset="1" stop-color="#FF8559"/></linearGradient></defs></svg>',
+  };
+
+  // ───────── Wiki page data ─────────
+  const WIKI_PAGES = [
+    { id:'overview',       parent:null,            title:'Show overview',                     icon:'document',  author:'Peter Kirkup',  edited:'2 hours ago',  words:842,  bylineColor:'aqua' },
+    { id:'stage',          parent:'overview',      title:'Stage layout & set pieces',         icon:'cube',      author:'Lauren Kiki',   edited:'12 min ago',   words:1240, bylineColor:'magenta' },
+    { id:'power',          parent:'overview',      title:'Power & rigging plot',              icon:'bolt',      author:'Robin Marshall',edited:'3 days ago',   words:530,  bylineColor:'violet' },
+    { id:'signal',         parent:'overview',      title:'Signal flow diagram',               icon:'lan',       author:'Robin Marshall',edited:'2 days ago',   words:640,  bylineColor:'violet' },
+    { id:'crew',           parent:null,            title:'Crew briefing',                     icon:'groups',    author:'Camilla Powell',edited:'Apr 11',       words:420,  bylineColor:'coral' },
+    { id:'broadcast',      parent:'crew',          title:'Broadcast handoff',                 icon:'broadcast', author:'Camilla Powell',edited:'Apr 9',        words:310,  bylineColor:'coral' },
+    { id:'runbook',        parent:null,            title:'Show runbook',                      icon:'play',      author:'Robin Marshall',edited:'Apr 8',        words:1980, bylineColor:'violet' },
+    { id:'decisions-log',  parent:null,            title:'Decisions log',                     icon:'branch',    author:'Robin Marshall',edited:'1 hour ago',   words:380,  bylineColor:'violet' },
+    { id:'dec-projectors', parent:'decisions-log', title:'Decision · Stage projector vendor', icon:'projector', author:'Robin Marshall',edited:'1 hour ago',   words:540,  bylineColor:'violet' },
+  ];
+
+  const WIKI_CONTENT = {
+    overview: `
+      <p>This is the master reference for <strong>Eurovision Song Contest 2026</strong>. Anything that doesn't live in a lens — context, decisions, stakeholders — should be linked here.</p>
+      <h2>At a glance</h2>
+      <div class="wiki__panels">
+        <div class="wiki__panel"><div class="wiki__panel-ico">${SVG.target}</div><div class="wiki__panel-title">Brief</div><div class="wiki__panel-body">Grand final stage with extended LED volume and architectural projection mapping.</div></div>
+        <div class="wiki__panel"><div class="wiki__panel-ico">${SVG.mappin}</div><div class="wiki__panel-title">Venue</div><div class="wiki__panel-body">Stadthalle Vienna · 16,000 capacity</div></div>
+        <div class="wiki__panel"><div class="wiki__panel-ico">${SVG.calendar}</div><div class="wiki__panel-title">Show dates</div><div class="wiki__panel-body">May 8 → May 16, 2026 · 5 broadcasts</div></div>
+        <div class="wiki__panel"><div class="wiki__panel-ico">${SVG.person}</div><div class="wiki__panel-title">Lead</div><div class="wiki__panel-body">Peter Kirkup (Producer)</div></div>
+      </div>
+      <h2>Sub-pages</h2>
+      <div class="wiki__pagelinks" data-pagelinks-for="overview"></div>
+      <div class="wiki__callout info">
+        ${SVG.info}
+        <div><strong>Single source of truth</strong><p>Anything that doesn't fit inside a specific lens — context, decisions, run sheets — lives here. The wiki is the canonical record.</p></div>
+      </div>`,
+
+    stage: `
+      <div class="wiki__aid-callout">
+        <div class="wiki__aid-av">${SVG.aid3nGrad}</div>
+        <div class="wiki__aid-body">
+          <div class="wiki__aid-head"><b>Aid3n drafted a summary</b><span class="wiki__aid-badge">AI · 4s ago</span></div>
+          <p class="wiki__aid-quote">"Three EPS-foam architectural arches receive projection mapping from the rear truss above a 12 m LED B-stage runway. Total mapped surface area is 142.4 m² across three surfaces; build is on schedule for procurement gate on May 4."</p>
+          <div class="wiki__aid-actions">
+            <button class="wiki__aid-btn wiki__aid-btn-primary">Use as page summary</button>
+            <button class="wiki__aid-btn wiki__aid-btn-secondary">Dismiss</button>
+            <button class="wiki__aid-btn wiki__aid-btn-secondary">Regenerate</button>
+          </div>
+        </div>
+      </div>
+
+      <p>The B-stage extends <span class="data-chip" title="Source: CAD · stage_plan_v4.dwg · updated 2h ago">12 m</span> into the audience floor and is flanked by three architectural arches that receive projection mapping from the rear truss. Total mapped surface area is <span class="data-chip" title="Source: Mapping Matter · projection_study_v4.mm">142.4 m²</span> across three surfaces. Lighting comes from FOH and is split between the LED volume and the arches.</p>
+
+      <div class="wiki__callout info">
+        ${SVG.info}
+        <div><strong>Decision · Apr 8</strong><p>Arches will be CNC'd in EPS foam over a steel armature. Total weight budget: 480 kg per arch.</p></div>
+      </div>
+
+      <h2>Set pieces</h2>
+      <table class="wiki__table">
+        <thead><tr><th>Piece</th><th>Size</th><th>Surface</th><th>Mapped by</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Arch L</strong></td><td>6.2 × 4.8 m</td><td>EPS foam, white matte</td><td>Lauren Kiki</td></tr>
+          <tr><td><strong>Arch C</strong></td><td>8.0 × 5.4 m</td><td>EPS foam, white matte</td><td>Lauren Kiki</td></tr>
+          <tr><td><strong>Arch R</strong></td><td>6.2 × 4.8 m</td><td>EPS foam, white matte</td><td>Lauren Kiki</td></tr>
+          <tr><td><strong>B-stage runway</strong></td><td>12 × 2.4 m</td><td>LED tile (P3.9)</td><td>—</td></tr>
+        </tbody>
+      </table>
+
+      <h2>Mapping references</h2>
+      <p>See <a class="wiki__chip-link mm" href="lens-mapping-matter.html">${SVG.mmMini}Mapping Matter</a> for the live scene file. The projection study is bound to the surface data in the table above — edits to dimensions propagate downstream.</p>
+
+      <div class="wiki__callout warn">
+        ${SVG.warn}
+        <div><strong>Open question</strong><p>Confirm with broadcast: do we need a flat backplate for the cleanfeed wide shot? <em>Awaiting EBU response — Camilla following up.</em></p></div>
+      </div>`,
+
+    power: `
+      <p>Power distribution is centralised at four 63A 3φ feeds with independent dimming for projector trusses. All projector circuits are isolated from the LED wall and audio gear.</p>
+      <h2>Feed map</h2>
+      <ul>
+        <li><strong>FOH-A</strong> — 63A 3φ — projector truss, audio</li>
+        <li><strong>FOH-B</strong> — 63A 3φ — LED wall, B-stage</li>
+        <li><strong>BOH-A</strong> — 63A 3φ — server racks, control</li>
+        <li><strong>BOH-B</strong> — 63A 3φ — lighting fixtures</li>
+      </ul>
+      <div class="wiki__callout info">
+        ${SVG.info}
+        <div><strong>Inventory link</strong><p>
+          <span class="data-chip" title="Source: Inventory · reservation #IR-2026-0412">12× Barco UDX-4K32</span>
+          <span style="margin:0 4px; color:var(--grey-5);">·</span>
+          <span class="data-chip" title="Source: Inventory · reservation #IR-2026-0419">4× Christie Boxer 4K30</span>
+        </p></div>
+      </div>`,
+
+    signal: `
+      <p>Single source of truth for the broadcast pipeline. The live, auto-laid-out diagram lives in <a class="wiki__chip-link schem" href="lens-system-design.html">${SVG.schemMini}System Design</a>. This page describes intent; the lens is the source of record.</p>
+      <h2>Pipeline summary</h2>
+      <ol>
+        <li>Master <span class="data-chip">vx 4+</span> generates 4× 12G-SDI streams.</li>
+        <li><span class="data-chip">Riedel MN-MADRID-2</span> routes to <span class="data-chip">12 projector outputs</span> + <span class="data-chip">3 LED feeds</span>.</li>
+        <li>Backup vx 4+ runs hot, switched at the router on failure.</li>
+        <li>GX 3 handles the LED volume independently for low-latency content.</li>
+      </ol>
+      <div class="wiki__callout success">
+        ${SVG.success}
+        <div><strong>Sign-off</strong><p>Patch reviewed and signed off by Robin Marshall on Apr 12. Ready for procurement gate.</p></div>
+      </div>`,
+
+    crew: `
+      <p>Day-of briefing for <strong>24 crew</strong> across content, video, lighting, and broadcast departments. Daily 14:00 sync in the production office.</p>
+      <h2>Heads of department</h2>
+      <ul>
+        <li>Content — Peter Kirkup</li>
+        <li>Video / Disguise — Robin Marshall</li>
+        <li>Lighting — TBA</li>
+        <li>Broadcast liaison — Camilla Powell</li>
+      </ul>
+      <div class="wiki__callout info">
+        ${SVG.info}
+        <div><strong>Where to be at 14:00</strong><p>All HoDs in the production office for the daily 14:00 sync. Bring laptops + RF talkback.</p></div>
+      </div>`,
+
+    broadcast: `
+      <p>Standard EBU handover protocol. Color pipeline locked to <strong>ITU-R BT.709</strong> end to end; no wide-gamut content this year.</p>
+      <h2>Signal targets</h2>
+      <ul>
+        <li>1080i59.94, embedded audio L/R + 5.1</li>
+        <li>HDR contingency: SDR-only — no HDR for 2026</li>
+        <li>Backup feed mirrors at the EBU MCR via satellite</li>
+      </ul>`,
+
+    runbook: `
+      <p>Cue-by-cue runbook. <strong>Print this</strong> and have it taped to every desk on show night.</p>
+      <h2>Cue stack — Grand Final</h2>
+      <table class="wiki__table">
+        <thead><tr><th>#</th><th>Cue</th><th>Duration</th><th>Operator</th></tr></thead>
+        <tbody>
+          <tr><td>1.0</td><td>Pre-show idents</td><td>00:30</td><td>Robin Marshall</td></tr>
+          <tr><td>1.5</td><td>Host walk-on</td><td>02:15</td><td>Peter Kirkup</td></tr>
+          <tr><td>2.0</td><td>Act 01 — UA</td><td>03:00</td><td>Robin Marshall</td></tr>
+          <tr><td>…</td><td>—</td><td>—</td><td>—</td></tr>
+        </tbody>
+      </table>
+      <div class="wiki__callout warn">
+        ${SVG.warn}
+        <div><strong>Fallback</strong><p>On master vx 4+ failure: kill input on Riedel router, switch to backup. Rehearsed at run-through.</p></div>
+      </div>`,
+
+    'decisions-log': `
+      <p>Every decision with two or more takes ends up here. Auto-updated when a <a class="wiki__chip-link takes" href="lens-takes.html">${SVG.takesMini}Take</a> is committed — the chosen direction stays visible, the others are kept for context.</p>
+      <div class="wiki__callout info">
+        ${SVG.info}
+        <div><strong>Why a decisions log?</strong><p>On a 9-month build you make hundreds of small calls. Six months later when something breaks, "why did we pick X" matters. This page is the receipt.</p></div>
+      </div>
+      <h2>Active decisions</h2>
+      <div class="wiki__pagelinks" data-pagelinks-for="decisions-log"></div>
+      <h2>Committed</h2>
+      <p style="color:var(--grey-6);">None yet — committed decisions will appear here with the chosen take and reasoning.</p>`,
+
+    'dec-projectors': `
+      <p><strong>Status:</strong> <span style="color:var(--takes);">In review</span> · decision owner <strong>Robin Marshall</strong> · decide by <strong>Apr 18</strong></p>
+      <p>Stage projector vendor selection. Barco UDX-4K32 vs Christie Boxer 4K30. Two bids in, comparison side-by-side below. Affected lenses: System Design, Mapping Matter, Inventory.</p>
+      <div class="wiki__callout info">
+        ${SVG.info}
+        <div><strong>Live document</strong><p>This page is auto-generated from <a class="wiki__chip-link takes" href="lens-takes.html">${SVG.takesMini}Takes</a>. Edits made there flow back here. Comparison stays live until commit, then this page seals as a decision record.</p></div>
+      </div>
+      <h2>Takes under consideration</h2>
+      <table class="wiki__table">
+        <thead><tr><th>Take</th><th>Cost</th><th>Server config</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Barco UDX-4K32</strong><br><span style="font-size:12px;color:var(--grey-6);">12× units, native 4K32K</span></td><td>€480k<br><span style="font-size:11px;color:var(--grey-6);">via Pixel Vienna</span></td><td style="font-size:12px;">8× vx 4+ → 4 outputs each</td><td><span style="color:var(--green-ink); font-weight:600;">Lead</span></td></tr>
+          <tr><td><strong>Christie Boxer 4K30</strong><br><span style="font-size:12px;color:var(--grey-6);">12× units, scaled fit</span></td><td>€395k<br><span style="font-size:11px;color:var(--grey-6);">via Creative Tech</span></td><td style="font-size:12px;">6× vx 4+ → DP scaling</td><td>Open</td></tr>
+        </tbody>
+      </table>`,
+  };
+
+  // ───────── State + handles ─────────
+  let currentPageId = 'overview';   // Wiki lands on Show overview by default
+  let searchQuery = '';
+  const treeRoot = document.getElementById('wikiTree');
+  const topbarCrumb = document.getElementById('wikiTopbar');
+  const titleEl = document.getElementById('wikiTitle');
+  const iconEl  = document.getElementById('wikiPageIcon');
+  const bylineEl = document.getElementById('wikiByline');
+  const contentEl = document.getElementById('wikiContent');
+
+  // ───────── Helpers ─────────
+  function initials(name) { return name.split(' ').map(s => s[0]).slice(0, 2).join(''); }
+  function pageById(id) { return WIKI_PAGES.find(p => p.id === id); }
+  function childrenOf(id) { return WIKI_PAGES.filter(p => p.parent === id); }
+  function getBreadcrumbs(page) {
+    const out = [];
+    let p = page;
+    while (p) { out.unshift(p); p = p.parent ? pageById(p.parent) : null; }
+    return out;
+  }
+
+  // ───────── Render: tree ─────────
+  function renderTree() {
+    const filterFn = !searchQuery ? null
+      : p => p.title.toLowerCase().includes(searchQuery.toLowerCase());
+    function hasMatchingDescendant(p) {
+      const kids = childrenOf(p.id);
+      return kids.some(k => filterFn(k) || hasMatchingDescendant(k));
+    }
+    function buildBranch(parent, depth) {
+      const kids = WIKI_PAGES
+        .filter(p => p.parent === parent)
+        .filter(p => !filterFn || filterFn(p) || hasMatchingDescendant(p));
+      return kids.map(p => {
+        const hasKids = childrenOf(p.id).length > 0;
+        const active = p.id === currentPageId ? ' is-active' : '';
+        const toggle = hasKids
+          ? `<span class="wiki__tree-toggle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>`
+          : `<span class="wiki__tree-spacer"></span>`;
+        return `
+          <li>
+            <div class="wiki__tree-row${active}" data-page-id="${p.id}" style="padding-left:${8 + depth * 12}px;">
+              ${toggle}
+              <span class="wiki__tree-ico">${SVG[p.icon] || SVG.document}</span>
+              <span class="wiki__tree-label">${p.title}</span>
+            </div>
+            ${hasKids ? `<ul>${buildBranch(p.id, depth + 1)}</ul>` : ''}
+          </li>`;
+      }).join('');
+    }
+    treeRoot.innerHTML = buildBranch(null, 0);
+    treeRoot.querySelectorAll('.wiki__tree-row').forEach(row => {
+      row.addEventListener('click', () => selectPage(row.dataset.pageId));
+    });
+  }
+
+  // ───────── Render: page ─────────
+  function renderPage() {
+    const page = pageById(currentPageId);
+    if (!page) return;
+    titleEl.textContent = page.title;
+    iconEl.innerHTML = SVG[page.icon] || SVG.document;
+
+    const liveBindings = (WIKI_CONTENT[page.id] || '').match(/data-chip/g)?.length || 0;
+    const aiSugg = (WIKI_CONTENT[page.id] || '').match(/wiki__aid-callout/g)?.length || 0;
+    const readMin = Math.max(1, Math.ceil(page.words / 200));
+    bylineEl.innerHTML = `
+      <span class="wiki__byline-av ${page.bylineColor || 'magenta'}">${initials(page.author)}</span>
+      <span class="wiki__byline-name">${page.author}</span>
+      <span class="wiki__byline-sep">·</span>
+      <span>edited ${page.edited}</span>
+      <span class="wiki__byline-sep">·</span>
+      <span>${page.words.toLocaleString()} words · ${readMin} min read</span>
+      ${liveBindings ? `<span class="wiki__byline-sep">·</span><span class="wiki__byline-extra"><span class="dot-data"></span>${liveBindings} live binding${liveBindings === 1 ? '' : 's'}</span>` : ''}
+      ${aiSugg ? `<span class="wiki__byline-sep">·</span><span class="wiki__byline-extra"><span class="dot-aid"></span>${aiSugg} AI suggestion${aiSugg === 1 ? '' : 's'}</span>` : ''}
+    `;
+
+    contentEl.innerHTML = WIKI_CONTENT[page.id] || `<p>${page.title} — this page is a stub. Click <strong>Edit</strong> to start writing.</p>`;
+
+    // Expand sub-pages tiles
+    contentEl.querySelectorAll('[data-pagelinks-for]').forEach(holder => {
+      const parentId = holder.dataset.pagelinksFor;
+      const kids = childrenOf(parentId);
+      holder.innerHTML = kids.length
+        ? kids.map(k => `
+          <a class="wiki__pagelink" data-jump-id="${k.id}">
+            <span class="wiki__pagelink-ico">${SVG[k.icon] || SVG.document}</span>
+            <div>
+              <div class="wiki__pagelink-title">${k.title}</div>
+              <div class="wiki__pagelink-meta">${k.author} · ${k.edited}</div>
+            </div>
+          </a>`).join('')
+        : `<p style="color:var(--grey-6);">No sub-pages yet.</p>`;
+      holder.querySelectorAll('[data-jump-id]').forEach(a => {
+        a.addEventListener('click', () => selectPage(a.dataset.jumpId));
+      });
+    });
+  }
+
+  function renderBreadcrumbs() {
+    // Single merged breadcrumb in the topbar:
+    //   Productions / Eurovision 2026 / Wiki / [parent…] / [current page]
+    const page = pageById(currentPageId);
+    const trail = getBreadcrumbs(page);
+    const segs = [];
+
+    segs.push(`<a class="crumb" href="productions-grid.html">Productions</a>`);
+    segs.push(`<span class="sep">/</span>`);
+    segs.push(`<a class="crumb" href="production-home.html">Eurovision 2026</a>`);
+    segs.push(`<span class="sep">/</span>`);
+    // "Wiki" jumps to the default overview page; below it the page hierarchy.
+    segs.push(`<span class="crumb" data-jump="overview">Wiki</span>`);
+    trail.forEach((c, i) => {
+      const isLast = i === trail.length - 1;
+      segs.push(`<span class="sep">/</span>`);
+      segs.push(isLast
+        ? `<span class="current">${c.title}</span>`
+        : `<span class="crumb" data-jump="${c.id}">${c.title}</span>`);
+    });
+
+    topbarCrumb.innerHTML = segs.join('');
+    topbarCrumb.querySelectorAll('[data-jump]').forEach(b => {
+      b.addEventListener('click', () => selectPage(b.dataset.jump));
+    });
+  }
+
+  function selectPage(id) {
+    if (!pageById(id)) return;
+    currentPageId = id;
+    renderTree();
+    renderPage();
+    renderBreadcrumbs();
+    document.querySelector('.wiki__main')?.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  document.getElementById('wikiSearch').addEventListener('input', (e) => {
+    searchQuery = e.target.value;
+    renderTree();
+  });
+
+  // Cmd/Ctrl + K — focus the wiki search
+  document.addEventListener('keydown', (e) => {
+    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+      e.preventDefault();
+      document.getElementById('wikiSearch')?.focus();
+    }
+  });
+
+  // Contribute composer — auto-grow + enable submit when there's input
+  const composerInput = document.getElementById('wikiContributeInput');
+  const composerSubmit = document.getElementById('wikiContributeSubmit');
+  if (composerInput) {
+    composerInput.addEventListener('input', () => {
+      composerInput.style.height = 'auto';
+      composerInput.style.height = Math.min(240, composerInput.scrollHeight) + 'px';
+      composerSubmit.disabled = composerInput.value.trim().length === 0;
+    });
+    composerSubmit.addEventListener('click', () => {
+      const text = composerInput.value.trim();
+      if (!text) return;
+      composerInput.value = '';
+      composerInput.style.height = 'auto';
+      composerSubmit.disabled = true;
+      // In a real app this would post to the wiki — this prototype just confirms.
+      composerSubmit.textContent = 'Posted ✓';
+      setTimeout(() => composerSubmit.textContent = 'Comment', 1500);
+    });
+  }
+
+  // Initial render
+  renderTree();
+  renderPage();
+  renderBreadcrumbs();
+</script>
+
+<script src="assets/shared/sidebar.js" defer></script>
+<script src="assets/shared/launch-modal.js" defer></script>
+<script src="assets/shared/side-toggle.js" defer></script>
+</body>
+</html>

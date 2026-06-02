@@ -1,0 +1,501 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Team — Eurovision 2026</title>
+<style>
+  :root {
+    --pink:#FF98F4; --pink-soft:rgba(255,152,244,0.10); --pink-tint:rgba(255,152,244,0.05);
+    --ink:#D0D5DD;
+    --grey-0:#101828; --grey-1:#1D2939; --grey-2:#344054; --grey-3:#344054; --grey-4:#4F5F79; --grey-5:#4E5D76; --grey-6:#98A2B3; --grey-7:#D0D5DD;
+    --av-border:#101828;
+    --purple:#a855f7; --purple-soft:#270045; --purple-ink:#D8B4FE;
+    --amber-bg:#48324C; --amber-ink:#FFE6DD; --amber:#FFE6DD;
+    --red-bg:#3D1F2C; --red-ink:#FFC0CB;
+    --green-bg:#1A3D34; --green-ink:#6BFFDC;
+    --violet-bg:#270045; --violet-ink:#D8B4FE;
+    --blue-bg:#1A2E4D; --blue-ink:#93C5FD;
+    --line:#344054;
+  }
+  * { box-sizing:border-box; }
+  html, body { margin:0; padding:0; background:#0A1020; color:var(--ink); font-family:-apple-system,BlinkMacSystemFont,"Inter","SF Pro Text","Helvetica Neue",Arial,sans-serif; -webkit-font-smoothing:antialiased; font-size:14px; }
+
+  .app { display:grid; grid-template-columns:72px 280px 1fr; min-height:100vh; }
+
+  /* Icon rail · workspace nav only */
+  .rail { background:var(--grey-1); border-right:1px solid var(--line); padding:16px 0; display:flex; flex-direction:column; align-items:center; gap:4px; }
+  .rail .brand { width:36px; height:36px; border-radius:8px; display:grid; place-items:center; margin-bottom:12px; }
+  .rail a.icon { text-decoration:none; color:inherit; }
+  .rail .icon { width:44px; height:44px; border-radius:10px; display:grid; place-items:center; color:var(--grey-7); cursor:pointer; position:relative; }
+  .rail .icon:hover { background:var(--grey-2); color:var(--ink); }
+  .rail .icon.active { background:rgba(255,109,240,0.10); color:#FF6DF0; }
+  .rail .icon svg { width:22px; height:22px; stroke-width:1.6; }
+  .rail .spacer { flex:1; }
+  .rail .storage { font-size:10px; color:var(--grey-6); margin-top:6px; }
+  .rail .dot-notify { position:absolute; top:8px; right:10px; width:8px; height:8px; background:#FF98F4; border-radius:50%; }
+
+  /* Main · canvas-dark with dot pattern */
+  .main {
+    display:flex; flex-direction:column; min-width:0;
+    background-color:#0A1020;
+    background-image: radial-gradient(circle at center, #344054 1px, transparent 1.6px);
+    background-size: 40px 40px;
+  }
+  .main-top { padding:14px 24px; border-bottom:1px solid var(--line); display:flex; align-items:center; justify-content:space-between; gap:16px; background:rgba(10,16,32,0.85); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); }
+  .breadcrumb { display:flex; align-items:center; gap:8px; color:var(--grey-6); font-size:13px; }
+  .breadcrumb .crumb { cursor:pointer; text-decoration:none; color:inherit; }
+  .breadcrumb .crumb:hover { color:var(--ink); }
+  .breadcrumb .sep { color:var(--grey-4); }
+  .breadcrumb .current { color:var(--ink); font-weight:500; }
+  .topbar-actions { display:flex; align-items:center; gap:10px; }
+  .icon-btn { width:36px; height:36px; border-radius:50%; background:transparent; display:grid; place-items:center; cursor:pointer; color:var(--grey-7); position:relative; border:none; }
+  .icon-btn:hover { background:var(--grey-2); }
+  .icon-btn svg { width:18px; height:18px; stroke-width:1.7; }
+  .badge { position:absolute; top:2px; right:2px; min-width:16px; height:16px; padding:0 4px; border-radius:8px; background:var(--pink); color:#0a0a0c; font-size:10px; font-weight:600; display:grid; place-items:center; }
+  .avatar { width:34px; height:34px; border-radius:50%; background:var(--purple); color:#fff; font-size:13px; font-weight:600; display:grid; place-items:center; }
+
+  /* Page header */
+  .prod-header { padding:22px 32px 0; border-bottom:1px solid var(--line); }
+  .prod-title { display:flex; align-items:center; gap:14px; margin-bottom:6px; }
+  .prod-title h1 { font-size:24px; font-weight:600; margin:0; letter-spacing:-0.01em; }
+  .pill { padding:3px 9px; border-radius:999px; font-size:11px; font-weight:600; display:inline-flex; align-items:center; gap:6px; }
+  .pill .dot { width:6px; height:6px; border-radius:50%; background:currentColor; }
+  .pill.rehearsal { color:var(--amber-ink); background:var(--amber-bg); }
+  .prod-summary { display:flex; align-items:center; gap:18px; color:var(--grey-6); font-size:12px; margin-bottom:18px; flex-wrap:wrap; }
+  .prod-summary .summary-item { display:inline-flex; align-items:center; gap:6px; }
+  .prod-summary .summary-item svg { width:14px; height:14px; stroke-width:1.7; }
+  .avatars { display:flex; }
+  .avatars .av { width:22px; height:22px; border-radius:50%; color:#fff; font-size:9px; font-weight:600; display:grid; place-items:center; border:2px solid var(--av-border); margin-left:-7px; }
+  .avatars .av:first-child { margin-left:0; }
+  .av.c1 { background:#f97316; } .av.c2 { background:#14b8a6; } .av.c3 { background:#8b5cf6; }
+  .av.c4 { background:#ec4899; } .av.c5 { background:#0ea5e9; } .av.c6 { background:#84cc16; }
+  .av.c7 { background:#f43f5e; } .av.c8 { background:#22d3ee; } .av.c9 { background:#a3e635; }
+  .av.more { background:var(--grey-3); color:var(--grey-7); }
+
+  .tabs-row { display:flex; align-items:center; gap:4px; overflow-x:auto; padding-bottom:0; }
+  .tabs-row::-webkit-scrollbar { display:none; }
+  .tab { display:inline-flex; align-items:center; gap:6px; padding:12px 14px; font-size:13px; cursor:pointer; color:var(--grey-6); border-bottom:2px solid transparent; font-weight:500; white-space:nowrap; text-decoration:none; }
+  .tab:hover { color:var(--ink); }
+  .tab.active { color:var(--pink); border-bottom-color:var(--pink); }
+  .tab .count { font-size:11px; color:var(--grey-5); background:var(--grey-2); padding:1px 7px; border-radius:999px; }
+  .tab.active .count { background:var(--pink-soft); color:var(--pink); }
+
+  /* Team page */
+  .team-page { padding:24px 32px 64px; max-width:1280px; }
+  .toolbar { display:flex; align-items:center; gap:12px; margin-bottom:24px; flex-wrap:wrap; }
+  .search { display:flex; align-items:center; gap:8px; background:var(--grey-1); border:1px solid var(--grey-3); border-radius:10px; padding:8px 12px; min-width:280px; color:var(--grey-5); flex:1; }
+  .search input { border:none; outline:none; background:transparent; font-size:13px; flex:1; color:var(--ink); font-family:inherit; }
+  .search input::placeholder { color:var(--grey-6); }
+  .search svg { width:16px; height:16px; stroke-width:1.7; }
+  .select { display:inline-flex; align-items:center; gap:8px; padding:8px 14px; border-radius:10px; border:1px solid var(--grey-3); background:var(--grey-1); font-size:13px; color:var(--grey-7); cursor:pointer; }
+  .select svg { width:14px; height:14px; stroke-width:1.8; }
+  .btn { display:inline-flex; align-items:center; gap:6px; padding:9px 16px; border-radius:10px; font-size:13px; font-weight:600; cursor:pointer; border:1px solid transparent; background:var(--grey-1); color:var(--ink); font-family:inherit; text-decoration:none; }
+  .btn:hover { background:var(--grey-2); }
+  .btn-primary { background:var(--pink); color:#0a0a0c; border-color:var(--pink); }
+  .btn-primary:hover { background:var(--pink); filter:brightness(1.05); }
+  .btn-secondary { border-color:var(--grey-3); }
+
+  /* Pending invites */
+  .pending { background:var(--amber-bg); border:1px solid rgba(255,230,221,0.25); border-radius:12px; padding:16px 20px; display:flex; align-items:center; gap:14px; margin-bottom:24px; }
+  .pending .ico { width:36px; height:36px; border-radius:8px; background:rgba(255,230,221,0.12); color:var(--amber-ink); display:grid; place-items:center; flex-shrink:0; }
+  .pending .ico svg { width:18px; height:18px; stroke-width:2; }
+  .pending .txt { flex:1; font-size:13px; color:var(--amber-ink); }
+  .pending .txt strong { font-weight:600; color:#fff; }
+  .pending a { color:var(--amber-ink); font-weight:600; cursor:pointer; text-decoration:underline; }
+
+  /* Role group */
+  .role-group { margin-bottom:28px; }
+  .role-head { display:flex; align-items:center; gap:10px; margin-bottom:12px; flex-wrap:wrap; }
+  .role-head h2 { font-size:14px; font-weight:600; margin:0; color:var(--ink); }
+  .role-pill { padding:3px 10px; border-radius:999px; font-size:11px; font-weight:600; }
+  .role-pill.owner { background:var(--violet-bg); color:var(--violet-ink); }
+  .role-pill.designer { background:var(--blue-bg); color:var(--blue-ink); }
+  .role-pill.operator { background:var(--amber-bg); color:var(--amber-ink); }
+  .role-pill.viewer { background:var(--grey-2); color:var(--grey-7); }
+  .role-head .desc { font-size:11px; color:var(--grey-6); margin-left:8px; }
+  .role-head .count { font-size:11px; color:var(--grey-5); background:var(--grey-2); padding:1px 8px; border-radius:999px; margin-left:auto; }
+
+  .member-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+  @media (max-width:1100px) { .member-grid { grid-template-columns:repeat(2,1fr); } }
+  @media (max-width:680px)  { .member-grid { grid-template-columns:1fr; } }
+  .member { background:var(--grey-1); border:1px solid var(--grey-3); border-radius:12px; padding:16px 18px; display:flex; align-items:center; gap:14px; cursor:pointer; transition:border-color 150ms; }
+  .member:hover { border-color:var(--grey-4); }
+  .member .av { width:44px; height:44px; border-radius:50%; color:#fff; font-size:15px; font-weight:600; display:grid; place-items:center; flex-shrink:0; }
+  .member .body { flex:1; min-width:0; }
+  .member .nm { font-size:14px; font-weight:600; color:var(--ink); }
+  .member .em { font-size:12px; color:var(--grey-6); margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .member .row { display:flex; align-items:center; gap:8px; margin-top:8px; flex-wrap:wrap; }
+  .member .status-dot { display:inline-flex; align-items:center; gap:5px; font-size:11px; color:var(--grey-6); }
+  .member .status-dot .d { width:7px; height:7px; border-radius:50%; }
+  .member .status-dot .d.online { background:var(--green-ink); }
+  .member .status-dot .d.away { background:var(--amber-ink); }
+  .member .status-dot .d.offline { background:var(--grey-4); }
+  .member .role-select { display:inline-flex; align-items:center; gap:5px; font-size:11px; color:var(--grey-6); padding:2px 7px; border-radius:6px; background:var(--grey-2); cursor:pointer; }
+  .member .role-select svg { width:11px; height:11px; }
+  .member .more-btn { width:30px; height:30px; border-radius:8px; background:transparent; border:none; cursor:pointer; color:var(--grey-5); display:grid; place-items:center; }
+  .member .more-btn:hover { background:var(--grey-2); color:var(--ink); }
+  .member .more-btn svg { width:16px; height:16px; }
+  .member .ext-flag { font-size:10px; color:var(--grey-5); font-family:"JetBrains Mono",monospace; letter-spacing:0.04em; text-transform:uppercase; padding:1px 6px; border:1px solid var(--grey-4); border-radius:4px; }
+
+  /* Permissions matrix */
+  .perms-card { background:var(--grey-1); border:1px solid var(--grey-3); border-radius:14px; padding:20px 22px; margin-top:12px; }
+  .perms-card h2 { font-size:14px; font-weight:600; margin:0 0 4px; color:var(--ink); }
+  .perms-card .sub { font-size:12px; color:var(--grey-6); margin-bottom:18px; }
+  .perms-table { width:100%; border-collapse:collapse; font-size:13px; }
+  .perms-table th, .perms-table td { padding:10px 12px; text-align:left; border-bottom:1px solid var(--line); }
+  .perms-table th { font-weight:600; font-size:11px; color:var(--grey-6); text-transform:uppercase; letter-spacing:0.04em; }
+  .perms-table td { color:var(--grey-7); }
+  .perms-table td.check { text-align:center; color:var(--green-ink); font-weight:700; }
+  .perms-table td.dash { text-align:center; color:var(--grey-4); }
+
+  /* Aid3n FAB */
+  .aid3n-fab { position:fixed; bottom:22px; right:22px; background:linear-gradient(135deg, #4c1d95 0%, #7b2bff 100%); color:#fff; border-radius:999px; padding:10px 16px 10px 10px; display:inline-flex; align-items:center; gap:10px; box-shadow:0 14px 30px rgba(123,43,255,0.35), 0 0 0 1px rgba(216,180,254,0.25) inset; cursor:pointer; font-size:13px; font-weight:600; z-index:100; text-decoration:none; }
+  .aid3n-fab .av { width:28px; height:28px; border-radius:50%; background:rgba(255,255,255,0.18); display:grid; place-items:center; }
+  .aid3n-fab .av svg { width:14px; height:14px; stroke-width:2; }
+  .aid3n-fab .pulse-dot { width:7px; height:7px; border-radius:50%; background:#6BFFDC; animation:fabPulse 1.8s infinite; }
+  @keyframes fabPulse { 0% { box-shadow:0 0 0 0 rgba(107,255,220,0.5); } 70% { box-shadow:0 0 0 8px rgba(107,255,220,0); } 100% { box-shadow:0 0 0 0 rgba(107,255,220,0); } }
+  /* Rail · Octopus minimised nav (additions) */
+  .rail { padding: 14px 0 12px; overflow-y: auto; }
+  .rail::-webkit-scrollbar { display: none; }
+  .rail .brand { margin-bottom: 4px; flex-shrink: 0; }
+  .rail .icon { flex-shrink: 0; }
+  .rail .icon.active { background: rgba(255, 109, 240, 0.12); color: #FF6DF0; }
+  .rail .icon.prod-launcher { padding: 0; }
+  .rail .icon.prod-launcher:hover { background: transparent; }
+  .rail .icon.prod-launcher img { width: 36px; height: 36px; border-radius: 8px; display: block; transition: transform 0.15s; }
+  .rail .icon.prod-launcher:hover img { transform: scale(1.06); }
+  .rail .spacer { flex: 1; min-height: 12px; }
+  .rail .storage { font-size: 10px; color: var(--grey-6); margin-top: 4px; flex-shrink: 0; }
+  .rail .dot-notify { top: 6px; right: 8px; }
+  .rail .rail-sep { width: 28px; height: 1px; background: var(--line); margin: 6px 0; flex-shrink: 0; }
+  .rail .rail-gap { height: 14px; flex-shrink: 0; }
+</style>
+</head>
+<body>
+<div class="app">
+
+    <!-- Icon rail · Octopus minimised nav -->
+  <div class="rail">
+    <a class="brand" href="index.html" title="Octopus · Index">
+      <svg viewBox="0 0 22 28" fill="currentColor" style="color:var(--ink);width:22px;height:28px;display:block;"><path d="M5 2.5V23.5L2 25.5V0.5L5 2.5ZM11.5 7V19L8.5 21V5L11.5 7ZM18 11.5V14.5L15 16.5V9.5L18 11.5Z"/></svg>
+    </a>
+    <a class="icon" href="index.html" title="Index · toggle sidebar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="18" height="16" rx="2" stroke-width="1.7"/><path d="M9 4v16" stroke-width="1.7" stroke-linecap="round"/><path d="M13 9l3 3-3 3" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+
+    <div class="rail-gap"></div>
+
+    <a class="icon" href="#" title="Home">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 11l9-8 9 8M5 9v11h14V9M10 20v-6h4v6" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+    <a class="icon" href="#" title="Venues">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="4" y="3" width="16" height="18" rx="1" stroke-width="1.7"/><rect x="7.3" y="6" width="3" height="3" stroke-width="1.4"/><rect x="13.7" y="6" width="3" height="3" stroke-width="1.4"/><rect x="7.3" y="11" width="3" height="3" stroke-width="1.4"/><rect x="13.7" y="11" width="3" height="3" stroke-width="1.4"/><rect x="7.3" y="16" width="3" height="3" stroke-width="1.4"/><rect x="13.7" y="16" width="3" height="3" stroke-width="1.4"/></svg>
+    </a>
+    <a class="icon" href="inventories.html" title="Software">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9L12 3z" stroke-width="1.7" stroke-linejoin="round"/><path d="M12 12l8-4.5M12 12L4 7.5M12 12v9" stroke-width="1.7"/></svg>
+    </a>
+    <a class="icon" href="#" title="Subscriptions">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="6" width="18" height="13" rx="2" stroke-width="1.7"/><path d="M3 11h18" stroke-width="1.7"/></svg>
+    </a>
+    <a class="icon" href="#" title="Imports">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 4v12M6 10l6 6 6-6M4 20h16" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+    <a class="icon active" href="productions-grid.html" title="Productions">
+      <svg viewBox="0 0 24 24" width="22" height="22"><circle cx="9" cy="10" r="5" fill="#FF98F4" opacity="0.72"/><circle cx="14" cy="14" r="5" fill="#FF6DF0" opacity="0.92"/></svg>
+    </a>
+    <a class="icon" href="#" title="Knowledge">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="4" y="3" width="16" height="18" rx="1" stroke-width="1.7"/><path d="M10 16l2-7 2 7M11 13.5h2" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+    <a class="icon" href="#" title="Support">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="9" stroke-width="1.7"/><path d="M9 9a3 3 0 116 0c0 2-3 2-3 4M12 17.5h.01" stroke-width="1.7" stroke-linecap="round"/></svg>
+    </a>
+
+    <div class="rail-sep"></div>
+
+    <a class="icon prod-launcher" href="lens-mapping-matter.html" title="Mapping Matter">
+      <img src="assets/products/mapping-matter.svg" alt=""/>
+    </a>
+    <a class="icon prod-launcher" href="#" title="Designer">
+      <img src="assets/products/designer.svg" alt=""/>
+    </a>
+    <a class="icon prod-launcher" href="#" title="Porta">
+      <img src="assets/products/porta.svg" alt=""/>
+    </a>
+    <a class="icon prod-launcher" href="#" title="RenderStream">
+      <img src="assets/products/renderstream.svg" alt=""/>
+    </a>
+
+    <div class="spacer"></div>
+
+    <a class="icon" href="#" title="Notifications">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 10a6 6 0 1112 0c0 7 3 8 3 8H3s3-1 3-8M10 21h4" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span class="dot-notify"></span>
+    </a>
+    <a class="icon" href="#" title="My subscription · billing">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="6" width="18" height="13" rx="2" stroke-width="1.7"/><path d="M3 11h18" stroke-width="1.7"/></svg>
+    </a>
+    <div class="storage">0.8%</div>
+  </div>
+
+  <aside class="side" data-prod-sidebar></aside>
+
+  <main class="main">
+
+    <div class="main-top">
+      <div class="breadcrumb">
+        <a class="crumb" href="productions-grid.html">Productions</a>
+        <span class="sep">/</span>
+        <a class="crumb" href="production-home.html">Eurovision 2026</a>
+        <span class="sep">/</span>
+        <span class="current">Team</span>
+      </div>
+      <div class="topbar-actions">
+        <button class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="7" stroke-width="1.7"/><path d="M16 16l5 5" stroke-width="1.7" stroke-linecap="round"/></svg></button>
+        <button class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 10a6 6 0 1112 0c0 7 3 8 3 8H3s3-1 3-8M10 21h4" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="badge">3</span></button>
+        <div class="avatar">W</div>
+      </div>
+    </div>
+
+    <div class="prod-header">
+      <div class="prod-title">
+        <h1>Eurovision Song Contest 2026</h1>
+        <span class="pill rehearsal"><span class="dot"></span> Design phase</span>
+      </div>
+      <div class="prod-summary">
+        <span class="summary-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="5" width="18" height="16" rx="2" stroke-width="1.7"/><path d="M3 9h18M8 3v4M16 3v4" stroke-width="1.7"/></svg>May 8 → 16, 2026</span>
+        <span class="summary-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2c4 4 6 7 6 11a6 6 0 01-12 0c0-4 2-7 6-11z" stroke-width="1.7"/></svg>Stadthalle Vienna · 9 days to first show</span>
+        <span class="summary-item"><div class="avatars"><span class="av c1">IP</span><span class="av c4">CP</span><span class="av c2">RM</span><span class="av c6">LK</span><span class="av c5">MC</span><span class="av more">+4</span></div>9 team members</span>
+      </div>
+
+      <div class="tabs-row">
+        <a class="tab" href="production-home.html">Overview</a>
+        <a class="tab active" href="prod-team.html">Team <span class="count">9</span></a>
+        <a class="tab" href="prod-schedule.html">Schedule</a>
+        <a class="tab" href="prod-settings.html">Settings</a>
+      </div>
+    </div>
+
+    <div class="team-page">
+
+      <div class="toolbar">
+        <div class="search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="7" stroke-width="1.7"/><path d="M16 16l5 5" stroke-width="1.7" stroke-linecap="round"/></svg>
+          <input placeholder="Search team members…">
+        </div>
+        <div class="select">All roles <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 9l6 6 6-6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <button class="btn btn-secondary">Manage workspace members</button>
+        <a class="btn btn-primary" href="#">+ Invite member</a>
+      </div>
+
+      <!-- Pending invites -->
+      <div class="pending">
+        <div class="ico">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="9" stroke-width="1.7"/><path d="M12 7v5l3 3" stroke-width="1.7" stroke-linecap="round"/></svg>
+        </div>
+        <div class="txt">
+          <strong>2 invites pending</strong> · freelance.cam@vendor.tv (Viewer role, sent 2 days ago) and external.qc@network.eu (Operator role, sent 4 hours ago).
+        </div>
+        <a>View pending →</a>
+      </div>
+
+      <!-- Owners -->
+      <div class="role-group">
+        <div class="role-head">
+          <h2>Owners</h2>
+          <span class="role-pill owner">● Owner</span>
+          <span class="desc">Full control · Manage team, hardware, archive · 1 owner per production</span>
+          <span class="count">1 member</span>
+        </div>
+        <div class="member-grid">
+          <div class="member">
+            <span class="av c1">IP</span>
+            <div class="body">
+              <div class="nm">Igor Pancaldi</div>
+              <div class="em">ipancaldi@disguise.one · Producer</div>
+              <div class="row">
+                <span class="status-dot"><span class="d online"></span>Online now</span>
+                <span class="role-select">Owner <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 9l6 6 6-6" stroke-width="2"/></svg></span>
+              </div>
+            </div>
+            <button class="more-btn"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg></button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Designers -->
+      <div class="role-group">
+        <div class="role-head">
+          <h2>Designers</h2>
+          <span class="role-pill designer">● Designer</span>
+          <span class="desc">Edit all Designer + MM files · Upload media · Apply templates</span>
+          <span class="count">2 members</span>
+        </div>
+        <div class="member-grid">
+          <div class="member">
+            <span class="av c2">RM</span>
+            <div class="body">
+              <div class="nm">Robin Marshall</div>
+              <div class="em">robin.marshall@disguise.one · Technical Director</div>
+              <div class="row">
+                <span class="status-dot"><span class="d online"></span>Online · in System Design</span>
+                <span class="role-select">Designer <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 9l6 6 6-6" stroke-width="2"/></svg></span>
+              </div>
+            </div>
+            <button class="more-btn"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg></button>
+          </div>
+          <div class="member">
+            <span class="av c6">LK</span>
+            <div class="body">
+              <div class="nm">Lauren Kiki <span class="ext-flag">freelance</span></div>
+              <div class="em">lauren@kikidesign.studio · Lead designer</div>
+              <div class="row">
+                <span class="status-dot"><span class="d away"></span>Away · 1h</span>
+                <span class="role-select">Designer <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 9l6 6 6-6" stroke-width="2"/></svg></span>
+              </div>
+            </div>
+            <button class="more-btn"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg></button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Operators -->
+      <div class="role-group">
+        <div class="role-head">
+          <h2>Operators</h2>
+          <span class="role-pill operator">● Operator</span>
+          <span class="desc">Run shows · Open files in apps · Limited file editing</span>
+          <span class="count">4 members</span>
+        </div>
+        <div class="member-grid">
+          <div class="member">
+            <span class="av c4">CP</span>
+            <div class="body">
+              <div class="nm">Camilla Powell</div>
+              <div class="em">camilla.powell@disguise.one · Producer</div>
+              <div class="row">
+                <span class="status-dot"><span class="d online"></span>Online now</span>
+                <span class="role-select">Operator <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 9l6 6 6-6" stroke-width="2"/></svg></span>
+              </div>
+            </div>
+            <button class="more-btn"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg></button>
+          </div>
+          <div class="member">
+            <span class="av c5">MC</span>
+            <div class="body">
+              <div class="nm">Mariana Cruz</div>
+              <div class="em">mariana.cruz@disguise.one · L2 engineer · on-call</div>
+              <div class="row">
+                <span class="status-dot"><span class="d online"></span>On-call</span>
+                <span class="role-select">Operator <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 9l6 6 6-6" stroke-width="2"/></svg></span>
+              </div>
+            </div>
+            <button class="more-btn"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg></button>
+          </div>
+          <div class="member">
+            <span class="av c3">RP</span>
+            <div class="body">
+              <div class="nm">Robin Park</div>
+              <div class="em">robin.park@touring.tv · d3 operator</div>
+              <div class="row">
+                <span class="status-dot"><span class="d away"></span>Away · 3h</span>
+                <span class="role-select">Operator <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 9l6 6 6-6" stroke-width="2"/></svg></span>
+              </div>
+            </div>
+            <button class="more-btn"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg></button>
+          </div>
+          <div class="member">
+            <span class="av c7">MS</span>
+            <div class="body">
+              <div class="nm">Maya Sun</div>
+              <div class="em">maya.sun@touring.tv · d3 operator</div>
+              <div class="row">
+                <span class="status-dot"><span class="d offline"></span>Last seen 6h ago</span>
+                <span class="role-select">Operator <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 9l6 6 6-6" stroke-width="2"/></svg></span>
+              </div>
+            </div>
+            <button class="more-btn"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg></button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Viewers -->
+      <div class="role-group">
+        <div class="role-head">
+          <h2>Viewers</h2>
+          <span class="role-pill viewer">● Viewer</span>
+          <span class="desc">Read-only · Comment on files · See schedule and activity</span>
+          <span class="count">2 members</span>
+        </div>
+        <div class="member-grid">
+          <div class="member">
+            <span class="av c8">FM</span>
+            <div class="body">
+              <div class="nm">Florian Mauer <span class="ext-flag">external</span></div>
+              <div class="em">florian.mauer@orf.at · Camera operator</div>
+              <div class="row">
+                <span class="status-dot"><span class="d offline"></span>Last seen 2d ago</span>
+                <span class="role-select">Viewer <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 9l6 6 6-6" stroke-width="2"/></svg></span>
+              </div>
+            </div>
+            <button class="more-btn"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg></button>
+          </div>
+          <div class="member">
+            <span class="av c9">AT</span>
+            <div class="body">
+              <div class="nm">Akira Tanaka <span class="ext-flag">external</span></div>
+              <div class="em">akira.tanaka@nhk.jp · Audio engineer</div>
+              <div class="row">
+                <span class="status-dot"><span class="d offline"></span>Last seen 5d ago</span>
+                <span class="role-select">Viewer <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 9l6 6 6-6" stroke-width="2"/></svg></span>
+              </div>
+            </div>
+            <button class="more-btn"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg></button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Permissions matrix -->
+      <div class="perms-card">
+        <h2>What each role can do</h2>
+        <div class="sub">Roles cascade to all files, media and lenses within this production. They do not apply outside it.</div>
+        <table class="perms-table">
+          <thead>
+            <tr>
+              <th>Permission</th>
+              <th style="text-align:center;">Owner</th>
+              <th style="text-align:center;">Designer</th>
+              <th style="text-align:center;">Operator</th>
+              <th style="text-align:center;">Viewer</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>View files, media, schedule</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+            <tr><td>Comment on files</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+            <tr><td>Open files in Designer / MM</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="dash">—</td></tr>
+            <tr><td>Edit Designer / MM files</td><td class="check">✓</td><td class="check">✓</td><td class="dash">limited</td><td class="dash">—</td></tr>
+            <tr><td>Edit System Design / Takes</td><td class="check">✓</td><td class="check">✓</td><td class="dash">—</td><td class="dash">—</td></tr>
+            <tr><td>Upload media, apply templates</td><td class="check">✓</td><td class="check">✓</td><td class="dash">—</td><td class="dash">—</td></tr>
+            <tr><td>Run shows / start playback</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="dash">—</td></tr>
+            <tr><td>Invite / remove members</td><td class="check">✓</td><td class="dash">—</td><td class="dash">—</td><td class="dash">—</td></tr>
+            <tr><td>Allocate hardware &amp; licenses</td><td class="check">✓</td><td class="dash">—</td><td class="dash">—</td><td class="dash">—</td></tr>
+            <tr><td>Change production status</td><td class="check">✓</td><td class="check">✓</td><td class="dash">—</td><td class="dash">—</td></tr>
+            <tr><td>Archive / delete production</td><td class="check">✓</td><td class="dash">—</td><td class="dash">—</td><td class="dash">—</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<a class="aid3n-fab" href="lens-aid3n.html">
+  <span class="av"><svg viewBox="0 0 13 17" fill="currentColor"><path d="M6.02832 0.00195312L10.7539 10.0332L12.0557 12.7949L6.02832 16.3164H6.02734L0 12.7949L1.30176 10.0332L6.02832 0V0.00195312ZM5.03516 9.55078L2.49316 10.543L5.03516 11.5352L6.02734 14.0771L7.01953 11.5352L9.5625 10.543L7.01953 9.55078L6.02734 7.00879L5.03516 9.55078Z"/></svg></span>
+  Aid3n
+  <span class="pulse-dot"></span>
+</a>
+
+<script src="assets/shared/sidebar.js" defer></script>
+<script src="assets/shared/launch-modal.js" defer></script>
+<script src="assets/shared/side-toggle.js" defer></script>
+</body>
+</html>

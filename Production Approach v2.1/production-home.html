@@ -1,0 +1,880 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Production — Home · Eurovision 2026</title>
+<style>
+  :root {
+    --pink:#FF98F4; --pink-soft:rgba(255,152,244,0.10); --pink-tint:rgba(255,152,244,0.05);
+    --ink:#D0D5DD; --bg:#101828;
+    --grey-0:#101828; --grey-1:#1D2939; --grey-2:#344054; --grey-3:#344054; --grey-4:#4F5F79; --grey-5:#4E5D76; --grey-6:#98A2B3; --grey-7:#D0D5DD; --grey-900:#101828;
+    --av-border:#101828; --logo:#FFFFFF;
+    --purple:#a855f7; --purple-soft:#270045; --purple-ink:#D8B4FE;
+    --amber-bg:#48324C; --amber-soft:#48324C; --amber-ink:#FFE6DD; --amber:#FFE6DD;
+    --red-bg:#3D1F2C; --red-soft:#3D1F2C; --red-ink:#FFC0CB;
+    --green-bg:#1A3D34; --green-soft:#1A3D34; --green-ink:#6BFFDC;
+    --violet-bg:#270045; --violet-ink:#D8B4FE;
+    --blue-bg:#1A2E4D; --blue-soft:#1A2E4D; --blue-ink:#93C5FD; --blue:#60A5FA;
+    --line:#344054;
+
+    /* lens accents · Brand OS palette */
+    --aid3n:#a74cee;    --aid3n-bg:rgba(167, 76, 238, 0.18);  /* Electric Violet · light */
+    --mm:#ff98f4;       --mm-bg:rgba(255, 152, 244, 0.18);     /* Blush Pink · light */
+    --schem:#6bffdc;    --schem-bg:rgba(107, 255, 220, 0.16);  /* Aquamarine */
+    --takes:#feff70;    --takes-bg:rgba(254, 255, 112, 0.16);  /* Golden Fizz · light */
+    --wiki:#e6ccfa;     --wiki-bg:rgba(230, 204, 250, 0.18);   /* Electric Violet · pale */
+    --supp:#ff8559;     --supp-bg:rgba(255, 133, 89, 0.16);    /* Coral */
+    --orange:#ffa98a;   --orange-bg:rgba(255, 169, 138, 0.18); /* Coral · light (Designer) */
+    --porta:#97ffe6;    --porta-bg:rgba(151, 255, 230, 0.16);  /* Aquamarine · light (Porta) */
+  }
+  * { box-sizing: border-box; }
+  html, body { margin:0; padding:0; background:#0A1020; color:var(--ink); font-family:-apple-system,BlinkMacSystemFont,"Inter","SF Pro Text","Helvetica Neue",Arial,sans-serif; -webkit-font-smoothing:antialiased; font-size:14px; }
+  .mono { font-family: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace; }
+
+  .app { display: grid; grid-template-columns: 72px 280px 1fr; min-height: 100vh; }
+
+  /* Icon rail */
+  .rail { background: var(--grey-1); border-right:1px solid var(--line); padding:16px 0; display:flex; flex-direction:column; align-items:center; gap:4px; }
+  .rail .brand { width:36px; height:36px; border-radius:8px; display:grid; place-items:center; margin-bottom:12px; }
+  .rail a.icon { text-decoration:none; color:inherit; }
+  .rail .icon { width:44px; height:44px; border-radius:10px; display:grid; place-items:center; color:var(--grey-7); cursor:pointer; position:relative; }
+  .rail .icon:hover { background:var(--grey-2); color:var(--ink); }
+  .rail .icon.active { background:rgba(255,109,240,0.10); color:#FF6DF0; }
+  .rail .icon svg { width:22px; height:22px; stroke-width:1.6; }
+  .rail .spacer { flex:1; }
+  .rail .storage { font-size:10px; color:var(--grey-6); margin-top:6px; }
+  .rail .dot-notify { position:absolute; top:8px; right:10px; width:8px; height:8px; background:#FF98F4; border-radius:50%; }
+
+  /* Production sidebar — in-between tone (between icon rail grey-800 and canvas-dark bg) */
+  .side { background:#131D2E; border-right:1px solid var(--line); padding:24px 18px; display:flex; flex-direction:column; gap:4px; overflow-y:auto; }
+  .side .back { display:inline-flex; align-items:center; gap:8px; color:var(--grey-6); font-size:12px; cursor:pointer; margin-bottom:14px; text-decoration:none; }
+  .side .back:hover { color:var(--ink); }
+  .side .back svg { width:14px; height:14px; stroke-width:1.8; }
+  .side .prod-name { font-size:17px; font-weight:600; line-height:1.25; margin-bottom:8px; }
+  .pill { padding:3px 9px; border-radius:999px; font-size:11px; font-weight:600; display:inline-flex; align-items:center; gap:6px; }
+  .pill .dot { width:6px; height:6px; border-radius:50%; background:currentColor; }
+  .pill.rehearsal { color:var(--amber-ink); background:var(--amber-bg); }
+  .side .prod-sub { font-size:12px; color:var(--grey-6); margin-top:8px; line-height:1.5; }
+  .side hr { border:none; border-top:1px solid var(--line); margin:16px 0; }
+
+  .group-label { font-size:10px; color:var(--grey-5); letter-spacing:0.08em; text-transform:uppercase; padding:0 8px 8px; display:flex; align-items:center; justify-content:space-between; font-weight:600; }
+  .nav-list { display:flex; flex-direction:column; gap:1px; margin-bottom:6px; }
+  .nav-list .item { display:flex; align-items:center; gap:10px; padding:8px 10px; border-radius:8px; cursor:pointer; font-size:13px; color:var(--grey-7); text-decoration:none; }
+  .nav-list .item:hover { background:var(--grey-2); }
+  .nav-list .item.active { background:var(--pink-soft); color:var(--ink); font-weight:500; }
+  .nav-list .item.locked { color:var(--grey-5); cursor:not-allowed; }
+  .nav-list .item.locked:hover { background:transparent; }
+  .nav-list .item .ico { width:18px; height:18px; display:grid; place-items:center; flex-shrink:0; }
+  .nav-list .item .ico svg { width:18px; height:18px; stroke-width:1.6; }
+  .nav-list .item .count { margin-left:auto; font-size:11px; color:var(--grey-5); }
+  .nav-list .item .lock { margin-left:auto; font-size:10px; color:var(--grey-5); display:inline-flex; align-items:center; }
+  .nav-list .item .lock svg { width:11px; height:11px; stroke-width:2; }
+  .nav-list .item .pico { width:18px; height:18px; border-radius:4px; flex-shrink:0; }
+
+
+  /* Main · canvas-dark with grey-700 dot pattern at 40px grid */
+  .main {
+    padding:0; min-width:0; display:flex; flex-direction:column;
+    background-color:#0A1020;
+    background-image: radial-gradient(circle at center, #344054 1px, transparent 1.6px);
+    background-size: 40px 40px;
+    background-position: 0 0;
+  }
+  .main-top { padding:14px 24px; border-bottom:1px solid var(--line); display:flex; align-items:center; justify-content:space-between; gap:16px; background:rgba(10,16,32,0.85); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); }
+  .breadcrumb { display:flex; align-items:center; gap:8px; color:var(--grey-6); font-size:13px; }
+  .breadcrumb .crumb { cursor:pointer; text-decoration:none; color:inherit; }
+  .breadcrumb .crumb:hover { color:var(--ink); }
+  .breadcrumb .sep { color:var(--grey-4); }
+  .breadcrumb .current { color:var(--ink); font-weight:500; }
+  .topbar-actions { display:flex; align-items:center; gap:10px; }
+  .icon-btn { width:36px; height:36px; border-radius:50%; background:transparent; display:grid; place-items:center; cursor:pointer; color:var(--grey-7); position:relative; border:none; }
+  .icon-btn:hover { background:var(--grey-2); }
+  .icon-btn svg { width:18px; height:18px; stroke-width:1.7; }
+  .badge { position:absolute; top:2px; right:2px; min-width:16px; height:16px; padding:0 4px; border-radius:8px; background:var(--pink); color:#0a0a0c; font-size:10px; font-weight:600; display:grid; place-items:center; }
+  .avatar { width:34px; height:34px; border-radius:50%; background:var(--purple); color:#fff; font-size:13px; font-weight:600; display:grid; place-items:center; }
+
+  /* Content frame */
+  .ov { padding:36px 36px 96px; max-width:1280px; }
+
+  /* Title */
+  .title-row { display:flex; align-items:flex-start; justify-content:space-between; gap:24px; margin-bottom:6px; }
+  .title-row h1 { margin:0; font-size:30px; font-weight:600; letter-spacing:-0.02em; line-height:1.15; }
+  .title-meta { display:flex; align-items:center; gap:14px; color:var(--grey-6); font-size:13px; flex-wrap:wrap; margin-bottom:18px; }
+  .title-meta b { color:var(--ink); font-weight:500; }
+  .title-meta .sep { color:var(--grey-4); }
+  .title-meta .pill { font-size:11px; padding:3px 10px; }
+
+  /* Apps launcher */
+  .apps-label { font-size:10px; color:var(--grey-5); letter-spacing:0.12em; text-transform:uppercase; font-weight:700; font-family:"JetBrains Mono",monospace; margin-bottom:8px; }
+  .apps { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:30px; }
+  .app-pill { display:inline-flex; align-items:center; gap:10px; padding:7px 14px 7px 7px; background:rgba(29,41,57,0.55); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); border:1px solid var(--grey-3); border-radius:11px; cursor:pointer; text-decoration:none; color:var(--ink); transition:border-color 0.15s, transform 0.15s; }
+  .app-pill:hover { border-color:var(--grey-5); transform:translateY(-1px); }
+  .app-pill .app-ico { width:34px; height:34px; border-radius:7px; flex-shrink:0; display:block; }
+  .app-pill .app-name { font-size:13px; font-weight:600; }
+  .app-pill .app-file { font-size:10px; color:var(--grey-6); font-family:"JetBrains Mono",monospace; margin-top:1px; }
+  .app-pill .ext { color:var(--grey-5); margin-left:6px; }
+  .app-pill .ext svg { width:13px; height:13px; stroke-width:1.7; }
+
+  /* Aid3n strip */
+  .aid-strip { display:flex; align-items:center; gap:12px; padding:10px 14px; background:rgba(168,85,247,0.10); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); border:1px solid rgba(168,85,247,0.30); border-radius:10px; margin-bottom:28px; font-size:13px; cursor:pointer; text-decoration:none; color:var(--ink); }
+  .aid-strip .av { width:24px; height:24px; border-radius:50%; background:linear-gradient(135deg,#D8B4FE,#7b2bff); color:#0a0a0c; display:grid; place-items:center; flex-shrink:0; }
+  .aid-strip .av svg { width:13px; height:13px; stroke-width:2; }
+  .aid-strip .body { flex:1; }
+  .aid-strip .body b { color:var(--purple-ink); }
+  .aid-strip .body .scope { color:var(--purple-ink); font-family:"JetBrains Mono",monospace; font-size:11px; padding:1px 6px; background:var(--purple-soft); border-radius:4px; margin:0 4px; }
+  .aid-strip .when { font-size:11px; color:var(--grey-5); font-family:"JetBrains Mono",monospace; }
+  .aid-strip .arrow { color:var(--purple-ink); font-size:11px; font-family:"JetBrains Mono",monospace; }
+
+  /* Lifecycle */
+  .lifecycle-label { font-size:10px; color:var(--grey-5); letter-spacing:0.12em; text-transform:uppercase; font-weight:700; font-family:"JetBrains Mono",monospace; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; }
+  .lifecycle-label .meta { color:var(--grey-6); text-transform:none; letter-spacing:0; font-weight:400; }
+  .lifecycle-label .meta b { color:var(--pink); font-weight:600; }
+  .lifecycle { display:flex; gap:0; align-items:stretch; border-top:1px solid var(--line); border-bottom:1px solid var(--line); margin-bottom:0; }
+  .phase { flex:1; background:transparent; border:none; padding:12px 14px 14px; cursor:pointer; text-align:left; position:relative; color:var(--ink); font-family:inherit; display:flex; flex-direction:column; gap:4px; min-height:60px; }
+  .phase:hover { background:rgba(255,255,255,0.02); }
+  .phase + .phase { border-left:1px solid var(--line); }
+  .phase .num { font-size:9px; color:var(--grey-5); font-family:"JetBrains Mono",monospace; letter-spacing:0.06em; font-weight:600; display:block; }
+  .phase .name { font-size:14px; font-weight:600; color:var(--grey-6); line-height:1.2; }
+  .phase .chev { position:absolute; right:12px; top:12px; color:var(--grey-5); font-size:10px; opacity:0; transition:opacity 0.15s; }
+  .phase:hover .chev { opacity:1; }
+  .phase.done .num { color:var(--green-ink); }
+  .phase.done .name { color:var(--grey-7); }
+  .phase.selected { background:linear-gradient(180deg, rgba(255,152,244,0.10), transparent); }
+  .phase.selected .num { color:var(--pink); }
+  .phase.selected .name { color:var(--ink); }
+  .phase.selected .chev { opacity:1; color:var(--pink); }
+  .phase.selected::after { content:""; position:absolute; left:0; right:0; top:-1px; height:2px; background:var(--pink); }
+  .phase .now { position:absolute; top:4px; right:10px; background:var(--pink); color:#0a0a0c; padding:1px 6px; border-radius:4px; font-size:9px; font-weight:700; letter-spacing:0.06em; font-family:"JetBrains Mono",monospace; }
+  .phase.future { opacity:0.55; }
+  .phase.future .num, .phase.future .name { color:var(--grey-6); }
+
+  /* Lenses section */
+  .lenses-section { padding-top:36px; position:relative; }
+  .lenses-head { display:flex; align-items:baseline; justify-content:space-between; margin-bottom:0; flex-wrap:wrap; gap:10px; }
+  .lenses-head h2 { font-size:22px; font-weight:600; margin:0; letter-spacing:-0.01em; }
+  .lenses-head h2 b { color:var(--pink); font-weight:600; }
+  .lenses-head h2 b.locked { color:var(--grey-5); }
+  .lenses-head .hint { font-size:12px; color:var(--grey-6); font-family:"JetBrains Mono",monospace; }
+  .lenses-head .hint .kbd { display:inline-block; padding:1px 6px; background:var(--grey-2); border:1px solid var(--grey-3); border-radius:4px; font-size:10px; font-family:"JetBrains Mono",monospace; color:var(--grey-7); margin:0 2px; }
+
+  /* 3D coverflow stage for lenses */
+  .lens-cf-stage {
+    position:relative;
+    margin: 14px -36px 0;
+    padding: 24px 36px 16px;
+    --lens-accent: var(--pink);
+    --lens-accent-bg: rgba(255,152,244,0.08);
+    background:
+      radial-gradient(ellipse 60% 55% at 50% 32%, var(--lens-accent-bg), transparent 65%);
+    transition: --lens-accent 400ms ease;
+  }
+  .lens-cf-track {
+    position:relative; height: 460px;
+    perspective: 1800px; perspective-origin: 50% 50%;
+    overflow: visible;
+  }
+  .lens-cf-deck { position:absolute; inset:0; transform-style: preserve-3d; }
+
+  /* Each lens card is a 3D glass plate floating in space */
+  .lens {
+    position: absolute; left: 50%; top: 50%;
+    width: 320px; height: 320px;
+    margin-left: -160px; margin-top: -160px;
+    text-decoration: none; color: inherit; cursor: pointer;
+    background: transparent; border: none; padding: 0;
+    font-family: inherit;
+    transform-style: preserve-3d; transform-origin: 50% 50%;
+    transition: transform 700ms cubic-bezier(0.22, 1, 0.36, 1),
+                opacity 400ms ease,
+                filter 400ms ease;
+    will-change: transform, opacity, filter;
+  }
+  /* Phase emphasis: cards belonging to the selected phase stay bright */
+  .lens.out-of-phase:not(.is-center) {
+    filter: saturate(0.18) brightness(0.78);
+  }
+  .lens:focus { outline: none; }
+
+  .lens-inner {
+    position: relative; width: 100%; height: 100%;
+    transition: transform 700ms cubic-bezier(0.4, 0.0, 0.2, 1);
+    transform-style: preserve-3d;
+  }
+  /* Only the centered card flips on hover (active or locked) */
+  .lens.is-center:hover .lens-inner { transform: rotateY(180deg); }
+
+  .lens-face {
+    position: absolute; inset: 0; border-radius: 22px; padding: 26px;
+    /* Optical glass: thin, transparent, refractive */
+    background:
+      radial-gradient(ellipse 90% 75% at 28% 18%, rgba(255,255,255,0.07) 0%, transparent 42%),
+      radial-gradient(circle at 50% 50%, var(--lens-accent-bg) 0%, transparent 72%),
+      rgba(255,255,255,0.025);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    border: 1px solid rgba(255,255,255,0.08);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.14),
+      inset 0 -1px 0 rgba(0,0,0,0.22),
+      0 24px 50px -20px rgba(0,0,0,0.5);
+    backface-visibility: hidden; -webkit-backface-visibility: hidden;
+    display: flex; flex-direction: column; overflow: hidden;
+    transition: border-color 240ms ease, box-shadow 300ms ease;
+  }
+  /* Specular highlight + accent bloom layer */
+  .lens-face::before {
+    content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 0;
+    background:
+      radial-gradient(circle at 72% 22%, rgba(255,255,255,0.10) 0%, transparent 18%),
+      linear-gradient(135deg, var(--lens-accent-bg) 0%, transparent 55%);
+  }
+  /* Outer iris/aperture ring suggesting an optical lens */
+  .lens-face::after {
+    content: ''; position: absolute;
+    right: -110px; bottom: -110px;
+    width: 340px; height: 340px;
+    border-radius: 50%;
+    border: 1px solid var(--lens-accent);
+    opacity: 0.14;
+    pointer-events: none;
+  }
+  .lens-face > * { position: relative; z-index: 1; }
+
+  .lens.is-center .lens-face {
+    border-color: rgba(255,255,255,0.16);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.18),
+      inset 0 -1px 0 rgba(0,0,0,0.28),
+      0 32px 60px -20px rgba(0,0,0,0.6),
+      0 0 32px -16px var(--lens-accent);
+  }
+
+  /* Front */
+  .lens-front { justify-content: space-between; }
+  .lens-front .top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+  .lens-front .icon-tile {
+    width: 52px; height: 52px; border-radius: 12px;
+    background: var(--lens-accent-bg); color: var(--lens-accent);
+    display: grid; place-items: center; flex-shrink: 0; overflow: hidden;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 8px 16px -6px rgba(0,0,0,0.4);
+  }
+  .lens-front .icon-tile svg { width: 26px; height: 26px; stroke-width: 1.7; }
+  .lens-front .icon-tile.product { background: transparent; padding: 0; box-shadow: none; }
+  .lens-front .icon-tile.product img { width: 52px; height: 52px; display: block; border-radius: 12px; }
+  .lens-front .tag {
+    font-size: 10px; padding: 4px 9px; border-radius: 6px;
+    color: var(--lens-accent);
+    background: rgba(255,255,255,0.04);
+    font-family: "JetBrains Mono",monospace; font-weight: 700;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    border: 1px solid currentColor;
+  }
+  .lens-front .name { font-size: 32px; font-weight: 400; letter-spacing: -0.015em; color: var(--lens-accent); line-height: 1.1; }
+  .lens-front .flip-hint {
+    position: absolute; bottom: 18px; right: 22px; z-index: 2;
+    font-size: 9px; color: var(--lens-accent); opacity: 0.5;
+    font-family: "JetBrains Mono",monospace; letter-spacing: 0.08em;
+    display: flex; align-items: center; gap: 5px;
+  }
+  .lens-front .flip-hint svg { width: 11px; height: 11px; stroke-width: 1.8; }
+  .lens.is-center:hover .lens-front .flip-hint { opacity: 0; }
+  .lens:not(.is-center) .lens-front .flip-hint { display: none; }
+
+  /* Back */
+  .lens-back { transform: rotateY(180deg); justify-content: space-between; gap: 14px; }
+  .lens-back::before { background: linear-gradient(315deg, var(--lens-accent-bg) 0%, transparent 60%); }
+  .lens-back .b-top { display: flex; align-items: center; justify-content: space-between; }
+  .lens-back .b-title { display: flex; align-items: center; gap: 10px; }
+  .lens-back .b-mini { width: 28px; height: 28px; border-radius: 7px; background: var(--lens-accent-bg); color: var(--lens-accent); display: grid; place-items: center; flex-shrink: 0; overflow: hidden; }
+  .lens-back .b-mini svg { width: 15px; height: 15px; stroke-width: 1.7; }
+  .lens-back .b-mini.product { background: transparent; padding: 0; }
+  .lens-back .b-mini.product img { width: 28px; height: 28px; display: block; border-radius: 6px; }
+  .lens-back .b-name { font-size: 15px; font-weight: 500; color: var(--ink); letter-spacing: -0.005em; }
+  .lens-back .b-tag {
+    font-size: 10px; padding: 3px 8px; border-radius: 6px;
+    color: var(--lens-accent); background: rgba(255,255,255,0.04);
+    font-family: "JetBrains Mono",monospace; font-weight: 700;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    border: 1px solid currentColor;
+  }
+  .lens-back .b-desc {
+    flex: 1; margin: 6px 0 0;
+    font-size: 13px; line-height: 1.55;
+    color: var(--ink); letter-spacing: -0.003em;
+  }
+  .lens-back .b-desc b { color: var(--lens-accent); font-weight: 600; }
+
+  /* System small primary button */
+  .btn-primary-sm {
+    align-self: flex-start;
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 8px 14px; border-radius: 8px;
+    background: var(--lens-accent); color: #0a0a0c;
+    font-family: inherit; font-size: 12px; font-weight: 600;
+    letter-spacing: -0.005em; text-decoration: none;
+    border: none; cursor: pointer;
+    box-shadow: 0 6px 14px -6px var(--lens-accent), inset 0 1px 0 rgba(255,255,255,0.25);
+    transition: transform 150ms ease, box-shadow 200ms ease, filter 200ms ease;
+  }
+  .btn-primary-sm:hover { transform: translateY(-1px); filter: brightness(1.06); box-shadow: 0 10px 20px -6px var(--lens-accent), inset 0 1px 0 rgba(255,255,255,0.3); }
+  .btn-primary-sm:active { transform: translateY(0); }
+  .btn-primary-sm svg { width: 13px; height: 13px; stroke-width: 2.2; }
+
+  /* Locked tag + locked note on back face */
+  .lens-back .b-tag.locked {
+    color: var(--grey-5); border-color: var(--grey-4);
+    background: transparent;
+    display: inline-flex; align-items: center; gap: 5px;
+  }
+  .lens-back .b-tag.locked svg { width: 11px; height: 11px; stroke-width: 2; }
+  .b-locked-note {
+    align-self: flex-start;
+    display: inline-flex; align-items: center; gap: 7px;
+    font-size: 11px; font-family: "JetBrains Mono", monospace;
+    font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--grey-5);
+    padding: 8px 14px; border: 1px dashed var(--grey-4); border-radius: 8px;
+  }
+  .b-locked-note svg { width: 12px; height: 12px; stroke-width: 2; }
+
+  /* Inactive (locked) lens cards · greyscaled frosted glass */
+  .lens.inactive { cursor: default; filter: grayscale(1) brightness(0.92); }
+  .lens.inactive.out-of-phase:not(.is-center) { filter: grayscale(1) brightness(0.7); }
+  .lens.inactive .lens-face {
+    background:
+      radial-gradient(circle at 50% 50%, rgba(78,93,118,0.1) 0%, transparent 60%),
+      rgba(29,41,57,0.20);
+    border: 1px dashed rgba(255,255,255,0.07);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.05),
+      0 20px 40px -20px rgba(0,0,0,0.45);
+  }
+  .lens.inactive .lens-face::before { background: none; }
+  .lens.inactive .lens-face::after { opacity: 0.06; border-color: var(--grey-5); }
+  .lens.inactive .lens-front .icon-tile { background: var(--grey-2); color: var(--grey-5); box-shadow: none; }
+  .lens.inactive .lens-front .icon-tile.product { background: transparent; }
+  .lens.inactive .lens-front .icon-tile.product img { opacity: 0.45; filter: grayscale(0.6); }
+  .lens.inactive .lens-front .name { color: var(--grey-5); }
+  .lens.inactive .lens-front .tag {
+    color: var(--grey-5); border-color: var(--grey-4);
+    background: transparent; display: inline-flex; align-items: center; gap: 5px;
+  }
+  .lens.inactive .lens-front .tag svg { width: 11px; height: 11px; stroke-width: 2; flex-shrink: 0; }
+  .lens.inactive .meta-block { display: flex; flex-direction: column; gap: 6px; }
+  .lens.inactive .unlocks-at {
+    font-size: 10px; font-family: "JetBrains Mono",monospace; font-weight: 600;
+    letter-spacing: 0.06em; text-transform: uppercase; color: var(--grey-5);
+    display: inline-flex; align-items: center; gap: 5px;
+  }
+  .lens.inactive .unlocks-at svg { width: 11px; height: 11px; stroke-width: 2; flex-shrink: 0; }
+
+  /* Coverflow controls */
+  .lens-cf-controls { display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 6px 0 4px; }
+  .lens-cf-progress { width: 100%; max-width: 480px; height: 2px; background: rgba(255,255,255,0.06); border-radius: 2px; position: relative; }
+  .lens-cf-fill { position: absolute; left: 0; top: 0; bottom: 0; width: 0%; background: linear-gradient(90deg, var(--lens-accent), rgba(255,255,255,0.6)); border-radius: 2px; transition: width 600ms cubic-bezier(0.4,0,0.2,1), background 300ms; }
+  .lens-cf-ticks { position: absolute; inset: -3px 0; display: flex; justify-content: space-between; pointer-events: none; }
+  .lens-cf-tick { width: 8px; height: 8px; border-radius: 50%; background: var(--grey-2); border: 1.5px solid var(--bg); cursor: pointer; pointer-events: auto; transition: background 200ms, box-shadow 200ms, transform 200ms; }
+  .lens-cf-tick.current { background: var(--lens-accent); box-shadow: 0 0 0 4px rgba(255,255,255,0.08); transform: scale(1.15); }
+
+  .lens-cf-row { display: flex; align-items: center; gap: 20px; }
+  .lens-cf-nav {
+    width: 42px; height: 42px; border-radius: 50%;
+    background: rgba(29,41,57,0.55); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    border: 1px solid var(--grey-3); display: grid; place-items: center; cursor: pointer;
+    color: var(--ink); transition: border-color 200ms, transform 200ms, color 200ms;
+  }
+  .lens-cf-nav:hover { border-color: var(--lens-accent); color: var(--lens-accent); transform: scale(1.06); }
+  .lens-cf-nav:disabled { opacity: 0.32; cursor: not-allowed; transform: none; }
+  .lens-cf-nav:disabled:hover { border-color: var(--grey-3); color: var(--ink); transform: none; }
+  .lens-cf-nav svg { width: 18px; height: 18px; stroke-width: 2; }
+
+  .lens-cf-pagination { font-family: "JetBrains Mono", monospace; font-size: 13px; color: var(--grey-6); min-width: 64px; text-align: center; }
+  .lens-cf-pagination b { color: var(--lens-accent); font-size: 22px; font-weight: 600; margin-right: 2px; vertical-align: baseline; transition: color 300ms; }
+
+  /* per-lens accents */
+  .lens.aid3n    { --lens-accent: var(--aid3n);  --lens-accent-bg: var(--aid3n-bg); }
+  .lens.mm       { --lens-accent: var(--mm);     --lens-accent-bg: var(--mm-bg); }
+  .lens.schem    { --lens-accent: var(--schem);  --lens-accent-bg: var(--schem-bg); }
+  .lens.takes    { --lens-accent: var(--takes);  --lens-accent-bg: var(--takes-bg); }
+  .lens.wiki     { --lens-accent: var(--wiki);   --lens-accent-bg: var(--wiki-bg); }
+  .lens.supp     { --lens-accent: var(--supp);   --lens-accent-bg: var(--supp-bg); }
+  .lens.orange   { --lens-accent: var(--orange); --lens-accent-bg: var(--orange-bg); }
+  .lens.porta    { --lens-accent: var(--porta);  --lens-accent-bg: var(--porta-bg); }
+
+  @media (max-width: 900px) {
+    .lens { width: 260px; height: 260px; margin-left: -130px; margin-top: -130px; }
+    .lens-front .name { font-size: 26px; }
+    .lens-cf-track { height: 380px; }
+  }
+
+  /* Aid3n FAB */
+  .aid3n-fab { position:fixed; bottom:22px; right:22px; background:linear-gradient(135deg, #4c1d95 0%, #7b2bff 100%); color:#fff; border-radius:999px; padding:10px 16px 10px 10px; display:inline-flex; align-items:center; gap:10px; box-shadow:0 14px 30px rgba(123,43,255,0.35), 0 0 0 1px rgba(216,180,254,0.25) inset; cursor:pointer; font-size:13px; font-weight:600; z-index:100; text-decoration:none; }
+  .aid3n-fab:hover { transform:translateY(-1px); }
+  .aid3n-fab .av { width:28px; height:28px; border-radius:50%; background:rgba(255,255,255,0.18); display:grid; place-items:center; }
+  .aid3n-fab .av svg { width:14px; height:14px; stroke-width:2; }
+  .aid3n-fab .pulse-dot { width:7px; height:7px; border-radius:50%; background:#6BFFDC; animation:fabPulse 1.8s infinite; }
+  @keyframes fabPulse { 0% { box-shadow:0 0 0 0 rgba(107,255,220,0.5); } 70% { box-shadow:0 0 0 8px rgba(107,255,220,0); } 100% { box-shadow:0 0 0 0 rgba(107,255,220,0); } }
+  /* Rail · Octopus minimised nav (additions) */
+  .rail { padding: 14px 0 12px; overflow-y: auto; }
+  .rail::-webkit-scrollbar { display: none; }
+  .rail .brand { margin-bottom: 4px; flex-shrink: 0; }
+  .rail .icon { flex-shrink: 0; }
+  .rail .icon.active { background: rgba(255, 109, 240, 0.12); color: #FF6DF0; }
+  .rail .icon.prod-launcher { padding: 0; }
+  .rail .icon.prod-launcher:hover { background: transparent; }
+  .rail .icon.prod-launcher img { width: 36px; height: 36px; border-radius: 8px; display: block; transition: transform 0.15s; }
+  .rail .icon.prod-launcher:hover img { transform: scale(1.06); }
+  .rail .spacer { flex: 1; min-height: 12px; }
+  .rail .storage { font-size: 10px; color: var(--grey-6); margin-top: 4px; flex-shrink: 0; }
+  .rail .dot-notify { top: 6px; right: 8px; }
+  .rail .rail-sep { width: 28px; height: 1px; background: var(--line); margin: 6px 0; flex-shrink: 0; }
+  .rail .rail-gap { height: 14px; flex-shrink: 0; }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- Icon rail · Octopus minimised nav -->
+  <div class="rail">
+    <a class="brand" href="index.html" title="Octopus · Index">
+      <svg viewBox="0 0 22 28" fill="currentColor" style="color:var(--ink);width:22px;height:28px;display:block;"><path d="M5 2.5V23.5L2 25.5V0.5L5 2.5ZM11.5 7V19L8.5 21V5L11.5 7ZM18 11.5V14.5L15 16.5V9.5L18 11.5Z"/></svg>
+    </a>
+    <a class="icon" href="index.html" title="Index · toggle sidebar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="18" height="16" rx="2" stroke-width="1.7"/><path d="M9 4v16" stroke-width="1.7" stroke-linecap="round"/><path d="M13 9l3 3-3 3" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+
+    <div class="rail-gap"></div>
+
+    <a class="icon" href="#" title="Home">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 11l9-8 9 8M5 9v11h14V9M10 20v-6h4v6" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+    <a class="icon" href="#" title="Venues">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="4" y="3" width="16" height="18" rx="1" stroke-width="1.7"/><rect x="7.3" y="6" width="3" height="3" stroke-width="1.4"/><rect x="13.7" y="6" width="3" height="3" stroke-width="1.4"/><rect x="7.3" y="11" width="3" height="3" stroke-width="1.4"/><rect x="13.7" y="11" width="3" height="3" stroke-width="1.4"/><rect x="7.3" y="16" width="3" height="3" stroke-width="1.4"/><rect x="13.7" y="16" width="3" height="3" stroke-width="1.4"/></svg>
+    </a>
+    <a class="icon" href="inventories.html" title="Software">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9L12 3z" stroke-width="1.7" stroke-linejoin="round"/><path d="M12 12l8-4.5M12 12L4 7.5M12 12v9" stroke-width="1.7"/></svg>
+    </a>
+    <a class="icon" href="#" title="Subscriptions">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="6" width="18" height="13" rx="2" stroke-width="1.7"/><path d="M3 11h18" stroke-width="1.7"/></svg>
+    </a>
+    <a class="icon" href="#" title="Imports">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 4v12M6 10l6 6 6-6M4 20h16" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+    <a class="icon active" href="productions-grid.html" title="Productions">
+      <svg viewBox="0 0 24 24" width="22" height="22"><circle cx="9" cy="10" r="5" fill="#FF98F4" opacity="0.72"/><circle cx="14" cy="14" r="5" fill="#FF6DF0" opacity="0.92"/></svg>
+    </a>
+    <a class="icon" href="#" title="Knowledge">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="4" y="3" width="16" height="18" rx="1" stroke-width="1.7"/><path d="M10 16l2-7 2 7M11 13.5h2" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+    <a class="icon" href="#" title="Support">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="9" stroke-width="1.7"/><path d="M9 9a3 3 0 116 0c0 2-3 2-3 4M12 17.5h.01" stroke-width="1.7" stroke-linecap="round"/></svg>
+    </a>
+
+    <div class="rail-sep"></div>
+
+    <a class="icon prod-launcher" href="lens-mapping-matter.html" title="Mapping Matter">
+      <img src="assets/products/mapping-matter.svg" alt=""/>
+    </a>
+    <a class="icon prod-launcher" href="#" title="Designer">
+      <img src="assets/products/designer.svg" alt=""/>
+    </a>
+    <a class="icon prod-launcher" href="#" title="Porta">
+      <img src="assets/products/porta.svg" alt=""/>
+    </a>
+    <a class="icon prod-launcher" href="#" title="RenderStream">
+      <img src="assets/products/renderstream.svg" alt=""/>
+    </a>
+
+    <div class="spacer"></div>
+
+    <a class="icon" href="#" title="Notifications">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 10a6 6 0 1112 0c0 7 3 8 3 8H3s3-1 3-8M10 21h4" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span class="dot-notify"></span>
+    </a>
+    <a class="icon" href="#" title="My subscription · billing">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="6" width="18" height="13" rx="2" stroke-width="1.7"/><path d="M3 11h18" stroke-width="1.7"/></svg>
+    </a>
+    <div class="storage">0.8%</div>
+  </div>
+
+  <!-- Production sidebar · injected by assets/shared/sidebar.js -->
+  <aside class="side" data-prod-sidebar></aside>
+
+  <!-- Main -->
+  <main class="main">
+
+    <div class="main-top">
+      <div class="breadcrumb">
+        <a class="crumb" href="productions-grid.html">Productions</a>
+        <span class="sep">/</span>
+        <span class="current">Eurovision 2026</span>
+      </div>
+      <div class="topbar-actions">
+        <button class="icon-btn" title="Search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="7" stroke-width="1.7"/><path d="M16 16l5 5" stroke-width="1.7" stroke-linecap="round"/></svg></button>
+        <button class="icon-btn" title="Notifications"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 10a6 6 0 1112 0c0 7 3 8 3 8H3s3-1 3-8M10 21h4" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="badge">3</span></button>
+        <div class="avatar">W</div>
+      </div>
+    </div>
+
+    <div class="ov">
+
+      <!-- Title -->
+      <div class="title-row"><h1>Eurovision Song Contest 2026</h1></div>
+      <div class="title-meta">
+        <span><b>Stadthalle Vienna</b></span>
+        <span class="sep">·</span>
+        <span>May 8 – 16, 2026 · <b>9 days</b> to first show</span>
+        <span class="sep">·</span>
+        <span>9 team members</span>
+        <span class="sep">·</span>
+        <span class="pill rehearsal"><span class="dot"></span> Design phase</span>
+      </div>
+
+      <!-- Aid3n thin strip -->
+      <a class="aid-strip" href="lens-system-design.html">
+        <span class="av"><svg viewBox="0 0 13 17" fill="currentColor"><path d="M6.02832 0.00195312L10.7539 10.0332L12.0557 12.7949L6.02832 16.3164H6.02734L0 12.7949L1.30176 10.0332L6.02832 0V0.00195312ZM5.03516 9.55078L2.49316 10.543L5.03516 11.5352L6.02734 14.0771L7.01953 11.5352L9.5625 10.543L7.01953 9.55078L6.02734 7.00879L5.03516 9.55078Z"/></svg></span>
+        <span class="body"><b>Aid3n</b> extended the route table — <span class="scope">in Schematic</span> after Mapping Matter added 4 projectors on truss C.</span>
+        <span class="when">2 min ago</span>
+        <span class="arrow">review →</span>
+      </a>
+
+      <!-- Lifecycle -->
+      <div class="lifecycle-label">
+        <span>▷ Lifecycle</span>
+        <span class="meta">You're in <b>Design</b> · click a phase to preview its lenses</span>
+      </div>
+      <div class="lifecycle" id="lifecycle">
+        <button class="phase done" data-phase="pitch"><span class="num">01 ✓</span><span class="name">Pitch</span><span class="chev">↓</span></button>
+        <button class="phase selected" data-phase="design"><span class="now">NOW</span><span class="num">02</span><span class="name">Design</span><span class="chev">↓</span></button>
+        <button class="phase future" data-phase="procurement"><span class="num">03</span><span class="name">Procurement</span><span class="chev">↓</span></button>
+        <button class="phase future" data-phase="rehearsal"><span class="num">04</span><span class="name">Rehearsal</span><span class="chev">↓</span></button>
+        <button class="phase future" data-phase="show"><span class="num">05</span><span class="name">Show</span><span class="chev">↓</span></button>
+        <button class="phase future" data-phase="wrap"><span class="num">06</span><span class="name">Wrap</span><span class="chev">↓</span></button>
+      </div>
+
+      <!-- Lenses · 3D coverflow driven by selected lifecycle phase -->
+      <div class="lenses-section">
+        <div class="lenses-head">
+          <h2 id="lensesHead">Lenses · activating in <b>Design</b></h2>
+          <span class="hint" id="lensesHint">centered lens flips on hover <span class="kbd">↻</span> · <span class="kbd">←</span> <span class="kbd">→</span> to navigate</span>
+        </div>
+        <section class="lens-cf-stage" id="lensStage" aria-label="Lens carousel">
+          <div class="lens-cf-track">
+            <div class="lens-cf-deck" id="lensDeck"></div>
+          </div>
+          <div class="lens-cf-controls">
+            <div class="lens-cf-progress">
+              <div class="lens-cf-fill" id="lensFill"></div>
+              <div class="lens-cf-ticks" id="lensTicks"></div>
+            </div>
+            <div class="lens-cf-row">
+              <button class="lens-cf-nav" id="lensPrev" title="Previous lens" aria-label="Previous lens">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M15 6l-6 6 6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+              <div class="lens-cf-pagination"><b id="lensCur">01</b>/<span id="lensTotal">03</span></div>
+              <button class="lens-cf-nav" id="lensNext" title="Next lens" aria-label="Next lens">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+            </div>
+          </div>
+        </section>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<!-- Aid3n FAB -->
+<a class="aid3n-fab" href="lens-aid3n.html">
+  <span class="av"><svg viewBox="0 0 13 17" fill="currentColor"><path d="M6.02832 0.00195312L10.7539 10.0332L12.0557 12.7949L6.02832 16.3164H6.02734L0 12.7949L1.30176 10.0332L6.02832 0V0.00195312ZM5.03516 9.55078L2.49316 10.543L5.03516 11.5352L6.02734 14.0771L7.01953 11.5352L9.5625 10.543L7.01953 9.55078L6.02734 7.00879L5.03516 9.55078Z"/></svg></span>
+  Aid3n
+  <span class="pulse-dot"></span>
+</a>
+
+<script>
+  // ───────── Lens card data ─────────
+  const ICONS = {
+    aid3n:    '<svg viewBox="0 0 13 17" fill="currentColor"><path d="M6.02832 0.00195312L10.7539 10.0332L12.0557 12.7949L6.02832 16.3164H6.02734L0 12.7949L1.30176 10.0332L6.02832 0V0.00195312ZM5.03516 9.55078L2.49316 10.543L5.03516 11.5352L6.02734 14.0771L7.01953 11.5352L9.5625 10.543L7.01953 9.55078L6.02734 7.00879L5.03516 9.55078Z"/></svg>',
+    wiki:     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 4h14v16H8a3 3 0 01-3-3V4z"/><path d="M9 9h6M9 13h6" stroke-linecap="round"/></svg>',
+    schem:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="6" height="6" rx="1"/><rect x="15" y="3" width="6" height="6" rx="1"/><rect x="9" y="15" width="6" height="6" rx="1"/><path d="M9 6h6M6 9v6h6M18 9v6h-6"/></svg>',
+    takes:    '<svg viewBox="0 0 20 21" fill="currentColor"><path d="M17.4446 19.1187V20.6187H2.8137V19.1187H17.4446ZM17.9446 18.6187V10.5854H2.3137V18.6187C2.3137 18.8948 2.53756 19.1187 2.8137 19.1187V20.6187L2.6096 20.6079C1.66805 20.5125 0.919901 19.7643 0.824444 18.8228L0.813702 18.6187V9.08545H19.4446V18.6187L19.4338 18.8228C19.3384 19.7642 18.5901 20.5123 17.6487 20.6079L17.4446 20.6187V19.1187C17.7206 19.1185 17.9446 18.8947 17.9446 18.6187Z"/><path d="M16.6158 1.87062C16.5443 1.60396 16.2701 1.44575 16.0034 1.51706L1.87109 5.30381C1.60435 5.37528 1.44606 5.64945 1.51753 5.91618L1.87442 7.2481L16.9727 3.20254L16.6158 1.87062ZM18.8098 4.2632L0.813702 9.08545L0.0686447 6.30441C-0.217239 5.23748 0.415927 4.1408 1.48286 3.85492L15.6152 0.0681738L15.8151 0.0257246C16.8158 -0.136424 17.7966 0.482106 18.0647 1.48239L18.8098 4.2632Z"/><path d="M1.73454 4.01073L3.66639 3.4931L2.8393 8.49343L0.907445 9.01107L1.73454 4.01073Z"/><path d="M6.16725 2.8717L8.0991 2.35406L7.27201 7.3544L5.34016 7.87204L6.16725 2.8717Z"/><path d="M10.4182 1.73267L12.35 1.21503L11.5229 6.21537L9.59108 6.733L10.4182 1.73267Z"/><path d="M14.6691 0.59364L16.6009 0.0760022L15.7739 5.07633L13.842 5.59397L14.6691 0.59364Z"/></svg>',
+    supp:     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="9"/><path d="M9 9a3 3 0 116 0c0 2-3 2-3 4M12 17.5h.01" stroke-linecap="round"/></svg>',
+    inventory:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 7l9-4 9 4-9 4-9-4z" stroke-linejoin="round"/><path d="M3 12l9 4 9-4M3 17l9 4 9-4" stroke-linejoin="round"/></svg>',
+    schedule: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg>',
+    liveMon:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 12h3l2-6 4 12 2-6 2 3h5" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    exports:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 16V4M6 10l6-6 6 6M4 20h16" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    decisions:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 5h14v14H5z"/><path d="M9 9h6M9 13h4" stroke-linecap="round"/></svg>',
+    lock:     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/></svg>',
+    flip:     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 8a8 8 0 0114 -3M21 16a8 8 0 01-14 3M21 5v4h-4M3 19v-4h4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    arrow:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  };
+
+  const LENS_CARDS = {
+    aid3n:     { name:'Aid3n',           tag:'4 chats',     accent:'aid3n', href:'lens-aid3n.html',     iconType:'product', iconFile:'aid3n.svg',
+                 desc:'<b>Your production AI collaborator.</b> Acts inside other lenses on your behalf — extends route tables, drafts cue stacks, proposes wiki pages. Every action is reviewed before it commits.' },
+    wiki:      { name:'Wiki',            tag:'7 pages',     accent:'wiki',  href:'lens-wiki.html',       iconType:'concept', iconKey:'wiki',
+                 desc:'<b>The production\'s living knowledge base.</b> Stage diagrams, power plans, signal flow, runbooks. The single source of truth your team writes against.' },
+    previz:    { name:'Previz',          tag:'study v4',    accent:'mm',    href:'lens-previz.html',     iconType:'product', iconFile:'Previz.svg',
+                 desc:'<b>3D pre-visualisation of the show.</b> Stage simulation, camera tests, lighting previews — cross-referenced back to Mapping Matter and the system design.' },
+
+    mm:        { name:'Mapping Matter 2',tag:'78 objects',  accent:'mm',    href:'lens-mapping-matter.html', iconType:'product', iconFile:'mapping-matter.svg',
+                 desc:'<b>Projection and LED study.</b> Lay out every projector and pixel, simulate coverage, bind objects to cues. The visual layout layer for your show.' },
+    schem:     { name:'System Design',   tag:'2 takes',     accent:'schem', href:'lens-system-design.html', iconType:'concept', iconKey:'schem',
+                 desc:'<b>The signal and IP architecture.</b> Cameras, sources, distribution, outputs — every route, every subnet, every box on the rig in one auto-laid-out graph.' },
+    takes:     { name:'Takes',           tag:'2 active',    accent:'takes', href:'lens-takes.html',         iconType:'concept', iconKey:'takes',
+                 desc:'<b>Branches of decision.</b> Try a router vendor or a different topology, compare side-by-side, commit. Upstream changes propagate; rejected takes archive.' },
+
+    inventory: { name:'Inventory',       tag:'locked',  lockedAt:'Procurement', accent:'schem', href:'inventories.html', iconType:'concept', iconKey:'inventory',
+                 desc:'<b>Hardware reservations</b> against workspace stock. Reserve UDX-4Ks, Riedel nodes, vx servers — Octopus tracks billing and entitlement.' },
+    schedule:  { name:'Schedule',        tag:'locked',  lockedAt:'Procurement', accent:'wiki',  href:'prod-schedule.html', iconType:'concept', iconKey:'schedule',
+                 desc:'<b>Crew calls, freight, install days, soak time.</b> The production timeline tied to inventory holds and team availability.' },
+    designer:  { name:'Designer',        tag:'locked',  lockedAt:'Rehearsal',   accent:'orange', href:'#', iconType:'product', iconFile:'designer.svg',
+                 desc:'<b>The d3 Designer session</b> running on-site. Programmes cue stacks, runs sessions, edits the show live. The rehearsal-room workhorse.' },
+    porta:     { name:'Porta',           tag:'locked',  lockedAt:'Rehearsal',   accent:'porta', href:'#', iconType:'product', iconFile:'porta.svg',
+                 desc:'<b>Remote ops portal</b> for the touring team. Surfaces what Designer is doing — cue progress, server health, file syncs — for off-site review.' },
+    supp:      { name:'Support',         tag:'locked',  lockedAt:'Show',        accent:'supp',  href:'lens-support.html', iconType:'concept', iconKey:'supp',
+                 desc:'<b>Production-scoped ticketing</b> during the show. Open tickets pull Aid3n\'s diagnostic bundle (logs, route, last cue) automatically.' },
+    liveMon:   { name:'Live monitoring', tag:'locked',  lockedAt:'Show',        accent:'schem', href:'#', iconType:'concept', iconKey:'liveMon',
+                 desc:'<b>Real-time telemetry</b> from every box on the rig. Frame rate, sync status, fan curves, output integrity — second-by-second show health.' },
+    exports:   { name:'Exports',         tag:'locked',  lockedAt:'Wrap',        accent:'schem', href:'#', iconType:'concept', iconKey:'exports',
+                 desc:'<b>Bundle the production</b> for archive — show file, system design snapshot, decisions log, support tickets. Ready for handover.' },
+    decisions: { name:'Decisions log',   tag:'locked',  lockedAt:'Wrap',        accent:'takes', href:'#', iconType:'concept', iconKey:'decisions',
+                 desc:'<b>Every Take committed,</b> every override, every reason. The why behind the show — captured for post-mortems and the next production.' },
+  };
+
+  // ───────── Phase → which cards activate · their state ─────────
+  const PHASE_LENSES = {
+    pitch:       { state:'active',   verb:'activated in', cards:['aid3n', 'wiki', 'previz'] },
+    design:      { state:'active',   verb:'activating in', cards:['mm', 'schem', 'takes'] },
+    procurement: { state:'inactive', verb:'will unlock at', cards:['inventory', 'schedule'] },
+    rehearsal:   { state:'inactive', verb:'will unlock at', cards:['designer', 'porta'] },
+    show:        { state:'inactive', verb:'will unlock at', cards:['supp', 'liveMon'] },
+    wrap:        { state:'inactive', verb:'will unlock at', cards:['exports', 'decisions'] },
+  };
+
+  // ───────── Render functions ─────────
+  function iconHTML(card, size /* 'big' | 'mini' */) {
+    if (card.iconType === 'product') {
+      return `<div class="${size === 'big' ? 'icon-tile' : 'b-mini'} product"><img src="assets/products/${card.iconFile}" alt=""/></div>`;
+    }
+    return `<div class="${size === 'big' ? 'icon-tile' : 'b-mini'}">${ICONS[card.iconKey] || ''}</div>`;
+  }
+
+  function renderActiveCard(card, idx) {
+    return `
+      <div class="lens ${card.accent}" data-idx="${idx}">
+        <div class="lens-inner">
+          <div class="lens-face lens-front">
+            <div class="top">
+              ${iconHTML(card, 'big')}
+              <span class="tag">${card.tag}</span>
+            </div>
+            <div class="name">${card.name}</div>
+            <span class="flip-hint">flip ${ICONS.flip}</span>
+          </div>
+          <div class="lens-face lens-back">
+            <div class="b-top">
+              <div class="b-title">${iconHTML(card, 'mini')}<span class="b-name">${card.name}</span></div>
+              <span class="b-tag">${card.tag}</span>
+            </div>
+            <p class="b-desc">${card.desc || ''}</p>
+            <a class="btn-primary-sm" href="${card.href}">Open ${card.name} ${ICONS.arrow}</a>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  function renderInactiveCard(card, idx) {
+    return `
+      <div class="lens inactive ${card.accent}" data-idx="${idx}">
+        <div class="lens-inner">
+          <div class="lens-face lens-front">
+            <div class="top">
+              ${iconHTML(card, 'big')}
+              <span class="tag">${ICONS.lock} Locked</span>
+            </div>
+            <div class="meta-block">
+              <div class="name">${card.name}</div>
+              <div class="unlocks-at">${ICONS.lock} unlocks · ${card.lockedAt}</div>
+            </div>
+          </div>
+          <div class="lens-face lens-back">
+            <div class="b-top">
+              <div class="b-title">${iconHTML(card, 'mini')}<span class="b-name">${card.name}</span></div>
+              <span class="b-tag locked">${ICONS.lock} Locked</span>
+            </div>
+            <p class="b-desc">${card.desc || ''}</p>
+            <div class="b-locked-note">${ICONS.lock} Unlocks at ${card.lockedAt}</div>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  // ───────── Phase tabs + Lens 3D coverflow ─────────
+  // Canonical lens order, walked left-to-right across the carousel
+  const LENS_ORDER = [
+    'aid3n', 'wiki', 'previz',           // Pitch
+    'mm', 'schem', 'takes',              // Design
+    'inventory', 'schedule',             // Procurement
+    'designer', 'porta',                 // Rehearsal
+    'supp', 'liveMon',                   // Show
+    'exports', 'decisions',              // Wrap
+  ];
+  const LENS_PHASE = {
+    aid3n:'pitch', wiki:'pitch', previz:'pitch',
+    mm:'design', schem:'design', takes:'design',
+    inventory:'procurement', schedule:'procurement',
+    designer:'rehearsal', porta:'rehearsal',
+    supp:'show', liveMon:'show',
+    exports:'wrap', decisions:'wrap',
+  };
+
+  const head     = document.getElementById('lensesHead');
+  const hint     = document.getElementById('lensesHint');
+  const stage    = document.getElementById('lensStage');
+  const deck     = document.getElementById('lensDeck');
+  const lensCur  = document.getElementById('lensCur');
+  const lensTotal= document.getElementById('lensTotal');
+  const lensFill = document.getElementById('lensFill');
+  const lensTicks= document.getElementById('lensTicks');
+  const lensPrev = document.getElementById('lensPrev');
+  const lensNext = document.getElementById('lensNext');
+
+  let lensIdx = 0;
+
+  function arrangeLenses() {
+    deck.querySelectorAll('.lens').forEach(lens => {
+      const i = parseInt(lens.dataset.idx, 10);
+      const offset = i - lensIdx;
+      const abs = Math.abs(offset);
+      const sign = Math.sign(offset);
+      let tx, tz, ry, scale, opacity;
+      if (abs === 0) {
+        tx = 0; tz = 60; ry = 0; scale = 1.04; opacity = 1;
+        lens.classList.add('is-center');
+      } else {
+        lens.classList.remove('is-center');
+        if (abs === 1)      { tx = 270; tz = -50;  ry = 55; scale = 0.82; opacity = 0.95; }
+        else if (abs === 2) { tx = 430; tz = -200; ry = 60; scale = 0.64; opacity = 0.55; }
+        else if (abs === 3) { tx = 540; tz = -320; ry = 60; scale = 0.50; opacity = 0.22; }
+        else                { tx = 620; tz = -420; ry = 60; scale = 0.40; opacity = 0;    }
+        tx *= sign; ry *= -sign;
+      }
+      lens.style.transform = `translate3d(${tx}px, 0, ${tz}px) rotateY(${ry}deg) scale(${scale})`;
+      lens.style.opacity = opacity;
+      lens.style.zIndex = 100 - abs;
+      lens.style.pointerEvents = opacity < 0.15 ? 'none' : 'auto';
+    });
+
+    // Recolor controls + stage glow with the centered lens's accent
+    const activeId = LENS_ORDER[lensIdx];
+    if (activeId && LENS_CARDS[activeId]) {
+      const accent = LENS_CARDS[activeId].accent;
+      stage.style.setProperty('--lens-accent', `var(--${accent})`);
+      stage.style.setProperty('--lens-accent-bg', `var(--${accent}-bg)`);
+    }
+  }
+
+  function updateLensControls() {
+    const total = LENS_ORDER.length;
+    const cur = lensIdx + 1;
+    lensCur.textContent   = String(cur).padStart(2, '0');
+    lensTotal.textContent = String(total).padStart(2, '0');
+    lensPrev.disabled = lensIdx === 0;
+    lensNext.disabled = lensIdx === total - 1;
+    lensFill.style.width = total > 1 ? ((cur - 1) / (total - 1) * 100) + '%' : '100%';
+    lensTicks.querySelectorAll('.lens-cf-tick').forEach((t, ti) => {
+      t.classList.toggle('current', ti === lensIdx);
+    });
+  }
+
+  function syncPhaseFromLens() {
+    const phase = LENS_PHASE[LENS_ORDER[lensIdx]];
+    const data = PHASE_LENSES[phase];
+    if (!data) return;
+
+    // Tab + header reflect the centered lens's phase
+    document.querySelectorAll('.phase').forEach(el => el.classList.toggle('selected', el.dataset.phase === phase));
+    const phaseName = document.querySelector(`[data-phase="${phase}"] .name`).textContent;
+    const isActivePhase = data.state === 'active';
+    const headBClass = isActivePhase ? '' : ' class="locked"';
+    const phaseLensCount = LENS_ORDER.filter(id => LENS_PHASE[id] === phase).length;
+
+    head.innerHTML = `Lenses · ${data.verb} <b${headBClass}>${phaseName}</b> <span style="color:var(--grey-5);font-weight:400;font-size:14px;">· ${phaseLensCount} of ${LENS_ORDER.length}</span>`;
+    hint.innerHTML = 'centered lens flips on hover <span class="kbd">↻</span> · <span class="kbd">←</span> <span class="kbd">→</span> to navigate · click a side card to bring it forward';
+
+    // In-phase highlight vs out-of-phase dim
+    deck.querySelectorAll('.lens').forEach(lens => {
+      const i = parseInt(lens.dataset.idx, 10);
+      const id = LENS_ORDER[i];
+      const inPhase = LENS_PHASE[id] === phase;
+      lens.classList.toggle('in-phase', inPhase);
+      lens.classList.toggle('out-of-phase', !inPhase);
+    });
+  }
+
+  function gotoLens(i) {
+    lensIdx = Math.max(0, Math.min(LENS_ORDER.length - 1, i));
+    arrangeLenses();
+    updateLensControls();
+    syncPhaseFromLens();
+  }
+
+  function buildLensCarousel() {
+    // Build all 14 cards once — intrinsic active vs locked state set by the lens's phase
+    deck.innerHTML = LENS_ORDER
+      .map((id, i) => {
+        const card = LENS_CARDS[id];
+        if (!card) return '';
+        const phase = LENS_PHASE[id];
+        const phaseData = PHASE_LENSES[phase];
+        const isActiveLens = phaseData && phaseData.state === 'active';
+        return isActiveLens ? renderActiveCard(card, i) : renderInactiveCard(card, i);
+      })
+      .join('');
+
+    lensTicks.innerHTML = LENS_ORDER.map(() => '<span class="lens-cf-tick"></span>').join('');
+
+    // Side-card clicks center; tick clicks jump
+    deck.querySelectorAll('.lens').forEach(el => {
+      el.addEventListener('click', (e) => {
+        const idx = parseInt(el.dataset.idx, 10);
+        if (idx !== lensIdx) {
+          e.preventDefault();
+          gotoLens(idx);
+        }
+      });
+    });
+    lensTicks.querySelectorAll('.lens-cf-tick').forEach((t, ti) => {
+      t.addEventListener('click', () => gotoLens(ti));
+    });
+  }
+
+  // Phase tab click → jump carousel to first lens of that phase
+  function selectPhase(p) {
+    const firstIdx = LENS_ORDER.findIndex(id => LENS_PHASE[id] === p);
+    if (firstIdx >= 0) gotoLens(firstIdx);
+  }
+  document.querySelectorAll('.phase').forEach(btn => {
+    btn.addEventListener('click', () => selectPhase(btn.dataset.phase));
+  });
+
+  // Coverflow nav + keyboard
+  lensPrev.addEventListener('click', () => gotoLens(lensIdx - 1));
+  lensNext.addEventListener('click', () => gotoLens(lensIdx + 1));
+  document.addEventListener('keydown', (e) => {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+    if (e.key === 'ArrowLeft')  { e.preventDefault(); gotoLens(lensIdx - 1); }
+    else if (e.key === 'ArrowRight') { e.preventDefault(); gotoLens(lensIdx + 1); }
+  });
+
+  // Initial render — center on the first Design lens (Mapping Matter)
+  buildLensCarousel();
+  gotoLens(LENS_ORDER.findIndex(id => LENS_PHASE[id] === 'design'));
+</script>
+
+<script src="assets/shared/sidebar.js" defer></script>
+<script src="assets/shared/launch-modal.js" defer></script>
+<script src="assets/shared/side-toggle.js" defer></script>
+</body>
+</html>

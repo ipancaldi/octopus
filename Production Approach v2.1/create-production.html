@@ -1,0 +1,683 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Create production — Production Approach v2</title>
+<style>
+  :root {
+    --pink:#FF98F4; --pink-soft:rgba(255,152,244,0.10); --pink-tint:rgba(255,152,244,0.05);
+    --ink:#D0D5DD; --bg:#101828;
+    --grey-0:#101828; --grey-1:#1D2939; --grey-2:#344054; --grey-3:#344054; --grey-4:#4F5F79; --grey-5:#4E5D76; --grey-6:#98A2B3; --grey-7:#D0D5DD;
+    --purple:#a855f7; --purple-soft:#270045; --purple-ink:#D8B4FE;
+    --amber-bg:#48324C; --amber-ink:#FFE6DD;
+    --red-bg:#3D1F2C; --red-ink:#FFC0CB;
+    --green-bg:#1A3D34; --green-ink:#6BFFDC;
+    --violet-bg:#270045; --violet-ink:#D8B4FE;
+    --blue-bg:#1A2E4D; --blue-ink:#93C5FD;
+    --line:#344054;
+    --aid3n:#D8B4FE; --aid3n-bg:#270045;
+    --mm:#A78BFA; --mm-bg:#231340;
+    --schem:#6BFFDC; --schem-bg:#1A3D34;
+    --takes:#FFE08A; --takes-bg:#3D2F12; --take-strong:#FFD24A;
+    --supp:#FFC0CB; --supp-bg:#3D1F2C;
+    --inv:#6BFFDC; --inv-bg:#1A3D34;
+  }
+  * { box-sizing:border-box; }
+  html, body { margin:0; padding:0; font-family:-apple-system,BlinkMacSystemFont,"Inter","SF Pro Text","Helvetica Neue",Arial,sans-serif; -webkit-font-smoothing:antialiased; font-size:14px; color:var(--ink); min-height:100vh; }
+  body { background: radial-gradient(ellipse at center, #14213b 0%, #050810 70%); overflow:auto; }
+  .mono { font-family:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,monospace; }
+
+  /* Optional: hint of the productions-grid underneath */
+  .backdrop-hint { position:fixed; inset:0; pointer-events:none; opacity:0.18; background:
+    repeating-linear-gradient(90deg, transparent 0, transparent 295px, rgba(255,255,255,0.04) 295px, rgba(255,255,255,0.04) 297px),
+    repeating-linear-gradient(0deg,  transparent 0, transparent 220px, rgba(255,255,255,0.04) 220px, rgba(255,255,255,0.04) 222px);
+  }
+
+  /* ─────────────── Lightbox shell ─────────────── */
+  .lightbox { min-height:100vh; display:flex; align-items:flex-start; justify-content:center; padding:48px 24px; }
+
+  .modal { width:100%; max-width:880px; background:var(--grey-0); border:1px solid var(--grey-3); border-radius:16px; box-shadow:0 24px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,152,244,0.06) inset; overflow:hidden; display:flex; flex-direction:column; }
+
+  /* Header */
+  .m-head { display:flex; align-items:center; justify-content:space-between; padding:18px 24px 14px; border-bottom:1px solid var(--line); }
+  .m-title { display:flex; align-items:center; gap:12px; }
+  .m-title .ico { width:32px; height:32px; border-radius:9px; background:var(--pink-soft); color:var(--pink); display:grid; place-items:center; }
+  .m-title .ico svg { width:16px; height:16px; stroke-width:2; }
+  .m-title h1 { margin:0; font-size:18px; font-weight:600; letter-spacing:-0.005em; }
+  .m-title .sub { color:var(--grey-6); font-size:12px; font-family:"JetBrains Mono",monospace; }
+  .m-title .sub::before { content:"·"; margin:0 6px; color:var(--grey-5); }
+  .m-close { width:32px; height:32px; border-radius:50%; border:none; background:transparent; color:var(--grey-6); cursor:pointer; display:grid; place-items:center; text-decoration:none; }
+  .m-close:hover { background:var(--grey-2); color:var(--ink); }
+  .m-close svg { width:16px; height:16px; stroke-width:1.8; }
+
+  /* Step indicator */
+  .steps { display:grid; grid-template-columns:repeat(4, 1fr); gap:0; padding:16px 24px 0; }
+  .step-pill { position:relative; padding:12px 14px; border-top:2px solid var(--grey-3); cursor:pointer; }
+  .step-pill .num { font-size:10px; font-family:"JetBrains Mono",monospace; color:var(--grey-5); letter-spacing:0.06em; font-weight:600; margin-bottom:2px; }
+  .step-pill .label { font-size:13px; color:var(--grey-6); font-weight:500; }
+  .step-pill.done { border-top-color:var(--green-ink); }
+  .step-pill.done .num { color:var(--green-ink); }
+  .step-pill.active { border-top-color:var(--pink); }
+  .step-pill.active .num { color:var(--pink); }
+  .step-pill.active .label { color:var(--ink); font-weight:600; }
+  .step-pill.done .label { color:var(--ink); }
+  .step-pill .check { position:absolute; top:8px; right:10px; color:var(--green-ink); font-size:12px; display:none; }
+  .step-pill.done .check { display:inline; }
+
+  /* Body */
+  .m-body { padding:24px 28px 8px; min-height:420px; }
+  .step-content { display:none; }
+  body[data-step="1"] .step-content[data-step="1"],
+  body[data-step="2"] .step-content[data-step="2"],
+  body[data-step="3"] .step-content[data-step="3"],
+  body[data-step="4"] .step-content[data-step="4"] { display:block; }
+
+  body[data-step="1"] .step-pill:nth-child(1),
+  body[data-step="2"] .step-pill:nth-child(2),
+  body[data-step="3"] .step-pill:nth-child(3),
+  body[data-step="4"] .step-pill:nth-child(4) { border-top-color:var(--pink); }
+  body[data-step="1"] .step-pill:nth-child(1) .num,
+  body[data-step="2"] .step-pill:nth-child(2) .num,
+  body[data-step="3"] .step-pill:nth-child(3) .num,
+  body[data-step="4"] .step-pill:nth-child(4) .num { color:var(--pink); }
+  body[data-step="1"] .step-pill:nth-child(1) .label,
+  body[data-step="2"] .step-pill:nth-child(2) .label,
+  body[data-step="3"] .step-pill:nth-child(3) .label,
+  body[data-step="4"] .step-pill:nth-child(4) .label { color:var(--ink); font-weight:600; }
+  body[data-step="2"] .step-pill:nth-child(1),
+  body[data-step="3"] .step-pill:nth-child(1),
+  body[data-step="3"] .step-pill:nth-child(2),
+  body[data-step="4"] .step-pill:nth-child(1),
+  body[data-step="4"] .step-pill:nth-child(2),
+  body[data-step="4"] .step-pill:nth-child(3) { border-top-color:var(--green-ink); }
+  body[data-step="2"] .step-pill:nth-child(1) .num,
+  body[data-step="3"] .step-pill:nth-child(1) .num,
+  body[data-step="3"] .step-pill:nth-child(2) .num,
+  body[data-step="4"] .step-pill:nth-child(1) .num,
+  body[data-step="4"] .step-pill:nth-child(2) .num,
+  body[data-step="4"] .step-pill:nth-child(3) .num { color:var(--green-ink); }
+  body[data-step="2"] .step-pill:nth-child(1) .check,
+  body[data-step="3"] .step-pill:nth-child(1) .check,
+  body[data-step="3"] .step-pill:nth-child(2) .check,
+  body[data-step="4"] .step-pill:nth-child(1) .check,
+  body[data-step="4"] .step-pill:nth-child(2) .check,
+  body[data-step="4"] .step-pill:nth-child(3) .check { display:inline; }
+
+  /* Section titles */
+  .sec-title { font-size:16px; font-weight:600; margin:0 0 4px; letter-spacing:-0.005em; }
+  .sec-sub { font-size:13px; color:var(--grey-6); margin:0 0 18px; line-height:1.55; max-width:600px; }
+  .sec-sub b { color:var(--ink); }
+
+  /* Form bits */
+  .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  @media (max-width:680px) { .grid-2 { grid-template-columns:1fr; } }
+  .field { display:flex; flex-direction:column; gap:5px; }
+  .field label { font-size:11px; color:var(--grey-5); letter-spacing:0.06em; text-transform:uppercase; font-weight:600; }
+  .field input, .field textarea, .field select { width:100%; background:var(--grey-1); border:1px solid var(--grey-3); border-radius:8px; padding:10px 12px; color:var(--ink); font-family:inherit; font-size:13px; outline:none; }
+  .field input:focus, .field textarea:focus, .field select:focus { border-color:var(--pink); }
+  .field textarea { min-height:64px; resize:vertical; }
+  .field .hint { font-size:11px; color:var(--grey-5); font-family:"JetBrains Mono",monospace; }
+  .field-row { display:flex; gap:10px; align-items:flex-end; }
+
+  /* Cover gradient swatches */
+  .covers { display:flex; gap:8px; }
+  .cover-sw { width:42px; height:42px; border-radius:8px; cursor:pointer; border:2px solid transparent; }
+  .cover-sw.active { border-color:var(--pink); }
+  .cover-sw.c1 { background:linear-gradient(135deg,#1e0a3c,#4c1d95); }
+  .cover-sw.c2 { background:linear-gradient(135deg,#7b2bff,#FF98F4); }
+  .cover-sw.c3 { background:linear-gradient(135deg,#0a1c3d,#0ea5e9); }
+  .cover-sw.c4 { background:linear-gradient(135deg,#1A3D34,#6BFFDC); }
+  .cover-sw.c5 { background:linear-gradient(135deg,#3D2F12,#FFE08A); }
+  .cover-sw.c6 { background:linear-gradient(135deg,#3D1F2C,#FFC0CB); }
+  .cover-sw.upload { display:grid; place-items:center; border:1.5px dashed var(--grey-4); background:var(--grey-1); color:var(--grey-5); }
+  .cover-sw.upload svg { width:16px; height:16px; stroke-width:1.8; }
+
+  /* ─────────────── Step 2 · Phase rail ─────────────── */
+  .phase-rail { background:var(--grey-1); border:1px solid var(--grey-3); border-radius:12px; padding:14px 16px 16px; margin-bottom:18px; }
+  .phase-rail-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+  .phase-rail-head .label { font-size:10px; color:var(--grey-5); letter-spacing:0.08em; text-transform:uppercase; font-weight:700; font-family:"JetBrains Mono",monospace; }
+  .phase-rail-head .hint { font-size:12px; color:var(--grey-6); }
+  .phase-rail-head .hint b { color:var(--pink); font-weight:600; }
+  .phases { display:grid; grid-template-columns:repeat(6,1fr); gap:6px; }
+  .phase { padding:10px 10px 9px; border-radius:8px; background:var(--grey-2); border:1px solid var(--grey-3); cursor:pointer; position:relative; display:flex; flex-direction:column; gap:3px; min-height:64px; }
+  .phase:hover { border-color:var(--grey-4); }
+  .phase.active { background:linear-gradient(180deg, rgba(255,152,244,0.14), rgba(255,152,244,0.04)); border-color:var(--pink); box-shadow:0 0 0 1px var(--pink) inset; }
+  .phase .num { font-size:9px; color:var(--grey-5); font-weight:600; font-family:"JetBrains Mono",monospace; }
+  .phase.active .num { color:var(--pink); }
+  .phase .name { font-size:12px; font-weight:600; color:var(--ink); }
+  .phase .now { position:absolute; top:-7px; right:8px; background:var(--pink); color:#0a0a0c; padding:1px 6px; border-radius:5px; font-size:9px; font-weight:700; letter-spacing:0.04em; font-family:"JetBrains Mono",monospace; }
+  .phase.active .now { display:inline; }
+  .phase .now { display:none; }
+
+  /* Lens unlock grid */
+  .lens-unlock { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:6px; }
+  @media (max-width:680px) { .lens-unlock { grid-template-columns:1fr; } }
+  .lu-card { background:var(--grey-1); border:1px solid var(--grey-3); border-radius:12px; padding:14px 16px; }
+  .lu-card .h { font-size:10px; letter-spacing:0.08em; text-transform:uppercase; font-weight:700; margin-bottom:10px; display:flex; align-items:center; gap:8px; }
+  .lu-card .h.now { color:var(--green-ink); }
+  .lu-card .h.later { color:var(--grey-5); }
+  .lu-card .h .dot { width:6px; height:6px; border-radius:50%; background:currentColor; }
+  .lu-list { display:flex; flex-direction:column; gap:6px; }
+  .lu-item { display:flex; align-items:center; gap:9px; font-size:13px; color:var(--ink); }
+  .lu-item .lico { width:22px; height:22px; border-radius:6px; display:grid; place-items:center; flex-shrink:0; }
+  .lu-item .lico svg { width:13px; height:13px; stroke-width:1.7; }
+  .lu-item.locked { color:var(--grey-5); }
+  .lu-item.locked .lico { background:var(--grey-2) !important; color:var(--grey-5) !important; }
+  .lu-item .lock-meta { margin-left:auto; font-size:10px; color:var(--grey-5); font-family:"JetBrains Mono",monospace; }
+  .lu-item.aid3n .lico { background:var(--aid3n-bg); color:var(--aid3n); }
+  .lu-item.mm .lico { background:var(--mm-bg); color:var(--mm); }
+  .lu-item.schem .lico { background:var(--schem-bg); color:var(--schem); }
+  .lu-item.takes .lico { background:var(--takes-bg); color:var(--takes); }
+  .lu-item.wiki .lico { background:var(--blue-bg); color:var(--blue-ink); }
+  .lu-item.supp .lico { background:var(--supp-bg); color:var(--supp); }
+
+  /* ─────────────── Step 3 · Team + Aid3n ─────────────── */
+  .team-list { display:flex; flex-direction:column; gap:8px; margin-bottom:14px; }
+  .team-row { display:grid; grid-template-columns:32px 1fr 160px 28px; gap:10px; align-items:center; background:var(--grey-1); border:1px solid var(--grey-3); border-radius:10px; padding:10px 12px; }
+  .team-row .av { width:32px; height:32px; border-radius:50%; display:grid; place-items:center; color:#fff; font-size:11px; font-weight:700; }
+  .team-row .av.lk { background:#ec4899; } .team-row .av.rm { background:#14b8a6; } .team-row .av.cp { background:#a855f7; }
+  .team-row .name { font-size:13px; color:var(--ink); font-weight:500; }
+  .team-row .meta { font-size:11px; color:var(--grey-6); font-family:"JetBrains Mono",monospace; margin-top:2px; }
+  .team-row .role select { width:100%; padding:6px 10px; background:var(--grey-2); border:1px solid var(--grey-3); border-radius:7px; color:var(--ink); font-family:inherit; font-size:12px; }
+  .team-row .x { color:var(--grey-5); cursor:pointer; display:grid; place-items:center; height:28px; border-radius:6px; }
+  .team-row .x:hover { background:var(--grey-2); color:var(--ink); }
+  .team-row .x svg { width:14px; height:14px; stroke-width:1.8; }
+
+  .add-row { display:flex; gap:8px; align-items:center; padding:10px 12px; border:1px dashed var(--grey-4); border-radius:10px; color:var(--grey-6); font-size:12px; cursor:pointer; }
+  .add-row:hover { border-color:var(--pink); color:var(--ink); background:rgba(255,152,244,0.04); }
+  .add-row svg { width:14px; height:14px; stroke-width:1.8; }
+
+  /* Role matrix */
+  .role-matrix { background:var(--grey-1); border:1px solid var(--grey-3); border-radius:10px; padding:14px 16px; margin-top:14px; margin-bottom:18px; }
+  .role-matrix .h { font-size:10px; letter-spacing:0.08em; text-transform:uppercase; color:var(--grey-5); font-weight:700; margin-bottom:10px; font-family:"JetBrains Mono",monospace; }
+  .role-matrix table { width:100%; border-collapse:collapse; font-size:11px; font-family:"JetBrains Mono",monospace; }
+  .role-matrix th, .role-matrix td { padding:6px 8px; text-align:center; }
+  .role-matrix th { font-weight:600; color:var(--grey-6); }
+  .role-matrix td:first-child, .role-matrix th:first-child { text-align:left; color:var(--ink); }
+  .role-matrix td { color:var(--grey-6); }
+  .role-matrix td.y { color:var(--green-ink); font-weight:700; }
+  .role-matrix td.r { color:var(--purple-ink); font-weight:700; }
+  .role-matrix td.n { color:var(--grey-5); }
+
+  /* Aid3n card */
+  .aid-card { background:linear-gradient(180deg, rgba(168,85,247,0.10) 0%, rgba(168,85,247,0.02) 100%); border:1px solid var(--purple); border-radius:12px; padding:16px 18px; }
+  .aid-card .top-row { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
+  .aid-card .left { display:flex; align-items:center; gap:10px; }
+  .aid-card .av { width:32px; height:32px; border-radius:50%; background:linear-gradient(135deg,#D8B4FE,#7b2bff); color:#0a0a0c; display:grid; place-items:center; flex-shrink:0; }
+  .aid-card .av svg { width:15px; height:15px; stroke-width:2; }
+  .aid-card .h { font-size:13px; font-weight:600; color:var(--ink); }
+  .aid-card .sub { font-size:11px; color:var(--purple-ink); font-family:"JetBrains Mono",monospace; }
+
+  /* Toggle switch */
+  .toggle { width:42px; height:24px; border-radius:999px; background:var(--grey-3); position:relative; cursor:pointer; flex-shrink:0; transition:background 0.15s; }
+  .toggle::after { content:""; position:absolute; top:2px; left:2px; width:20px; height:20px; border-radius:50%; background:#fff; transition:transform 0.15s; }
+  .toggle.on { background:var(--purple); }
+  .toggle.on::after { transform:translateX(18px); }
+
+  .aid-perms { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+  .aid-perm { background:var(--grey-1); border:1px solid var(--grey-3); border-radius:8px; padding:10px 12px; }
+  .aid-perm .scope { font-size:10px; color:var(--grey-5); letter-spacing:0.06em; text-transform:uppercase; font-weight:600; font-family:"JetBrains Mono",monospace; margin-bottom:3px; }
+  .aid-perm .lev { font-size:12px; color:var(--ink); font-weight:600; display:flex; align-items:center; gap:6px; }
+  .aid-perm .lev .d { width:6px; height:6px; border-radius:50%; }
+  .aid-perm .lev.act .d { background:var(--green-ink); }
+  .aid-perm .lev.prop .d { background:var(--takes); }
+  .aid-perm .lev.read .d { background:var(--blue-ink); }
+  .aid-perm .lev.ro .d { background:var(--grey-5); }
+  .aid-perm .scope-list { font-size:10px; color:var(--grey-6); margin-top:4px; font-family:"JetBrains Mono",monospace; line-height:1.4; }
+
+  /* ─────────────── Step 4 · Inventory + Billing ─────────────── */
+  .inv-section { background:var(--grey-1); border:1px solid var(--grey-3); border-radius:12px; padding:14px 16px; margin-bottom:14px; }
+  .inv-section .h { font-size:11px; letter-spacing:0.06em; text-transform:uppercase; color:var(--grey-5); font-weight:700; margin-bottom:10px; display:flex; align-items:center; gap:8px; }
+  .inv-section .h .dot { width:7px; height:7px; border-radius:50%; }
+  .inv-section .h.dev .dot { background:var(--violet-ink); }
+  .inv-section .h.brand .dot { background:var(--inv); }
+  .inv-section .h.people .dot { background:var(--pink); }
+
+  .inv-row { display:grid; grid-template-columns:24px 32px 1fr 140px 80px; gap:10px; align-items:center; padding:8px 8px; border-radius:8px; cursor:pointer; }
+  .inv-row:hover { background:var(--grey-2); }
+  .inv-check { width:18px; height:18px; border-radius:5px; background:var(--grey-2); border:1.5px solid var(--grey-4); display:grid; place-items:center; }
+  .inv-check.on { background:var(--pink); border-color:var(--pink); }
+  .inv-check.on::after { content:""; width:8px; height:5px; border-left:2px solid #0a0a0c; border-bottom:2px solid #0a0a0c; transform:rotate(-45deg) translate(1px,-1px); }
+  .inv-row .icn { width:32px; height:32px; border-radius:7px; display:grid; place-items:center; font-size:11px; font-weight:700; font-family:"JetBrains Mono",monospace; }
+  .inv-row .icn.dev { background:var(--violet-bg); color:var(--violet-ink); }
+  .inv-row .icn.brand { background:var(--pink); color:#0a0a0c; }
+  .inv-row .icn.people { background:var(--pink-soft); color:var(--pink); }
+  .inv-row .name { font-size:13px; color:var(--ink); font-weight:500; }
+  .inv-row .sub  { font-size:11px; color:var(--grey-6); font-family:"JetBrains Mono",monospace; margin-top:2px; }
+  .inv-row .qty  { font-size:11px; color:var(--grey-6); font-family:"JetBrains Mono",monospace; text-align:right; }
+  .inv-row .qty b { color:var(--ink); }
+  .inv-row .qty-input { width:64px; padding:5px 8px; background:var(--grey-2); border:1px solid var(--grey-3); border-radius:6px; color:var(--ink); font-family:"JetBrains Mono",monospace; font-size:12px; text-align:center; }
+
+  /* Octopus bridge */
+  .octopus { background:linear-gradient(135deg, #1e0a3c 0%, #4c1d95 50%, #0a0118 100%); border-radius:12px; padding:16px 18px; color:#fff; display:flex; gap:14px; align-items:flex-start; }
+  .octopus .ico { width:34px; height:34px; border-radius:8px; background:rgba(255,255,255,0.10); display:grid; place-items:center; flex-shrink:0; }
+  .octopus .ico svg { width:16px; height:16px; }
+  .octopus .body { flex:1; min-width:0; }
+  .octopus h3 { margin:0 0 4px; font-size:13px; font-weight:600; }
+  .octopus p { margin:0 0 10px; font-size:11px; color:rgba(255,255,255,0.72); line-height:1.55; font-family:"JetBrains Mono",monospace; }
+  .octopus select { width:100%; padding:9px 12px; background:rgba(0,0,0,0.30); border:1px solid rgba(255,255,255,0.18); border-radius:7px; color:#fff; font-family:inherit; font-size:12px; }
+
+  /* ─────────────── Footer ─────────────── */
+  .m-foot { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:16px 24px; border-top:1px solid var(--line); background:var(--grey-1); }
+  .m-foot .left { font-size:11px; color:var(--grey-6); font-family:"JetBrains Mono",monospace; }
+  .m-foot .right { display:flex; gap:8px; }
+  .btn { display:inline-flex; align-items:center; gap:7px; padding:9px 16px; border-radius:9px; font-size:13px; font-weight:600; cursor:pointer; border:1px solid var(--grey-3); background:transparent; color:var(--ink); font-family:inherit; text-decoration:none; }
+  .btn:hover { background:var(--grey-2); }
+  .btn.primary { background:var(--pink); color:#0a0a0c; border-color:var(--pink); }
+  .btn.primary:hover { background:#FF6DF0; }
+  .btn.subtle { background:transparent; border-color:transparent; color:var(--grey-6); }
+  .btn.subtle:hover { color:var(--ink); background:var(--grey-2); }
+  .btn[disabled] { opacity:0.4; cursor:not-allowed; pointer-events:none; }
+  .btn svg { width:13px; height:13px; stroke-width:1.8; }
+</style>
+</head>
+<body data-step="1">
+
+<div class="backdrop-hint"></div>
+
+<div class="lightbox">
+  <div class="modal">
+
+    <!-- Header -->
+    <div class="m-head">
+      <div class="m-title">
+        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 5v14M5 12h14" stroke-linecap="round"/></svg></span>
+        <h1>Create production</h1>
+        <span class="sub">New · Eurovision Song Contest 2026</span>
+      </div>
+      <a class="m-close" href="productions-grid.html" title="Close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 6l12 12M6 18L18 6" stroke-linecap="round"/></svg>
+      </a>
+    </div>
+
+    <!-- Step indicator -->
+    <div class="steps">
+      <div class="step-pill" onclick="goTo(1)">
+        <div class="num">01 <span class="check">✓</span></div>
+        <div class="label">Basics</div>
+      </div>
+      <div class="step-pill" onclick="goTo(2)">
+        <div class="num">02 <span class="check">✓</span></div>
+        <div class="label">Lifecycle &amp; lenses</div>
+      </div>
+      <div class="step-pill" onclick="goTo(3)">
+        <div class="num">03 <span class="check">✓</span></div>
+        <div class="label">Team &amp; Aid3n</div>
+      </div>
+      <div class="step-pill" onclick="goTo(4)">
+        <div class="num">04 <span class="check">✓</span></div>
+        <div class="label">Inventory &amp; billing</div>
+      </div>
+    </div>
+
+    <!-- Body -->
+    <div class="m-body">
+
+      <!-- ───────────── Step 1 · Basics ───────────── -->
+      <div class="step-content" data-step="1">
+        <h2 class="sec-title">Tell us about the show</h2>
+        <p class="sec-sub">A production is the unit of work in v2 — everything from the projection study to the show-week incident lives inside it. <b>Octopus owns billing</b>; this form sets up the production workspace.</p>
+
+        <div class="grid-2">
+          <div class="field">
+            <label>Production name</label>
+            <input value="Eurovision Song Contest 2026" />
+          </div>
+          <div class="field">
+            <label>Venue</label>
+            <input value="Stadthalle Vienna" />
+          </div>
+        </div>
+
+        <div style="height:14px;"></div>
+        <div class="grid-2">
+          <div class="field">
+            <label>Start date</label>
+            <input type="text" value="May 8, 2026" />
+          </div>
+          <div class="field">
+            <label>End date · last show</label>
+            <input type="text" value="May 16, 2026" />
+          </div>
+        </div>
+
+        <div style="height:14px;"></div>
+        <div class="field">
+          <label>Description · optional</label>
+          <textarea>Eurovision 2026 grand final + 2 semi-finals. Pixel Vienna technical lead; broadcast on 47 national networks. Stadium-class projection rig + LED main wall + ST2110 chain.</textarea>
+        </div>
+
+        <div style="height:18px;"></div>
+        <div class="field">
+          <label>Cover</label>
+          <div class="covers">
+            <div class="cover-sw c1 active" title="Aid3n purple"></div>
+            <div class="cover-sw c2" title="Pink wash"></div>
+            <div class="cover-sw c3" title="Stage blue"></div>
+            <div class="cover-sw c4" title="Schematic mint"></div>
+            <div class="cover-sw c5" title="Takes amber"></div>
+            <div class="cover-sw c6" title="Support coral"></div>
+            <div class="cover-sw upload" title="Upload"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 4v12M6 10l6 6 6-6M4 20h16" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          </div>
+          <div class="hint">Cover shows on the Productions grid and on the production-home hero strip.</div>
+        </div>
+      </div>
+
+      <!-- ───────────── Step 2 · Lifecycle & lenses ───────────── -->
+      <div class="step-content" data-step="2">
+        <h2 class="sec-title">Where are you in the lifecycle?</h2>
+        <p class="sec-sub">In v2, the phase you start at decides <b>which lenses are active now</b>, which unlock later, and how the production is billed in Octopus. You can move forward or back at any time.</p>
+
+        <div class="phase-rail">
+          <div class="phase-rail-head">
+            <div class="label">▷ Starting phase</div>
+            <div class="hint">You're entering at <b>Design</b> — Mapping Matter + Schematic + Takes activate immediately.</div>
+          </div>
+          <div class="phases">
+            <div class="phase"><span class="num">01</span><span class="name">Pitch</span></div>
+            <div class="phase active"><span class="now">START</span><span class="num">02</span><span class="name">Design</span></div>
+            <div class="phase"><span class="num">03</span><span class="name">Procurement</span></div>
+            <div class="phase"><span class="num">04</span><span class="name">Rehearsal</span></div>
+            <div class="phase"><span class="num">05</span><span class="name">Show</span></div>
+            <div class="phase"><span class="num">06</span><span class="name">Wrap</span></div>
+          </div>
+        </div>
+
+        <div class="lens-unlock">
+
+          <div class="lu-card">
+            <div class="h now"><span class="dot"></span> Active from day 1 · 5 lenses</div>
+            <div class="lu-list">
+              <div class="lu-item aid3n">
+                <span class="lico"><svg viewBox="0 0 13 17" fill="currentColor"><path d="M6.02832 0.00195312L10.7539 10.0332L12.0557 12.7949L6.02832 16.3164H6.02734L0 12.7949L1.30176 10.0332L6.02832 0V0.00195312ZM5.03516 9.55078L2.49316 10.543L5.03516 11.5352L6.02734 14.0771L7.01953 11.5352L9.5625 10.543L7.01953 9.55078L6.02734 7.00879L5.03516 9.55078Z"/></svg></span>
+                Aid3n <span class="lock-meta">always on</span>
+              </div>
+              <div class="lu-item mm">
+                <span class="lico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 7l9-4 9 4-9 4-9-4z" stroke-linejoin="round"/></svg></span>
+                Mapping Matter 2 <span class="lock-meta">design</span>
+              </div>
+              <div class="lu-item schem">
+                <span class="lico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="6" height="6" rx="1"/><rect x="15" y="3" width="6" height="6" rx="1"/><rect x="9" y="15" width="6" height="6" rx="1"/><path d="M9 6h6M6 9v6h6M18 9v6h-6"/></svg></span>
+                System Design <span class="lock-meta">design</span>
+              </div>
+              <div class="lu-item takes">
+                <span class="lico"><svg viewBox="0 0 20 21" fill="currentColor"><path d="M17.4446 19.1187V20.6187H2.8137V19.1187H17.4446ZM17.9446 18.6187V10.5854H2.3137V18.6187C2.3137 18.8948 2.53756 19.1187 2.8137 19.1187V20.6187L2.6096 20.6079C1.66805 20.5125 0.919901 19.7643 0.824444 18.8228L0.813702 18.6187V9.08545H19.4446V18.6187L19.4338 18.8228C19.3384 19.7642 18.5901 20.5123 17.6487 20.6079L17.4446 20.6187V19.1187C17.7206 19.1185 17.9446 18.8947 17.9446 18.6187Z"/><path d="M16.6158 1.87062C16.5443 1.60396 16.2701 1.44575 16.0034 1.51706L1.87109 5.30381C1.60435 5.37528 1.44606 5.64945 1.51753 5.91618L1.87442 7.2481L16.9727 3.20254L16.6158 1.87062ZM18.8098 4.2632L0.813702 9.08545L0.0686447 6.30441C-0.217239 5.23748 0.415927 4.1408 1.48286 3.85492L15.6152 0.0681738L15.8151 0.0257246C16.8158 -0.136424 17.7966 0.482106 18.0647 1.48239L18.8098 4.2632Z"/><path d="M1.73454 4.01073L3.66639 3.4931L2.8393 8.49343L0.907445 9.01107L1.73454 4.01073Z"/><path d="M6.16725 2.8717L8.0991 2.35406L7.27201 7.3544L5.34016 7.87204L6.16725 2.8717Z"/><path d="M10.4182 1.73267L12.35 1.21503L11.5229 6.21537L9.59108 6.733L10.4182 1.73267Z"/><path d="M14.6691 0.59364L16.6009 0.0760022L15.7739 5.07633L13.842 5.59397L14.6691 0.59364Z"/></svg></span>
+                Takes <span class="lock-meta">design</span>
+              </div>
+              <div class="lu-item wiki">
+                <span class="lico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 4h14v16H8a3 3 0 01-3-3V4z"/></svg></span>
+                Wiki <span class="lock-meta">pitch</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="lu-card">
+            <div class="h later"><span class="dot"></span> Unlock later · 2 lenses</div>
+            <div class="lu-list">
+              <div class="lu-item locked">
+                <span class="lico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 7h14M5 12h14M5 17h14" stroke-linecap="round"/></svg></span>
+                Designer <span class="lock-meta">rehearsal</span>
+              </div>
+              <div class="lu-item supp">
+                <span class="lico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="9"/><path d="M9 9a3 3 0 116 0c0 2-3 2-3 4M12 17.5h.01" stroke-linecap="round"/></svg></span>
+                Support <span class="lock-meta">show − 14d</span>
+              </div>
+            </div>
+            <div class="hint" style="font-size:11px;color:var(--grey-5);margin-top:10px;font-family:'JetBrains Mono',monospace;line-height:1.5;">Designer activates when you build the cue stack — typically rehearsal. Support unlocks 14 days out and auto-opens for show-week tickets.</div>
+          </div>
+
+        </div>
+
+        <div style="margin-top:14px;" class="field">
+          <label>First show date</label>
+          <input value="May 8, 2026" />
+          <span class="hint">Drives billing meter rollover, freelancer scopes, and the show-in countdown on Support.</span>
+        </div>
+      </div>
+
+      <!-- ───────────── Step 3 · Team & Aid3n ───────────── -->
+      <div class="step-content" data-step="3">
+        <h2 class="sec-title">Bring the team in</h2>
+        <p class="sec-sub">Roles map to lens permissions. <b>Aid3n is enabled by default</b> — it sees the full production but only acts within explicit scopes. You can revoke or expand later.</p>
+
+        <div class="team-list">
+          <div class="team-row">
+            <div class="av lk">LK</div>
+            <div>
+              <div class="name">Lauren Kiki</div>
+              <div class="meta">Freelance · Vienna · Eurovision 2026 only</div>
+            </div>
+            <div class="role">
+              <select>
+                <option>Designer</option>
+                <option>Technical Director</option>
+                <option>Producer</option>
+                <option>Operator</option>
+                <option>Viewer</option>
+              </select>
+            </div>
+            <div class="x"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 6l12 12M6 18L18 6" stroke-linecap="round"/></svg></div>
+          </div>
+
+          <div class="team-row">
+            <div class="av rm">RM</div>
+            <div>
+              <div class="name">Robin Marshall</div>
+              <div class="meta">Staff · London · stretched across 3 shows</div>
+            </div>
+            <div class="role">
+              <select>
+                <option>Designer</option>
+                <option selected>Technical Director</option>
+                <option>Producer</option>
+                <option>Operator</option>
+                <option>Viewer</option>
+              </select>
+            </div>
+            <div class="x"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 6l12 12M6 18L18 6" stroke-linecap="round"/></svg></div>
+          </div>
+
+          <div class="team-row">
+            <div class="av cp">CP</div>
+            <div>
+              <div class="name">Camilla Powell</div>
+              <div class="meta">Staff · production lead</div>
+            </div>
+            <div class="role">
+              <select>
+                <option>Designer</option>
+                <option>Technical Director</option>
+                <option selected>Producer</option>
+                <option>Operator</option>
+                <option>Viewer</option>
+              </select>
+            </div>
+            <div class="x"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 6l12 12M6 18L18 6" stroke-linecap="round"/></svg></div>
+          </div>
+        </div>
+
+        <div class="add-row">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 5v14M5 12h14" stroke-linecap="round"/></svg>
+          Invite by email · or pick from your inventory of crew + freelancers
+        </div>
+
+        <div class="role-matrix">
+          <div class="h">Role → lens permission map</div>
+          <table>
+            <thead>
+              <tr><th>Role</th><th>Aid3n</th><th>MM 2</th><th>System Design</th><th>Takes</th><th>Wiki</th><th>Support</th><th>Octopus</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Designer</td><td class="y">RW</td><td class="y">RW</td><td class="r">R</td><td class="r">R</td><td class="r">R</td><td class="n">—</td><td class="n">—</td></tr>
+              <tr><td>Technical Director</td><td class="y">RW</td><td class="r">R</td><td class="y">RW</td><td class="y">RW</td><td class="y">RW</td><td class="y">RW</td><td class="r">R</td></tr>
+              <tr><td>Producer</td><td class="r">R</td><td class="r">R</td><td class="r">R</td><td class="y">RW</td><td class="y">RW</td><td class="y">RW</td><td class="y">RW</td></tr>
+              <tr><td>Operator</td><td class="n">—</td><td class="n">—</td><td class="r">R</td><td class="n">—</td><td class="r">R</td><td class="r">R</td><td class="n">—</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="aid-card">
+          <div class="top-row">
+            <div class="left">
+              <div class="av"><svg viewBox="0 0 13 17" fill="currentColor"><path d="M6.02832 0.00195312L10.7539 10.0332L12.0557 12.7949L6.02832 16.3164H6.02734L0 12.7949L1.30176 10.0332L6.02832 0V0.00195312ZM5.03516 9.55078L2.49316 10.543L5.03516 11.5352L6.02734 14.0771L7.01953 11.5352L9.5625 10.543L7.01953 9.55078L6.02734 7.00879L5.03516 9.55078Z"/></svg></div>
+              <div>
+                <div class="h">Enable Aid3n for this production</div>
+                <div class="sub">Proactive AI that has the full production in context</div>
+              </div>
+            </div>
+            <div class="toggle on" title="Aid3n is ON"></div>
+          </div>
+
+          <div class="aid-perms">
+            <div class="aid-perm">
+              <div class="scope">Acts in</div>
+              <div class="lev act"><span class="d"></span> Read &amp; write</div>
+              <div class="scope-list">mapping_matter · system_design</div>
+            </div>
+            <div class="aid-perm">
+              <div class="scope">Proposes in</div>
+              <div class="lev prop"><span class="d"></span> Drafts only</div>
+              <div class="scope-list">takes · cue_stack · schedule</div>
+            </div>
+            <div class="aid-perm">
+              <div class="scope">Reads</div>
+              <div class="lev read"><span class="d"></span> Read &amp; comment</div>
+              <div class="scope-list">wiki · support · inventory</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ───────────── Step 4 · Inventory & billing ───────────── -->
+      <div class="step-content" data-step="4">
+        <h2 class="sec-title">Bind from your inventory</h2>
+        <p class="sec-sub">Pull devices, freelancers, and brand assets from <b>your workspace inventory</b> — not a global catalog. Aid3n already knows what you own.</p>
+
+        <div class="inv-section">
+          <div class="h dev"><span class="dot"></span> Devices · 5 selected</div>
+
+          <div class="inv-row">
+            <div class="inv-check on"></div>
+            <div class="icn dev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" style="width:16px;height:16px;stroke-width:1.7;"><path d="M3 8l9-5 9 5-9 5-9-5z" stroke-linejoin="round"/><path d="M3 8v8l9 5 9-5V8" stroke-linejoin="round"/></svg></div>
+            <div><div class="name">Barco UDX-4K32</div><div class="sub">BP-30K-01 · Vienna depot</div></div>
+            <div class="qty"><b>8 / 12</b> available</div>
+            <div><input class="qty-input" value="12" /></div>
+          </div>
+
+          <div class="inv-row">
+            <div class="inv-check on"></div>
+            <div class="icn dev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" style="width:16px;height:16px;stroke-width:1.7;"><rect x="4" y="6" width="16" height="6" rx="1"/><rect x="4" y="14" width="16" height="6" rx="1"/></svg></div>
+            <div><div class="name">d3 vx 4+ server</div><div class="sub">7 units · firmware 12.4.2 · multi-depot</div></div>
+            <div class="qty"><b>2 / 7</b> available</div>
+            <div><input class="qty-input" value="3" /></div>
+          </div>
+
+          <div class="inv-row">
+            <div class="inv-check on"></div>
+            <div class="icn dev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" style="width:16px;height:16px;stroke-width:1.7;"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 010 18M12 3a14 14 0 000 18"/></svg></div>
+            <div><div class="name">Riedel MN-MADRID-2</div><div class="sub">32×32 MediorNet · Vienna · owned</div></div>
+            <div class="qty"><b>1 / 1</b> available</div>
+            <div><input class="qty-input" value="1" /></div>
+          </div>
+
+          <div class="inv-row">
+            <div class="inv-check on"></div>
+            <div class="icn dev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" style="width:16px;height:16px;stroke-width:1.7;"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/></svg></div>
+            <div><div class="name">Sony FX9</div><div class="sub">6 bodies · multi-depot</div></div>
+            <div class="qty"><b>2 / 6</b> available</div>
+            <div><input class="qty-input" value="4" /></div>
+          </div>
+
+          <div class="inv-row">
+            <div class="inv-check"></div>
+            <div class="icn dev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" style="width:16px;height:16px;stroke-width:1.7;"><rect x="4" y="6" width="16" height="12" rx="1"/><path d="M8 10h8M8 14h8"/></svg></div>
+            <div><div class="name">ROE Visual CB5 (P2.6)</div><div class="sub">512 panels · LED · multi-depot</div></div>
+            <div class="qty"><b>224 / 512</b> avail</div>
+            <div><input class="qty-input" value="288" /></div>
+          </div>
+        </div>
+
+        <div class="inv-section">
+          <div class="h brand"><span class="dot"></span> Brand assets · 2 selected</div>
+
+          <div class="inv-row">
+            <div class="inv-check on"></div>
+            <div class="icn brand">EV</div>
+            <div><div class="name">Eurovision 2026 brand pack</div><div class="sub">5 logos · 3 schemes · keyart</div></div>
+            <div class="qty">scoped to this show</div>
+            <div></div>
+          </div>
+
+          <div class="inv-row">
+            <div class="inv-check on"></div>
+            <div class="icn brand" style="background:var(--pink);">PV</div>
+            <div><div class="name">Pixel Vienna brand</div><div class="sub">auto-applied to PDF exports</div></div>
+            <div class="qty">default</div>
+            <div></div>
+          </div>
+        </div>
+
+        <div style="height:6px;"></div>
+
+        <div class="octopus">
+          <div class="ico"><svg viewBox="0 0 22 28" fill="currentColor" style="color:#fff;width:18px;height:22px;"><path d="M5 2.5V23.5L2 25.5V0.5L5 2.5ZM11.5 7V19L8.5 21V5L11.5 7ZM18 11.5V14.5L15 16.5V9.5L18 11.5Z"/></svg></div>
+          <div class="body">
+            <h3>Octopus billing &amp; entitlements</h3>
+            <p>Devices &amp; people come from your inventory; software &amp; subscriptions are entitlements managed in Octopus. Pick the licence that funds this production — the production platform reads, doesn't store.</p>
+            <select>
+              <option>L-2026-04 · vx 4+ shared pool · 5 / 12 seats free · billed per phase</option>
+              <option>L-2025-12 · Mapping Matter Pro · unlimited · annual</option>
+              <option>L-2026-01 · Aid3n Pro · seat-based · 24 seats</option>
+              <option>+ Buy a new licence in Octopus</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Footer -->
+    <div class="m-foot">
+      <div class="left">Press <b>⌘+Enter</b> to skip ahead</div>
+      <div class="right">
+        <a class="btn subtle" href="productions-grid.html">Cancel</a>
+        <button class="btn" id="backBtn" onclick="back()">← Back</button>
+        <button class="btn primary" id="nextBtn" onclick="next()">Continue →</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  function goTo(n) {
+    document.body.dataset.step = String(n);
+    update();
+  }
+  function next() {
+    const cur = parseInt(document.body.dataset.step, 10);
+    if (cur < 4) goTo(cur + 1);
+    else {
+      // Create — jump to production-home
+      window.location.href = 'production-home.html';
+    }
+  }
+  function back() {
+    const cur = parseInt(document.body.dataset.step, 10);
+    if (cur > 1) goTo(cur - 1);
+  }
+  function update() {
+    const cur = parseInt(document.body.dataset.step, 10);
+    document.getElementById('backBtn').disabled = (cur === 1);
+    document.getElementById('nextBtn').innerHTML = (cur === 4)
+      ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 12l5 5 10-12" stroke-linecap="round" stroke-linejoin="round"/></svg> Create production'
+      : 'Continue →';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  update();
+</script>
+
+<script src="assets/shared/launch-modal.js" defer></script>
+<script src="assets/shared/side-toggle.js" defer></script>
+</body>
+</html>

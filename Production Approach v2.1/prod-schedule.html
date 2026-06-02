@@ -1,0 +1,612 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Schedule — Eurovision 2026</title>
+<style>
+  :root {
+    --pink:#FF98F4; --pink-soft:rgba(255,152,244,0.10); --pink-tint:rgba(255,152,244,0.05);
+    --ink:#D0D5DD;
+    --grey-0:#101828; --grey-1:#1D2939; --grey-2:#344054; --grey-3:#344054; --grey-4:#4F5F79; --grey-5:#4E5D76; --grey-6:#98A2B3; --grey-7:#D0D5DD;
+    --av-border:#101828;
+    --purple:#a855f7; --purple-soft:#270045; --purple-ink:#D8B4FE;
+    --amber-bg:#48324C; --amber-ink:#FFE6DD; --amber:#FFE6DD;
+    --red-bg:#3D1F2C; --red-ink:#FFC0CB;
+    --green-bg:#1A3D34; --green-ink:#6BFFDC;
+    --violet-bg:#270045; --violet-ink:#D8B4FE;
+    --blue-bg:#1A2E4D; --blue-ink:#93C5FD;
+    --line:#344054;
+    --aid3n:#a74cee; --mm:#ff98f4; --schem:#6bffdc; --takes:#feff70;
+    --supp:#ff8559; --orange:#ffa98a;
+  }
+  * { box-sizing:border-box; }
+  html, body { margin:0; padding:0; background:#0A1020; color:var(--ink); font-family:-apple-system,BlinkMacSystemFont,"Inter","SF Pro Text","Helvetica Neue",Arial,sans-serif; -webkit-font-smoothing:antialiased; font-size:14px; }
+
+  .app { display:grid; grid-template-columns:72px 280px 1fr; min-height:100vh; }
+
+  .rail { background:var(--grey-1); border-right:1px solid var(--line); padding:16px 0; display:flex; flex-direction:column; align-items:center; gap:4px; }
+  .rail .brand { width:36px; height:36px; border-radius:8px; display:grid; place-items:center; margin-bottom:12px; }
+  .rail a.icon { text-decoration:none; color:inherit; }
+  .rail .icon { width:44px; height:44px; border-radius:10px; display:grid; place-items:center; color:var(--grey-7); cursor:pointer; position:relative; }
+  .rail .icon:hover { background:var(--grey-2); color:var(--ink); }
+  .rail .icon.active { background:rgba(255,109,240,0.10); color:#FF6DF0; }
+  .rail .icon svg { width:22px; height:22px; stroke-width:1.6; }
+  .rail .spacer { flex:1; }
+  .rail .storage { font-size:10px; color:var(--grey-6); margin-top:6px; }
+  .rail .dot-notify { position:absolute; top:8px; right:10px; width:8px; height:8px; background:#FF98F4; border-radius:50%; }
+
+  .main {
+    display:flex; flex-direction:column; min-width:0;
+    background-color:#0A1020;
+    background-image: radial-gradient(circle at center, #344054 1px, transparent 1.6px);
+    background-size: 40px 40px;
+  }
+  .main-top { padding:14px 24px; border-bottom:1px solid var(--line); display:flex; align-items:center; justify-content:space-between; gap:16px; background:rgba(10,16,32,0.85); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); }
+  .breadcrumb { display:flex; align-items:center; gap:8px; color:var(--grey-6); font-size:13px; }
+  .breadcrumb .crumb { cursor:pointer; text-decoration:none; color:inherit; }
+  .breadcrumb .crumb:hover { color:var(--ink); }
+  .breadcrumb .sep { color:var(--grey-4); }
+  .breadcrumb .current { color:var(--ink); font-weight:500; }
+  .topbar-actions { display:flex; align-items:center; gap:10px; }
+  .icon-btn { width:36px; height:36px; border-radius:50%; background:transparent; display:grid; place-items:center; cursor:pointer; color:var(--grey-7); position:relative; border:none; }
+  .icon-btn:hover { background:var(--grey-2); }
+  .icon-btn svg { width:18px; height:18px; stroke-width:1.7; }
+  .badge { position:absolute; top:2px; right:2px; min-width:16px; height:16px; padding:0 4px; border-radius:8px; background:var(--pink); color:#0a0a0c; font-size:10px; font-weight:600; display:grid; place-items:center; }
+  .avatar { width:34px; height:34px; border-radius:50%; background:var(--purple); color:#fff; font-size:13px; font-weight:600; display:grid; place-items:center; }
+
+  /* Header */
+  .prod-header { padding:22px 32px 0; border-bottom:1px solid var(--line); }
+  .prod-title { display:flex; align-items:center; gap:14px; margin-bottom:6px; }
+  .prod-title h1 { font-size:24px; font-weight:600; margin:0; letter-spacing:-0.01em; }
+  .pill { padding:3px 9px; border-radius:999px; font-size:11px; font-weight:600; display:inline-flex; align-items:center; gap:6px; }
+  .pill .dot { width:6px; height:6px; border-radius:50%; background:currentColor; }
+  .pill.rehearsal { color:var(--amber-ink); background:var(--amber-bg); }
+  .prod-summary { display:flex; align-items:center; gap:18px; color:var(--grey-6); font-size:12px; margin-bottom:18px; flex-wrap:wrap; }
+  .prod-summary .summary-item { display:inline-flex; align-items:center; gap:6px; }
+  .prod-summary .summary-item svg { width:14px; height:14px; stroke-width:1.7; }
+  .avatars { display:flex; }
+  .avatars .av { width:22px; height:22px; border-radius:50%; color:#fff; font-size:9px; font-weight:600; display:grid; place-items:center; border:2px solid var(--av-border); margin-left:-7px; }
+  .avatars .av:first-child { margin-left:0; }
+  .av.c1 { background:#f97316; } .av.c2 { background:#14b8a6; } .av.c3 { background:#8b5cf6; }
+  .av.c4 { background:#ec4899; } .av.c5 { background:#0ea5e9; } .av.c6 { background:#84cc16; }
+  .av.more { background:var(--grey-3); color:var(--grey-7); }
+
+  .tabs-row { display:flex; align-items:center; gap:4px; overflow-x:auto; }
+  .tabs-row::-webkit-scrollbar { display:none; }
+  .tab { display:inline-flex; align-items:center; gap:6px; padding:12px 14px; font-size:13px; cursor:pointer; color:var(--grey-6); border-bottom:2px solid transparent; font-weight:500; white-space:nowrap; text-decoration:none; }
+  .tab:hover { color:var(--ink); }
+  .tab.active { color:var(--pink); border-bottom-color:var(--pink); }
+  .tab .count { font-size:11px; color:var(--grey-5); background:var(--grey-2); padding:1px 7px; border-radius:999px; }
+  .tab.active .count { background:var(--pink-soft); color:var(--pink); }
+
+  /* Schedule page */
+  .sched-page { padding:24px 32px 64px; max-width:1400px; }
+
+  /* 6-phase lifecycle bar */
+  .lifecycle { display:flex; gap:6px; margin-bottom:28px; }
+  .ph { flex:1; padding:14px 16px; border-radius:10px; background:var(--grey-1); border:1px solid var(--grey-3); position:relative; cursor:pointer; transition:border-color 150ms; }
+  .ph:hover { border-color:var(--grey-4); }
+  .ph .num { font-size:10px; color:var(--grey-5); font-family:"JetBrains Mono",monospace; letter-spacing:0.06em; font-weight:600; margin-bottom:4px; }
+  .ph .lbl { font-size:13px; font-weight:600; color:var(--ink); }
+  .ph .sub { font-size:11px; color:var(--grey-6); margin-top:2px; }
+  .ph .dates { font-size:10px; color:var(--grey-5); margin-top:6px; font-family:"JetBrains Mono",monospace; letter-spacing:0.02em; }
+  .ph .marker { position:absolute; bottom:-9px; left:50%; transform:translateX(-50%); width:14px; height:14px; border-radius:50%; background:var(--grey-3); border:3px solid #0A1020; }
+  .ph.done .num { color:var(--green-ink); }
+  .ph.done .marker { background:var(--green-ink); }
+  .ph.done .lbl { color:var(--grey-7); }
+  .ph.current { background:linear-gradient(180deg, rgba(255,152,244,0.10), var(--grey-1)); border-color:var(--pink); box-shadow:0 0 0 3px rgba(255,152,244,0.08); }
+  .ph.current .num { color:var(--pink); }
+  .ph.current .lbl { color:var(--pink); }
+  .ph.current .marker { background:var(--pink); animation:pulse 1.6s infinite; }
+  @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.4; } }
+  .ph.future { opacity:0.55; }
+  .ph.future .lbl { color:var(--grey-6); }
+  .ph .now-flag { position:absolute; top:6px; right:8px; background:var(--pink); color:#0a0a0c; padding:1px 6px; border-radius:4px; font-size:9px; font-weight:700; letter-spacing:0.06em; font-family:"JetBrains Mono",monospace; }
+
+  /* View controls */
+  .view-controls { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; flex-wrap:wrap; gap:12px; }
+  .seg { display:inline-flex; background:var(--grey-1); border:1px solid var(--grey-3); border-radius:10px; padding:3px; gap:2px; }
+  .seg button { padding:7px 14px; border-radius:7px; border:none; background:transparent; cursor:pointer; font-size:12px; font-weight:500; color:var(--grey-6); font-family:inherit; }
+  .seg button:hover { color:var(--ink); }
+  .seg button.active { background:var(--grey-2); color:var(--ink); }
+  .month-nav { display:flex; align-items:center; gap:8px; }
+  .month-nav h3 { font-size:15px; font-weight:600; margin:0; color:var(--ink); }
+  .icon-mini { width:32px; height:32px; border-radius:8px; border:1px solid var(--grey-3); background:var(--grey-1); cursor:pointer; color:var(--grey-7); display:grid; place-items:center; }
+  .icon-mini:hover { background:var(--grey-2); }
+  .icon-mini svg { width:14px; height:14px; stroke-width:2; }
+  .btn { display:inline-flex; align-items:center; gap:6px; padding:8px 14px; border-radius:9px; font-size:13px; font-weight:600; cursor:pointer; border:1px solid transparent; background:var(--grey-1); color:var(--ink); font-family:inherit; text-decoration:none; }
+  .btn:hover { background:var(--grey-2); }
+  .btn-primary { background:var(--pink); color:#0a0a0c; border-color:var(--pink); }
+  .btn-primary:hover { background:var(--pink); filter:brightness(1.05); }
+  .btn-secondary { border-color:var(--grey-3); }
+
+  /* Gantt timeline */
+  .gantt { background:var(--grey-1); border:1px solid var(--grey-3); border-radius:14px; overflow:hidden; }
+  .gantt-head { display:grid; grid-template-columns:200px 1fr; gap:0; border-bottom:1px solid var(--grey-3); }
+  .gantt-head .label { padding:12px 14px; font-size:11px; color:var(--grey-6); text-transform:uppercase; letter-spacing:0.06em; font-weight:700; font-family:"JetBrains Mono",monospace; }
+  .month-grid { display:grid; grid-template-columns:repeat(7, 1fr); }
+  .month-cell { padding:12px 0; text-align:center; font-size:11px; color:var(--grey-6); text-transform:uppercase; letter-spacing:0.06em; font-weight:700; border-left:1px solid var(--line); font-family:"JetBrains Mono",monospace; }
+  .month-cell:first-child { border-left:none; }
+  .month-cell.now { background:rgba(255,152,244,0.08); color:var(--pink); }
+
+  .gantt-body { position:relative; }
+  .gantt-row { display:grid; grid-template-columns:200px 1fr; gap:0; border-top:1px solid var(--line); align-items:stretch; min-height:48px; }
+  .gantt-row:first-child { border-top:none; }
+  .row-label { padding:12px 14px; font-size:13px; font-weight:500; color:var(--ink); display:flex; align-items:center; gap:10px; border-right:1px solid var(--line); }
+  .row-label .sub { font-size:11px; color:var(--grey-6); margin-top:2px; }
+  .row-label .ico { width:24px; height:24px; border-radius:6px; display:grid; place-items:center; color:#0a0a0c; font-size:10px; font-weight:700; flex-shrink:0; font-family:"JetBrains Mono",monospace; }
+  .ico.pitch     { background:var(--aid3n); }
+  .ico.design    { background:var(--mm); }
+  .ico.proc      { background:var(--schem); }
+  .ico.rehearse  { background:var(--orange); }
+  .ico.show      { background:var(--supp); }
+  .ico.wrap      { background:var(--takes); }
+  .ico.av-c1 { background:#f97316; color:#fff; } .ico.av-c2 { background:#14b8a6; color:#fff; }
+  .ico.av-c3 { background:#8b5cf6; color:#fff; } .ico.av-c4 { background:#ec4899; color:#fff; }
+  .ico.av-c5 { background:#0ea5e9; color:#fff; }
+
+  .row-bars { position:relative; padding:10px 0; }
+  .bar { position:absolute; height:28px; border-radius:6px; display:flex; align-items:center; padding:0 10px; font-size:11px; font-weight:600; color:#0a0a0c; white-space:nowrap; overflow:hidden; top:10px; }
+  .bar.pitch-bar    { background:var(--aid3n); color:#fff; }
+  .bar.design-bar   { background:var(--mm); }
+  .bar.proc-bar     { background:var(--schem); }
+  .bar.rehearse-bar { background:var(--orange); }
+  .bar.show-bar     { background:var(--supp); color:#fff; }
+  .bar.wrap-bar     { background:var(--takes); }
+  .bar.av-c1 { background:#f97316; color:#fff; } .bar.av-c2 { background:#14b8a6; color:#fff; }
+  .bar.av-c3 { background:#8b5cf6; color:#fff; } .bar.av-c4 { background:#ec4899; color:#fff; }
+  .bar.av-c5 { background:#0ea5e9; color:#fff; }
+
+  .milestone { position:absolute; top:10px; width:28px; height:28px; display:grid; place-items:center; transform:translateX(-50%); }
+  .milestone .diamond { width:14px; height:14px; background:var(--pink); transform:rotate(45deg); border:2px solid #0A1020; box-shadow:0 1px 3px rgba(0,0,0,0.4); }
+  .milestone.done .diamond { background:var(--green-ink); }
+  .milestone.next .diamond { background:var(--amber-ink); }
+  .milestone .label-tt { position:absolute; bottom:32px; left:50%; transform:translateX(-50%); background:var(--ink); color:#0a0a0c; padding:3px 8px; border-radius:6px; font-size:10px; font-weight:600; white-space:nowrap; display:none; z-index:10; }
+  .milestone:hover .label-tt { display:block; }
+
+  /* Today marker */
+  .today { position:absolute; top:0; bottom:0; width:2px; background:var(--pink); z-index:5; pointer-events:none; }
+  .today::before { content:"TODAY"; position:absolute; top:-22px; left:50%; transform:translateX(-50%); background:var(--pink); color:#0a0a0c; padding:2px 8px; border-radius:4px; font-size:9px; font-weight:700; letter-spacing:0.05em; font-family:"JetBrains Mono",monospace; }
+
+  /* Show dots */
+  .show-dot { position:absolute; top:22px; width:8px; height:8px; background:#0A1020; border-radius:50%; border:2px solid var(--supp); transform:translateX(-50%); z-index:2; }
+
+  /* Bottom cards */
+  .list-section { margin-top:24px; display:grid; grid-template-columns:2fr 1fr; gap:18px; }
+  @media (max-width:1000px) { .list-section { grid-template-columns:1fr; } }
+  .card { background:var(--grey-1); border:1px solid var(--grey-3); border-radius:14px; padding:18px 20px; }
+  .card .head h3 { margin:0 0 14px; font-size:14px; font-weight:600; color:var(--ink); }
+  .show-row { display:grid; grid-template-columns:60px 1fr 110px 90px; gap:12px; align-items:center; padding:12px 0; border-top:1px solid var(--line); }
+  .show-row:first-of-type { border-top:none; }
+  .show-row .date { font-size:11px; line-height:1.1; }
+  .show-row .date .day { font-size:20px; font-weight:600; color:var(--ink); display:block; }
+  .show-row .date .mo { color:var(--grey-6); text-transform:uppercase; letter-spacing:0.06em; font-size:10px; font-family:"JetBrains Mono",monospace; }
+  .show-row .venue { font-size:13px; font-weight:500; color:var(--ink); }
+  .show-row .city { font-size:11px; color:var(--grey-6); margin-top:2px; }
+  .show-row .time { font-size:12px; color:var(--grey-6); font-family:"JetBrains Mono",monospace; }
+  .show-row .status-mini { padding:3px 8px; border-radius:999px; font-size:10px; font-weight:600; text-align:center; }
+  .status-mini.first    { background:var(--pink-soft); color:var(--pink); }
+  .status-mini.upcoming { background:var(--grey-2); color:var(--grey-6); }
+  .status-mini.grand    { background:rgba(255,133,89,0.15); color:var(--supp); }
+  .ms-row { display:flex; align-items:center; gap:10px; padding:11px 0; border-top:1px solid var(--line); font-size:13px; }
+  .ms-row:first-of-type { border-top:none; }
+  .ms-diamond { width:10px; height:10px; transform:rotate(45deg); flex-shrink:0; }
+  .ms-diamond.done { background:var(--green-ink); }
+  .ms-diamond.today { background:var(--pink); }
+  .ms-diamond.upcoming { background:var(--amber-ink); }
+  .ms-row .nm { flex:1; font-weight:500; color:var(--ink); }
+  .ms-row .dt { font-size:11px; color:var(--grey-6); font-family:"JetBrains Mono",monospace; }
+
+  /* Aid3n FAB */
+  .aid3n-fab { position:fixed; bottom:22px; right:22px; background:linear-gradient(135deg, #4c1d95 0%, #7b2bff 100%); color:#fff; border-radius:999px; padding:10px 16px 10px 10px; display:inline-flex; align-items:center; gap:10px; box-shadow:0 14px 30px rgba(123,43,255,0.35), 0 0 0 1px rgba(216,180,254,0.25) inset; cursor:pointer; font-size:13px; font-weight:600; z-index:100; text-decoration:none; }
+  .aid3n-fab .av { width:28px; height:28px; border-radius:50%; background:rgba(255,255,255,0.18); display:grid; place-items:center; }
+  .aid3n-fab .av svg { width:14px; height:14px; stroke-width:2; }
+  .aid3n-fab .pulse-dot { width:7px; height:7px; border-radius:50%; background:#6BFFDC; animation:fabPulse 1.8s infinite; }
+  @keyframes fabPulse { 0% { box-shadow:0 0 0 0 rgba(107,255,220,0.5); } 70% { box-shadow:0 0 0 8px rgba(107,255,220,0); } 100% { box-shadow:0 0 0 0 rgba(107,255,220,0); } }
+  /* Rail · Octopus minimised nav (additions) */
+  .rail { padding: 14px 0 12px; overflow-y: auto; }
+  .rail::-webkit-scrollbar { display: none; }
+  .rail .brand { margin-bottom: 4px; flex-shrink: 0; }
+  .rail .icon { flex-shrink: 0; }
+  .rail .icon.active { background: rgba(255, 109, 240, 0.12); color: #FF6DF0; }
+  .rail .icon.prod-launcher { padding: 0; }
+  .rail .icon.prod-launcher:hover { background: transparent; }
+  .rail .icon.prod-launcher img { width: 36px; height: 36px; border-radius: 8px; display: block; transition: transform 0.15s; }
+  .rail .icon.prod-launcher:hover img { transform: scale(1.06); }
+  .rail .spacer { flex: 1; min-height: 12px; }
+  .rail .storage { font-size: 10px; color: var(--grey-6); margin-top: 4px; flex-shrink: 0; }
+  .rail .dot-notify { top: 6px; right: 8px; }
+  .rail .rail-sep { width: 28px; height: 1px; background: var(--line); margin: 6px 0; flex-shrink: 0; }
+  .rail .rail-gap { height: 14px; flex-shrink: 0; }
+</style>
+</head>
+<body>
+<div class="app">
+
+    <!-- Icon rail · Octopus minimised nav -->
+  <div class="rail">
+    <a class="brand" href="index.html" title="Octopus · Index">
+      <svg viewBox="0 0 22 28" fill="currentColor" style="color:var(--ink);width:22px;height:28px;display:block;"><path d="M5 2.5V23.5L2 25.5V0.5L5 2.5ZM11.5 7V19L8.5 21V5L11.5 7ZM18 11.5V14.5L15 16.5V9.5L18 11.5Z"/></svg>
+    </a>
+    <a class="icon" href="index.html" title="Index · toggle sidebar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="18" height="16" rx="2" stroke-width="1.7"/><path d="M9 4v16" stroke-width="1.7" stroke-linecap="round"/><path d="M13 9l3 3-3 3" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+
+    <div class="rail-gap"></div>
+
+    <a class="icon" href="#" title="Home">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 11l9-8 9 8M5 9v11h14V9M10 20v-6h4v6" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+    <a class="icon" href="#" title="Venues">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="4" y="3" width="16" height="18" rx="1" stroke-width="1.7"/><rect x="7.3" y="6" width="3" height="3" stroke-width="1.4"/><rect x="13.7" y="6" width="3" height="3" stroke-width="1.4"/><rect x="7.3" y="11" width="3" height="3" stroke-width="1.4"/><rect x="13.7" y="11" width="3" height="3" stroke-width="1.4"/><rect x="7.3" y="16" width="3" height="3" stroke-width="1.4"/><rect x="13.7" y="16" width="3" height="3" stroke-width="1.4"/></svg>
+    </a>
+    <a class="icon" href="inventories.html" title="Software">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9L12 3z" stroke-width="1.7" stroke-linejoin="round"/><path d="M12 12l8-4.5M12 12L4 7.5M12 12v9" stroke-width="1.7"/></svg>
+    </a>
+    <a class="icon" href="#" title="Subscriptions">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="6" width="18" height="13" rx="2" stroke-width="1.7"/><path d="M3 11h18" stroke-width="1.7"/></svg>
+    </a>
+    <a class="icon" href="#" title="Imports">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 4v12M6 10l6 6 6-6M4 20h16" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+    <a class="icon active" href="productions-grid.html" title="Productions">
+      <svg viewBox="0 0 24 24" width="22" height="22"><circle cx="9" cy="10" r="5" fill="#FF98F4" opacity="0.72"/><circle cx="14" cy="14" r="5" fill="#FF6DF0" opacity="0.92"/></svg>
+    </a>
+    <a class="icon" href="#" title="Knowledge">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="4" y="3" width="16" height="18" rx="1" stroke-width="1.7"/><path d="M10 16l2-7 2 7M11 13.5h2" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+    <a class="icon" href="#" title="Support">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="9" stroke-width="1.7"/><path d="M9 9a3 3 0 116 0c0 2-3 2-3 4M12 17.5h.01" stroke-width="1.7" stroke-linecap="round"/></svg>
+    </a>
+
+    <div class="rail-sep"></div>
+
+    <a class="icon prod-launcher" href="lens-mapping-matter.html" title="Mapping Matter">
+      <img src="assets/products/mapping-matter.svg" alt=""/>
+    </a>
+    <a class="icon prod-launcher" href="#" title="Designer">
+      <img src="assets/products/designer.svg" alt=""/>
+    </a>
+    <a class="icon prod-launcher" href="#" title="Porta">
+      <img src="assets/products/porta.svg" alt=""/>
+    </a>
+    <a class="icon prod-launcher" href="#" title="RenderStream">
+      <img src="assets/products/renderstream.svg" alt=""/>
+    </a>
+
+    <div class="spacer"></div>
+
+    <a class="icon" href="#" title="Notifications">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 10a6 6 0 1112 0c0 7 3 8 3 8H3s3-1 3-8M10 21h4" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span class="dot-notify"></span>
+    </a>
+    <a class="icon" href="#" title="My subscription · billing">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="6" width="18" height="13" rx="2" stroke-width="1.7"/><path d="M3 11h18" stroke-width="1.7"/></svg>
+    </a>
+    <div class="storage">0.8%</div>
+  </div>
+
+  <aside class="side" data-prod-sidebar></aside>
+
+  <main class="main">
+
+    <div class="main-top">
+      <div class="breadcrumb">
+        <a class="crumb" href="productions-grid.html">Productions</a>
+        <span class="sep">/</span>
+        <a class="crumb" href="production-home.html">Eurovision 2026</a>
+        <span class="sep">/</span>
+        <span class="current">Schedule</span>
+      </div>
+      <div class="topbar-actions">
+        <button class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="7" stroke-width="1.7"/><path d="M16 16l5 5" stroke-width="1.7" stroke-linecap="round"/></svg></button>
+        <button class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 10a6 6 0 1112 0c0 7 3 8 3 8H3s3-1 3-8M10 21h4" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="badge">3</span></button>
+        <div class="avatar">W</div>
+      </div>
+    </div>
+
+    <div class="prod-header">
+      <div class="prod-title">
+        <h1>Eurovision Song Contest 2026</h1>
+        <span class="pill rehearsal"><span class="dot"></span> Design phase</span>
+      </div>
+      <div class="prod-summary">
+        <span class="summary-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="5" width="18" height="16" rx="2" stroke-width="1.7"/><path d="M3 9h18M8 3v4M16 3v4" stroke-width="1.7"/></svg>May 8 → 16, 2026</span>
+        <span class="summary-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2c4 4 6 7 6 11a6 6 0 01-12 0c0-4 2-7 6-11z" stroke-width="1.7"/></svg>Stadthalle Vienna · 9 days to first show</span>
+        <span class="summary-item"><div class="avatars"><span class="av c1">IP</span><span class="av c4">CP</span><span class="av c2">RM</span><span class="av c6">LK</span><span class="av more">+5</span></div>9 team members</span>
+      </div>
+
+      <div class="tabs-row">
+        <a class="tab" href="production-home.html">Overview</a>
+        <a class="tab" href="prod-team.html">Team <span class="count">9</span></a>
+        <a class="tab active" href="prod-schedule.html">Schedule</a>
+        <a class="tab" href="prod-settings.html">Settings</a>
+      </div>
+    </div>
+
+    <div class="sched-page">
+
+      <!-- 6-phase lifecycle bar -->
+      <div class="lifecycle">
+        <div class="ph done">
+          <div class="num">01 ✓</div>
+          <div class="lbl">Pitch</div>
+          <div class="sub">Concept · bid · brief</div>
+          <div class="dates">Nov 10 → Jan 14</div>
+          <div class="marker"></div>
+        </div>
+        <div class="ph current">
+          <span class="now-flag">NOW</span>
+          <div class="num">02</div>
+          <div class="lbl">Design</div>
+          <div class="sub">Build the show</div>
+          <div class="dates">Jan 14 → Apr 30</div>
+          <div class="marker"></div>
+        </div>
+        <div class="ph future">
+          <div class="num">03</div>
+          <div class="lbl">Procurement</div>
+          <div class="sub">Inventory · schedule</div>
+          <div class="dates">Mar 24 → Apr 26</div>
+          <div class="marker"></div>
+        </div>
+        <div class="ph future">
+          <div class="num">04</div>
+          <div class="lbl">Rehearsal</div>
+          <div class="sub">On-site programming</div>
+          <div class="dates">Apr 28 → May 7</div>
+          <div class="marker"></div>
+        </div>
+        <div class="ph future">
+          <div class="num">05</div>
+          <div class="lbl">Show</div>
+          <div class="sub">5 broadcasts</div>
+          <div class="dates">May 8 → May 16</div>
+          <div class="marker"></div>
+        </div>
+        <div class="ph future">
+          <div class="num">06</div>
+          <div class="lbl">Wrap</div>
+          <div class="sub">Strike · archive</div>
+          <div class="dates">May 16 → May 22</div>
+          <div class="marker"></div>
+        </div>
+      </div>
+
+      <!-- View controls -->
+      <div class="view-controls">
+        <div class="month-nav">
+          <button class="icon-mini"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M15 6l-6 6 6 6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <h3>Nov 2025 → May 2026</h3>
+          <button class="icon-mini"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 6l6 6-6 6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+          <div class="seg">
+            <button>Day</button>
+            <button>Week</button>
+            <button class="active">Month</button>
+            <button>Quarter</button>
+          </div>
+          <button class="btn btn-secondary">Today</button>
+          <button class="btn btn-primary">+ Milestone</button>
+        </div>
+      </div>
+
+      <!-- Gantt timeline -->
+      <div class="gantt">
+        <div class="gantt-head">
+          <span class="label">Track</span>
+          <div class="month-grid">
+            <div class="month-cell">Nov</div>
+            <div class="month-cell">Dec</div>
+            <div class="month-cell">Jan</div>
+            <div class="month-cell">Feb</div>
+            <div class="month-cell">Mar</div>
+            <div class="month-cell now">Apr</div>
+            <div class="month-cell">May</div>
+          </div>
+        </div>
+
+        <div class="gantt-body">
+
+          <!-- Today line · Apr 29 ≈ 83% of 7-month span -->
+          <div class="today" style="left:calc(200px + 83%);"></div>
+
+          <!-- Pitch -->
+          <div class="gantt-row">
+            <div class="row-label"><span class="ico pitch">P</span><div>Pitch<div class="sub">Concept · bid · brief</div></div></div>
+            <div class="row-bars">
+              <div class="bar pitch-bar" style="left:0%; width:18%;">Pitch · won</div>
+            </div>
+          </div>
+
+          <!-- Design -->
+          <div class="gantt-row">
+            <div class="row-label"><span class="ico design">D</span><div>Design<div class="sub">MM · System · Takes</div></div></div>
+            <div class="row-bars">
+              <div class="bar design-bar" style="left:18%; width:63%;">Design · in progress</div>
+            </div>
+          </div>
+
+          <!-- Procurement -->
+          <div class="gantt-row">
+            <div class="row-label"><span class="ico proc">Pr</span><div>Procurement<div class="sub">Inventory · schedule</div></div></div>
+            <div class="row-bars">
+              <div class="bar proc-bar" style="left:68%; width:14%;">Procurement</div>
+            </div>
+          </div>
+
+          <!-- Rehearsal -->
+          <div class="gantt-row">
+            <div class="row-label"><span class="ico rehearse">R</span><div>Rehearsal<div class="sub">On-site programming</div></div></div>
+            <div class="row-bars">
+              <div class="bar rehearse-bar" style="left:82%; width:10%;">Rehearsal</div>
+            </div>
+          </div>
+
+          <!-- Show -->
+          <div class="gantt-row">
+            <div class="row-label"><span class="ico show">S</span><div>Show<div class="sub">5 broadcasts</div></div></div>
+            <div class="row-bars">
+              <div class="bar show-bar" style="left:92%; width:6%;">Show · 5 broadcasts</div>
+              <div class="show-dot" style="left:92.2%;"></div>
+              <div class="show-dot" style="left:93.6%;"></div>
+              <div class="show-dot" style="left:95.0%;"></div>
+              <div class="show-dot" style="left:96.4%;"></div>
+              <div class="show-dot" style="left:97.8%;"></div>
+            </div>
+          </div>
+
+          <!-- Wrap -->
+          <div class="gantt-row">
+            <div class="row-label"><span class="ico wrap">W</span><div>Wrap<div class="sub">Strike · archive</div></div></div>
+            <div class="row-bars">
+              <div class="bar wrap-bar" style="left:98%; width:2%;">Wrap</div>
+            </div>
+          </div>
+
+          <!-- Milestones -->
+          <div class="gantt-row">
+            <div class="row-label" style="font-size:12px;color:var(--grey-6);"><span style="width:10px;height:10px;background:var(--pink);transform:rotate(45deg);flex-shrink:0;"></span>Milestones</div>
+            <div class="row-bars" style="min-height:48px;">
+              <div class="milestone done" style="left:14%;"><div class="diamond"></div><div class="label-tt">Pitch sign-off · Jan 15</div></div>
+              <div class="milestone done" style="left:34%;"><div class="diamond"></div><div class="label-tt">Hero concept locked · Feb 4</div></div>
+              <div class="milestone done" style="left:60%;"><div class="diamond"></div><div class="label-tt">Design v1 lock · Mar 15</div></div>
+              <div class="milestone" style="left:82%;"><div class="diamond"></div><div class="label-tt">Design v2 lock · today</div></div>
+              <div class="milestone next" style="left:88%;"><div class="diamond"></div><div class="label-tt">First on-site rehearsal · May 5</div></div>
+              <div class="milestone next" style="left:95%;"><div class="diamond"></div><div class="label-tt">SF1 broadcast · May 12</div></div>
+              <div class="milestone next" style="left:98%;"><div class="diamond"></div><div class="label-tt">Grand Final · May 16</div></div>
+            </div>
+          </div>
+
+          <!-- Team assignments -->
+          <div class="gantt-row">
+            <div class="row-label"><span class="ico av-c1">IP</span><div>Igor Pancaldi<div class="sub">Owner · Producer</div></div></div>
+            <div class="row-bars">
+              <div class="bar av-c1" style="left:0%; width:100%; opacity:0.85;">Whole production</div>
+            </div>
+          </div>
+          <div class="gantt-row">
+            <div class="row-label"><span class="ico av-c2">RM</span><div>Robin Marshall<div class="sub">Technical Director</div></div></div>
+            <div class="row-bars">
+              <div class="bar av-c2" style="left:18%; width:82%; opacity:0.85;">Design → Wrap</div>
+            </div>
+          </div>
+          <div class="gantt-row">
+            <div class="row-label"><span class="ico av-c3">LK</span><div>Lauren Kiki<div class="sub">Designer · freelance</div></div></div>
+            <div class="row-bars">
+              <div class="bar av-c3" style="left:18%; width:64%; opacity:0.85;">Design + Procurement</div>
+            </div>
+          </div>
+          <div class="gantt-row">
+            <div class="row-label"><span class="ico av-c4">CP</span><div>Camilla Powell<div class="sub">Producer · Operator</div></div></div>
+            <div class="row-bars">
+              <div class="bar av-c4" style="left:0%; width:100%; opacity:0.85;">Whole production</div>
+            </div>
+          </div>
+          <div class="gantt-row">
+            <div class="row-label"><span class="ico av-c5">MC</span><div>Mariana Cruz<div class="sub">L2 engineer · on-call</div></div></div>
+            <div class="row-bars">
+              <div class="bar av-c5" style="left:82%; width:18%; opacity:0.85;">Rehearsal → Show on-call</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Bottom: show list + milestones -->
+      <div class="list-section">
+        <div class="card">
+          <div class="head"><h3>Broadcast schedule · 5 shows</h3></div>
+          <div class="show-row">
+            <div class="date"><span class="day">08</span><span class="mo">May · Fri</span></div>
+            <div><div class="venue">Family show 1</div><div class="city">Stadthalle Vienna · 16,000 cap · dress run</div></div>
+            <div class="time">Call 14:00<br>Show 21:00</div>
+            <div class="status-mini first">First show</div>
+          </div>
+          <div class="show-row">
+            <div class="date"><span class="day">10</span><span class="mo">May · Sun</span></div>
+            <div><div class="venue">Family show 2</div><div class="city">Stadthalle Vienna · second dress</div></div>
+            <div class="time">Call 14:00<br>Show 21:00</div>
+            <div class="status-mini upcoming">In 2 days</div>
+          </div>
+          <div class="show-row">
+            <div class="date"><span class="day">12</span><span class="mo">May · Tue</span></div>
+            <div><div class="venue">Semi-final 1</div><div class="city">Live broadcast · 35 countries</div></div>
+            <div class="time">Call 13:00<br>Live 21:00</div>
+            <div class="status-mini upcoming">In 4 days</div>
+          </div>
+          <div class="show-row">
+            <div class="date"><span class="day">14</span><span class="mo">May · Thu</span></div>
+            <div><div class="venue">Semi-final 2</div><div class="city">Live broadcast · 35 countries</div></div>
+            <div class="time">Call 13:00<br>Live 21:00</div>
+            <div class="status-mini upcoming">In 6 days</div>
+          </div>
+          <div class="show-row">
+            <div class="date"><span class="day">16</span><span class="mo">May · Sat</span></div>
+            <div><div class="venue">Grand Final</div><div class="city">Live broadcast · 180M+ viewers</div></div>
+            <div class="time">Call 12:00<br>Live 21:00</div>
+            <div class="status-mini grand">Grand Final</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="head"><h3>Milestones</h3></div>
+          <div class="ms-row">
+            <span class="ms-diamond done"></span>
+            <span class="nm">Pitch sign-off</span>
+            <span class="dt">Jan 15 · Done</span>
+          </div>
+          <div class="ms-row">
+            <span class="ms-diamond done"></span>
+            <span class="nm">Hero concept locked</span>
+            <span class="dt">Feb 4 · Done</span>
+          </div>
+          <div class="ms-row">
+            <span class="ms-diamond done"></span>
+            <span class="nm">Design v1 lock</span>
+            <span class="dt">Mar 15 · Done</span>
+          </div>
+          <div class="ms-row">
+            <span class="ms-diamond today"></span>
+            <span class="nm">Design v2 lock</span>
+            <span class="dt">Today · 17:00</span>
+          </div>
+          <div class="ms-row">
+            <span class="ms-diamond upcoming"></span>
+            <span class="nm">Hardware to venue</span>
+            <span class="dt">May 1</span>
+          </div>
+          <div class="ms-row">
+            <span class="ms-diamond upcoming"></span>
+            <span class="nm">First on-site rehearsal</span>
+            <span class="dt">May 5</span>
+          </div>
+          <div class="ms-row">
+            <span class="ms-diamond upcoming"></span>
+            <span class="nm">SF1 broadcast</span>
+            <span class="dt">May 12</span>
+          </div>
+          <div class="ms-row">
+            <span class="ms-diamond upcoming"></span>
+            <span class="nm">Grand Final</span>
+            <span class="dt">May 16</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<a class="aid3n-fab" href="lens-aid3n.html">
+  <span class="av"><svg viewBox="0 0 13 17" fill="currentColor"><path d="M6.02832 0.00195312L10.7539 10.0332L12.0557 12.7949L6.02832 16.3164H6.02734L0 12.7949L1.30176 10.0332L6.02832 0V0.00195312ZM5.03516 9.55078L2.49316 10.543L5.03516 11.5352L6.02734 14.0771L7.01953 11.5352L9.5625 10.543L7.01953 9.55078L6.02734 7.00879L5.03516 9.55078Z"/></svg></span>
+  Aid3n
+  <span class="pulse-dot"></span>
+</a>
+
+<script src="assets/shared/sidebar.js" defer></script>
+<script src="assets/shared/launch-modal.js" defer></script>
+<script src="assets/shared/side-toggle.js" defer></script>
+</body>
+</html>

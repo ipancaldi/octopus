@@ -1,0 +1,476 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Support — Eurovision 2026</title>
+<style>
+  :root {
+    --pink:#FF98F4; --pink-soft:rgba(255,152,244,0.10);
+    --ink:#D0D5DD; --bg:#101828;
+    --grey-0:#101828; --grey-1:#1D2939; --grey-2:#344054; --grey-3:#344054; --grey-4:#4F5F79; --grey-5:#4E5D76; --grey-6:#98A2B3; --grey-7:#D0D5DD;
+    --av-border:#101828;
+    --purple:#a855f7; --purple-soft:#270045; --purple-ink:#D8B4FE;
+    --amber-bg:#48324C; --amber-ink:#FFE6DD;
+    --red-bg:#3D1F2C; --red-ink:#FFC0CB; --red:#ef4444;
+    --green-bg:#1A3D34; --green-ink:#6BFFDC;
+    --violet-bg:#270045; --violet-ink:#D8B4FE;
+    --blue-bg:#1A2E4D; --blue-ink:#93C5FD;
+    --line:#344054;
+    --supp:#FFC0CB; --supp-bg:#3D1F2C;
+  }
+  * { box-sizing:border-box; }
+  html,body { margin:0; padding:0; background:var(--grey-0); color:var(--ink); font-family:-apple-system,BlinkMacSystemFont,"Inter","SF Pro Text","Helvetica Neue",Arial,sans-serif; -webkit-font-smoothing:antialiased; font-size:14px; }
+  .mono { font-family:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,monospace; }
+
+  .app { display:grid; grid-template-columns:72px 280px 1fr; min-height:100vh; }
+
+  /* Rail */
+  .rail { background:var(--grey-1); border-right:1px solid var(--line); padding:16px 0; display:flex; flex-direction:column; align-items:center; gap:4px; }
+  .rail .brand { width:36px; height:36px; border-radius:8px; display:grid; place-items:center; margin-bottom:12px; }
+  .rail a.icon { text-decoration:none; color:inherit; }
+  .rail .icon { width:44px; height:44px; border-radius:10px; display:grid; place-items:center; color:var(--grey-7); cursor:pointer; position:relative; }
+  .rail .icon:hover { background:var(--grey-2); color:var(--ink); }
+  .rail .icon.active { background:rgba(255,192,203,0.10); color:var(--supp); }
+  .rail .icon svg { width:22px; height:22px; stroke-width:1.6; }
+  .rail .spacer { flex:1; }
+  .rail .storage { font-size:10px; color:var(--grey-6); margin-top:6px; }
+  .rail .dot-notify { position:absolute; top:8px; right:10px; width:8px; height:8px; background:#FF98F4; border-radius:50%; }
+
+  /* Side */
+  .side { background:var(--grey-1); border-right:1px solid var(--line); padding:24px 18px; display:flex; flex-direction:column; gap:4px; }
+  .side .back { display:inline-flex; align-items:center; gap:8px; color:var(--grey-6); font-size:12px; cursor:pointer; margin-bottom:14px; text-decoration:none; }
+  .side .back:hover { color:var(--ink); }
+  .side .back svg { width:14px; height:14px; stroke-width:1.8; }
+  .side .prod-name { font-size:17px; font-weight:600; line-height:1.25; margin-bottom:8px; }
+  .pill { padding:3px 9px; border-radius:999px; font-size:11px; font-weight:600; display:inline-flex; align-items:center; gap:6px; }
+  .pill .dot { width:6px; height:6px; border-radius:50%; background:currentColor; }
+  .pill.rehearsal { color:var(--amber-ink); background:var(--amber-bg); }
+  .side .prod-sub { font-size:12px; color:var(--grey-6); margin-top:8px; line-height:1.5; }
+  .side hr { border:none; border-top:1px solid var(--line); margin:16px 0; }
+  .group-label { font-size:10px; color:var(--grey-5); letter-spacing:0.08em; text-transform:uppercase; padding:0 8px 8px; font-weight:600; display:flex; align-items:center; justify-content:space-between; }
+  .group-label .meta { text-transform:none; letter-spacing:0; color:var(--grey-6); font-family:"JetBrains Mono",monospace; }
+
+  /* Ticket list in sidebar */
+  .ticket-list { display:flex; flex-direction:column; gap:4px; }
+  .ticket-item { background:var(--grey-2); border:1px solid var(--grey-3); border-radius:10px; padding:10px 12px; cursor:pointer; display:flex; flex-direction:column; gap:4px; }
+  .ticket-item.active { border-color:var(--supp); background:linear-gradient(180deg, rgba(255,192,203,0.10), rgba(255,192,203,0.02)); }
+  .ticket-item .id-row { font-size:10px; color:var(--grey-5); font-family:"JetBrains Mono",monospace; display:flex; align-items:center; gap:6px; }
+  .ticket-item .id-row .sev { padding:1px 6px; border-radius:4px; font-weight:700; }
+  .ticket-item .id-row .sev.p1 { background:var(--red-bg); color:var(--red-ink); }
+  .ticket-item .id-row .sev.p2 { background:var(--amber-bg); color:var(--amber-ink); }
+  .ticket-item .id-row .sev.p3 { background:var(--grey-2); color:var(--grey-6); }
+  .ticket-item .id-row .stat { margin-left:auto; }
+  .ticket-item .id-row .stat.open { color:var(--red-ink); }
+  .ticket-item .id-row .stat.wait { color:var(--amber-ink); }
+  .ticket-item .id-row .stat.done { color:var(--green-ink); }
+  .ticket-item .title { font-size:13px; color:var(--ink); line-height:1.35; font-weight:500; }
+  .ticket-item .meta { font-size:10px; color:var(--grey-5); font-family:"JetBrains Mono",monospace; }
+
+  /* Main */
+  .main { display:flex; flex-direction:column; min-width:0; padding-bottom:80px; }
+  .main-top { padding:14px 24px; border-bottom:1px solid var(--line); display:flex; align-items:center; justify-content:space-between; gap:16px; }
+  .breadcrumb { display:flex; align-items:center; gap:8px; color:var(--grey-6); font-size:13px; }
+  .breadcrumb .crumb { cursor:pointer; text-decoration:none; color:inherit; }
+  .breadcrumb .crumb:hover { color:var(--ink); }
+  .breadcrumb .sep { color:var(--grey-4); }
+  .breadcrumb .current { color:var(--ink); font-weight:500; }
+  .topbar-actions { display:flex; align-items:center; gap:10px; }
+  .icon-btn { width:36px; height:36px; border-radius:50%; background:transparent; display:grid; place-items:center; cursor:pointer; color:var(--grey-7); position:relative; border:none; }
+  .icon-btn:hover { background:var(--grey-2); }
+  .icon-btn svg { width:18px; height:18px; stroke-width:1.7; }
+  .avatar { width:34px; height:34px; border-radius:50%; background:var(--purple); color:#fff; font-size:13px; font-weight:600; display:grid; place-items:center; }
+  .badge { position:absolute; top:2px; right:2px; min-width:16px; height:16px; padding:0 4px; border-radius:8px; background:var(--pink); color:#0a0a0c; font-size:10px; font-weight:600; display:grid; place-items:center; }
+
+  /* Ticket page */
+  .ticket-page { padding:22px 32px; max-width:1080px; }
+  .ticket-head { display:flex; align-items:flex-start; justify-content:space-between; gap:18px; margin-bottom:16px; }
+  .ticket-head h1 { font-size:22px; font-weight:600; margin:0 0 8px; letter-spacing:-0.01em; line-height:1.35; }
+  .ticket-head .tag-row { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .tag { padding:4px 10px; border-radius:6px; font-size:11px; font-weight:600; background:var(--grey-2); border:1px solid var(--grey-3); color:var(--grey-7); font-family:"JetBrains Mono",monospace; }
+  .tag.scope { background:var(--blue-bg); color:var(--blue-ink); border-color:transparent; }
+  .tag.hw { background:var(--violet-bg); color:var(--violet-ink); border-color:transparent; }
+  .tag.bundle { background:var(--green-bg); color:var(--green-ink); border-color:transparent; }
+  .tag.sev { background:var(--red-bg); color:var(--red-ink); border-color:transparent; font-weight:700; }
+  .ticket-head .right { display:flex; flex-direction:column; align-items:flex-end; gap:8px; }
+  .countdown { background:var(--red-bg); color:var(--red-ink); padding:8px 14px; border-radius:10px; font-size:12px; font-family:"JetBrains Mono",monospace; font-weight:600; display:inline-flex; align-items:center; gap:8px; }
+  .countdown .d { width:6px; height:6px; border-radius:50%; background:currentColor; animation:pulse 1.6s infinite; }
+  @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.4; } }
+
+  /* Layout */
+  .ticket-grid { display:grid; grid-template-columns: 1fr 320px; gap:22px; }
+  @media (max-width:1100px) { .ticket-grid { grid-template-columns: 1fr; } }
+
+  .panel { background:var(--grey-1); border:1px solid var(--grey-3); border-radius:14px; padding:18px 20px; margin-bottom:16px; }
+  .panel .ph { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
+  .panel .ph h3 { font-size:14px; font-weight:600; margin:0; display:inline-flex; align-items:center; gap:8px; }
+  .panel .ph .ct { font-size:11px; color:var(--grey-6); font-family:"JetBrains Mono",monospace; }
+
+  /* Aid3n suggestion card */
+  .aid-card { background:linear-gradient(180deg, rgba(168,85,247,0.10) 0%, rgba(168,85,247,0.02) 100%); border:1px solid var(--purple); border-radius:14px; padding:18px 20px; margin-bottom:16px; }
+  .aid-card .head { display:flex; align-items:center; gap:10px; margin-bottom:12px; }
+  .aid-card .head .av { width:30px; height:30px; border-radius:50%; background:linear-gradient(135deg,#D8B4FE,#7b2bff); color:#0a0a0c; display:grid; place-items:center; flex-shrink:0; }
+  .aid-card .head .av svg { width:15px; height:15px; stroke-width:2; }
+  .aid-card .head .title { font-size:13px; font-weight:600; color:var(--purple-ink); font-family:"JetBrains Mono",monospace; }
+  .aid-card .head .meta { font-size:11px; color:var(--grey-6); font-family:"JetBrains Mono",monospace; margin-left:auto; }
+  .aid-card .head .meta b { color:var(--purple-ink); }
+  .aid-card .lead { font-size:14px; line-height:1.6; margin-bottom:14px; }
+  .aid-card .lead b { color:var(--ink); }
+  .aid-card .lead .link { color:var(--purple-ink); border-bottom:1px dashed currentColor; cursor:pointer; }
+  .aid-card .cases { display:flex; flex-direction:column; gap:8px; margin-bottom:14px; }
+  .aid-card .case-row { display:flex; align-items:center; gap:10px; padding:10px 12px; background:var(--grey-1); border:1px solid var(--grey-3); border-radius:10px; }
+  .aid-card .case-row .num { font-family:"JetBrains Mono",monospace; font-size:11px; color:var(--grey-5); width:90px; flex-shrink:0; }
+  .aid-card .case-row .body { font-size:12px; color:var(--ink); flex:1; }
+  .aid-card .case-row .body span { color:var(--grey-6); }
+  .aid-card .case-row .res { font-size:11px; padding:2px 8px; border-radius:6px; background:var(--green-bg); color:var(--green-ink); font-weight:600; font-family:"JetBrains Mono",monospace; }
+  .aid-card .actions { display:flex; align-items:center; gap:8px; justify-content:space-between; }
+  .aid-card .actions .left { font-size:11px; color:var(--grey-6); font-family:"JetBrains Mono",monospace; }
+  .aid-card .actions .right { display:flex; gap:8px; }
+  .btn { display:inline-flex; align-items:center; gap:6px; padding:7px 12px; border-radius:8px; font-size:12px; font-weight:600; cursor:pointer; border:1px solid var(--grey-3); background:var(--grey-2); color:var(--ink); font-family:inherit; text-decoration:none; }
+  .btn:hover { background:var(--grey-3); }
+  .btn.primary { background:var(--purple); color:#fff; border-color:var(--purple); }
+  .btn.primary:hover { background:#9333ea; }
+  .btn.subtle { background:transparent; border-color:transparent; color:var(--grey-6); }
+
+  /* Workaround */
+  .workaround { background:var(--green-bg); border:1px solid var(--green-ink); border-radius:10px; padding:12px 14px; margin-bottom:14px; }
+  .workaround .head { font-size:10px; letter-spacing:0.08em; text-transform:uppercase; font-weight:700; color:var(--green-ink); margin-bottom:6px; }
+  .workaround .text { font-size:13px; line-height:1.55; color:var(--ink); }
+  .workaround .text b { color:var(--green-ink); }
+
+  /* Diag bundle */
+  .diag-list { display:flex; flex-direction:column; gap:6px; }
+  .diag-row { display:flex; align-items:center; gap:10px; padding:8px 10px; background:var(--grey-2); border-radius:8px; font-size:12px; font-family:"JetBrains Mono",monospace; }
+  .diag-row .ico { color:var(--green-ink); }
+  .diag-row .ico svg { width:14px; height:14px; stroke-width:2; }
+  .diag-row .name { color:var(--ink); }
+  .diag-row .meta { color:var(--grey-6); margin-left:auto; font-size:11px; }
+
+  /* Activity */
+  .activity-row { display:flex; gap:12px; padding:10px 0; border-bottom:1px solid var(--line); align-items:flex-start; }
+  .activity-row:last-child { border-bottom:none; }
+  .activity-row .av { width:26px; height:26px; border-radius:50%; display:grid; place-items:center; flex-shrink:0; font-size:10px; font-weight:700; color:#fff; }
+  .activity-row .av.aid { background:linear-gradient(135deg,#D8B4FE,#7b2bff); color:#0a0a0c; }
+  .activity-row .av.d3 { background:var(--supp); color:#0a0a0c; }
+  .activity-row .av.cp { background:#ec4899; }
+  .activity-row .content { flex:1; font-size:13px; line-height:1.55; }
+  .activity-row .content b { color:var(--ink); font-weight:600; }
+  .activity-row .when { font-size:11px; color:var(--grey-5); font-family:"JetBrains Mono",monospace; white-space:nowrap; }
+
+  /* Side info */
+  .info-row { padding:10px 0; border-bottom:1px solid var(--line); font-size:12px; }
+  .info-row:last-child { border-bottom:none; }
+  .info-row .lbl { color:var(--grey-5); font-size:10px; letter-spacing:0.08em; text-transform:uppercase; font-weight:600; margin-bottom:4px; }
+  .info-row .val { color:var(--ink); font-family:"JetBrains Mono",monospace; font-size:12px; }
+  .info-row .val a { color:var(--blue-ink); text-decoration:none; border-bottom:1px dashed currentColor; cursor:pointer; }
+  .info-row .val .pill-mini { padding:1px 6px; border-radius:4px; font-size:10px; font-weight:600; }
+  .info-row .val .pill-mini.live { background:var(--red-bg); color:var(--red-ink); }
+
+  /* Aid3n FAB */
+  .aid3n-fab { position:fixed; bottom:22px; right:22px; background:linear-gradient(135deg, #4c1d95 0%, #7b2bff 100%); color:#fff; border-radius:999px; padding:10px 16px 10px 10px; display:inline-flex; align-items:center; gap:10px; box-shadow:0 14px 30px rgba(123,43,255,0.35), 0 0 0 1px rgba(216,180,254,0.25) inset; cursor:pointer; font-size:13px; font-weight:600; z-index:100; text-decoration:none; }
+  .aid3n-fab .av { width:28px; height:28px; border-radius:50%; background:rgba(255,255,255,0.18); display:grid; place-items:center; }
+  .aid3n-fab .av svg { width:14px; height:14px; stroke-width:2; }
+  .aid3n-fab .pulse-dot { width:7px; height:7px; border-radius:50%; background:#6BFFDC; animation:fabPulse 1.8s infinite; }
+  @keyframes fabPulse { 0% { box-shadow:0 0 0 0 rgba(107,255,220,0.5); } 70% { box-shadow:0 0 0 8px rgba(107,255,220,0); } 100% { box-shadow:0 0 0 0 rgba(107,255,220,0); } }
+  /* Rail · Octopus minimised nav (additions) */
+  .rail { padding: 14px 0 12px; overflow-y: auto; }
+  .rail::-webkit-scrollbar { display: none; }
+  .rail .brand { margin-bottom: 4px; flex-shrink: 0; }
+  .rail .icon { flex-shrink: 0; }
+  .rail .icon.active { background: rgba(255, 109, 240, 0.12); color: #FF6DF0; }
+  .rail .icon.prod-launcher { padding: 0; }
+  .rail .icon.prod-launcher:hover { background: transparent; }
+  .rail .icon.prod-launcher img { width: 36px; height: 36px; border-radius: 8px; display: block; transition: transform 0.15s; }
+  .rail .icon.prod-launcher:hover img { transform: scale(1.06); }
+  .rail .spacer { flex: 1; min-height: 12px; }
+  .rail .storage { font-size: 10px; color: var(--grey-6); margin-top: 4px; flex-shrink: 0; }
+  .rail .dot-notify { top: 6px; right: 8px; }
+  .rail .rail-sep { width: 28px; height: 1px; background: var(--line); margin: 6px 0; flex-shrink: 0; }
+  .rail .rail-gap { height: 14px; flex-shrink: 0; }
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- Icon rail · Octopus minimised nav -->
+  <div class="rail">
+    <a class="brand" href="index.html" title="Octopus · Index">
+      <svg viewBox="0 0 22 28" fill="currentColor" style="color:var(--ink);width:22px;height:28px;display:block;"><path d="M5 2.5V23.5L2 25.5V0.5L5 2.5ZM11.5 7V19L8.5 21V5L11.5 7ZM18 11.5V14.5L15 16.5V9.5L18 11.5Z"/></svg>
+    </a>
+    <a class="icon" href="index.html" title="Index · toggle sidebar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="18" height="16" rx="2" stroke-width="1.7"/><path d="M9 4v16" stroke-width="1.7" stroke-linecap="round"/><path d="M13 9l3 3-3 3" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+
+    <div class="rail-gap"></div>
+
+    <a class="icon" href="#" title="Home">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 11l9-8 9 8M5 9v11h14V9M10 20v-6h4v6" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+    <a class="icon" href="#" title="Venues">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="4" y="3" width="16" height="18" rx="1" stroke-width="1.7"/><rect x="7.3" y="6" width="3" height="3" stroke-width="1.4"/><rect x="13.7" y="6" width="3" height="3" stroke-width="1.4"/><rect x="7.3" y="11" width="3" height="3" stroke-width="1.4"/><rect x="13.7" y="11" width="3" height="3" stroke-width="1.4"/><rect x="7.3" y="16" width="3" height="3" stroke-width="1.4"/><rect x="13.7" y="16" width="3" height="3" stroke-width="1.4"/></svg>
+    </a>
+    <a class="icon" href="inventories.html" title="Software">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9L12 3z" stroke-width="1.7" stroke-linejoin="round"/><path d="M12 12l8-4.5M12 12L4 7.5M12 12v9" stroke-width="1.7"/></svg>
+    </a>
+    <a class="icon" href="#" title="Subscriptions">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="6" width="18" height="13" rx="2" stroke-width="1.7"/><path d="M3 11h18" stroke-width="1.7"/></svg>
+    </a>
+    <a class="icon" href="#" title="Imports">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 4v12M6 10l6 6 6-6M4 20h16" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+    <a class="icon active" href="productions-grid.html" title="Productions">
+      <svg viewBox="0 0 24 24" width="22" height="22"><circle cx="9" cy="10" r="5" fill="#FF98F4" opacity="0.72"/><circle cx="14" cy="14" r="5" fill="#FF6DF0" opacity="0.92"/></svg>
+    </a>
+    <a class="icon" href="#" title="Knowledge">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="4" y="3" width="16" height="18" rx="1" stroke-width="1.7"/><path d="M10 16l2-7 2 7M11 13.5h2" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+    <a class="icon" href="#" title="Support">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="9" stroke-width="1.7"/><path d="M9 9a3 3 0 116 0c0 2-3 2-3 4M12 17.5h.01" stroke-width="1.7" stroke-linecap="round"/></svg>
+    </a>
+
+    <div class="rail-sep"></div>
+
+    <a class="icon prod-launcher" href="lens-mapping-matter.html" title="Mapping Matter">
+      <img src="assets/products/mapping-matter.svg" alt=""/>
+    </a>
+    <a class="icon prod-launcher" href="#" title="Designer">
+      <img src="assets/products/designer.svg" alt=""/>
+    </a>
+    <a class="icon prod-launcher" href="#" title="Porta">
+      <img src="assets/products/porta.svg" alt=""/>
+    </a>
+    <a class="icon prod-launcher" href="#" title="RenderStream">
+      <img src="assets/products/renderstream.svg" alt=""/>
+    </a>
+
+    <div class="spacer"></div>
+
+    <a class="icon" href="#" title="Notifications">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 10a6 6 0 1112 0c0 7 3 8 3 8H3s3-1 3-8M10 21h4" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span class="dot-notify"></span>
+    </a>
+    <a class="icon" href="#" title="My subscription · billing">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="6" width="18" height="13" rx="2" stroke-width="1.7"/><path d="M3 11h18" stroke-width="1.7"/></svg>
+    </a>
+    <div class="storage">0.8%</div>
+  </div>
+
+  <!-- Production sidebar · injected by assets/shared/sidebar.js -->
+  <aside class="side" data-prod-sidebar></aside>
+
+  <!-- Main -->
+  <main class="main">
+
+    <div class="main-top">
+      <div class="breadcrumb">
+        <a class="crumb" href="productions-grid.html">Productions</a>
+        <span class="sep">/</span>
+        <a class="crumb" href="production-home.html">Eurovision 2026</a>
+        <span class="sep">/</span>
+        <span class="current">Support · DSE-4821</span>
+      </div>
+      <div class="topbar-actions">
+        <button class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="7" stroke-width="1.7"/><path d="M16 16l5 5" stroke-width="1.7" stroke-linecap="round"/></svg></button>
+        <button class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 10a6 6 0 1112 0c0 7 3 8 3 8H3s3-1 3-8M10 21h4" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="badge">3</span></button>
+        <div class="avatar">W</div>
+      </div>
+    </div>
+
+    <div class="ticket-page">
+
+      <div class="ticket-head">
+        <div>
+          <h1>VX 4+ master freezes after ~2h. Show in 9 days.</h1>
+          <div class="tag-row">
+            <span class="tag sev">P1 · open</span>
+            <span class="tag">DSE-4821</span>
+            <span class="tag scope">Eurovision 2026</span>
+            <span class="tag hw">BP-30K-01 · d3-vx-01</span>
+            <span class="tag bundle">Diag bundle · auto-attached</span>
+          </div>
+        </div>
+        <div class="right">
+          <div class="countdown"><span class="d"></span> show in 9 days · 4h</div>
+          <div style="font-size:11px;color:var(--grey-6);font-family:'JetBrains Mono',monospace;">SLA · L2 · respond &lt; 2h</div>
+        </div>
+      </div>
+
+      <div class="ticket-grid">
+
+        <div>
+
+          <!-- Aid3n suggested resolution -->
+          <div class="aid-card">
+            <div class="head">
+              <div class="av"><svg viewBox="0 0 13 17" fill="currentColor"><path d="M6.02832 0.00195312L10.7539 10.0332L12.0557 12.7949L6.02832 16.3164H6.02734L0 12.7949L1.30176 10.0332L6.02832 0V0.00195312ZM5.03516 9.55078L2.49316 10.543L5.03516 11.5352L6.02734 14.0771L7.01953 11.5352L9.5625 10.543L7.01953 9.55078L6.02734 7.00879L5.03516 9.55078Z"/></svg></div>
+              <div class="title">Aid3n · suggested resolution</div>
+              <div class="meta">confidence <b>0.86</b> · matched 3 past cases</div>
+            </div>
+            <div class="lead">
+              Three similar cases on this generation of VX 4+ — all resolved by replacing the <b>GPU sync card</b>. The card hits a thermal cutoff under sustained 4K60 fill at ~2h, which matches your <span class="link">diag bundle timeline</span>.
+            </div>
+
+            <div class="cases">
+              <div class="case-row">
+                <span class="num">DSE-4712</span>
+                <span class="body">Tour · 2025 · same freeze pattern at 2h12m <span>· FX9 chain</span></span>
+                <span class="res">→ GPU sync card</span>
+              </div>
+              <div class="case-row">
+                <span class="num">DSE-4533</span>
+                <span class="body">Install · 2025 · freeze at 1h54m <span>· UDX projection</span></span>
+                <span class="res">→ GPU sync card</span>
+              </div>
+              <div class="case-row">
+                <span class="num">DSE-4218</span>
+                <span class="body">Broadcast · 2024 · freeze at 2h05m <span>· LED main wall</span></span>
+                <span class="res">→ GPU sync card</span>
+              </div>
+            </div>
+
+            <div class="workaround">
+              <div class="head">Suggested workaround · before swap</div>
+              <div class="text">Pre-stage backup VX 4+ (<b>d3-vx-03</b> · already in your inventory) for hot-failover. Bind cues to its mirror; cap fill at 4K30 on truss A during the rehearsal window. Buys you the 9 days to ship the replacement card.</div>
+            </div>
+
+            <div class="actions">
+              <div class="left">Aid3n proposes · L2 engineer must accept</div>
+              <div class="right">
+                <a class="btn subtle">Dismiss</a>
+                <a class="btn">Open KB</a>
+                <a class="btn primary">Accept &amp; ship card →</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Diag bundle -->
+          <div class="panel">
+            <div class="ph">
+              <h3>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" style="width:16px;height:16px;stroke-width:2;color:var(--green-ink);"><path d="M5 5h11l3 3v11H5zM9 5v6h8" stroke-linejoin="round"/></svg>
+                Diagnostic bundle
+              </h3>
+              <span class="ct">attached by Aid3n · 14 min ago</span>
+            </div>
+            <div class="diag-list">
+              <div class="diag-row"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 12l5 5 9-12" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="name">d3_vx_01_diag_2026-05-21T14:30.zip</span><span class="meta">42.6 MB</span></div>
+              <div class="diag-row"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 12l5 5 9-12" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="name">cue_stack_v17.d3 · last 24h</span><span class="meta">snapshot</span></div>
+              <div class="diag-row"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 12l5 5 9-12" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="name">system_design · 10.42.0.0/16 · route table</span><span class="meta">live</span></div>
+              <div class="diag-row"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 12l5 5 9-12" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="name">VX 4+ GPU temperature log · 6h</span><span class="meta">2 alerts</span></div>
+              <div class="diag-row"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 12l5 5 9-12" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="name">firmware · 12.4.2 · build a417</span><span class="meta">verified</span></div>
+            </div>
+          </div>
+
+          <!-- Activity -->
+          <div class="panel">
+            <div class="ph">
+              <h3>Activity</h3>
+              <span class="ct">3 updates</span>
+            </div>
+
+            <div class="activity-row">
+              <div class="av aid">Ai</div>
+              <div class="content">
+                <b>Aid3n</b> attached diagnostic bundle and matched 3 prior cases.<br>
+                <span style="color:var(--grey-6);font-size:12px;">Confidence climbed from 0.61 → 0.86 once the GPU temperature log loaded.</span>
+              </div>
+              <div class="when">2 min</div>
+            </div>
+
+            <div class="activity-row">
+              <div class="av d3">d3</div>
+              <div class="content">
+                <b>Disguise L2 · Mariana Cruz</b> picked up the ticket.<br>
+                <span style="color:var(--grey-6);font-size:12px;">"I've seen this before — checking spare cards in Vienna depot."</span>
+              </div>
+              <div class="when">9 min</div>
+            </div>
+
+            <div class="activity-row">
+              <div class="av cp">CP</div>
+              <div class="content">
+                <b>Camilla Powell</b> opened the ticket from System Design after the second freeze.<br>
+                <span style="color:var(--grey-6);font-size:12px;">Auto-scoped to <i>Eurovision 2026</i> · BP-30K-01 attached automatically.</span>
+              </div>
+              <div class="when">12 min</div>
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- Side info -->
+        <aside>
+
+          <div class="panel" style="padding:18px 18px 12px;">
+            <div class="ph"><h3>Ticket meta</h3></div>
+            <div class="info-row">
+              <div class="lbl">Severity</div>
+              <div class="val"><span class="pill-mini live">P1 · live</span></div>
+            </div>
+            <div class="info-row">
+              <div class="lbl">Affected hardware</div>
+              <div class="val"><a>BP-30K-01</a> · d3-vx-01 · GPU sync</div>
+            </div>
+            <div class="info-row">
+              <div class="lbl">Scope</div>
+              <div class="val"><a href="production-home.html">Eurovision 2026</a></div>
+            </div>
+            <div class="info-row">
+              <div class="lbl">Reporter</div>
+              <div class="val">Camilla Powell · TD</div>
+            </div>
+            <div class="info-row">
+              <div class="lbl">Assignee</div>
+              <div class="val">Mariana Cruz · Disguise L2</div>
+            </div>
+            <div class="info-row">
+              <div class="lbl">Show in</div>
+              <div class="val" style="color:var(--red-ink);">9 days · 4h</div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="ph"><h3>Linked lenses</h3></div>
+            <div style="display:flex;flex-direction:column;gap:8px;font-size:12px;">
+              <a href="lens-system-design.html" style="display:flex;align-items:center;gap:8px;color:var(--ink);text-decoration:none;padding:8px;border-radius:8px;background:var(--grey-2);">
+                <span style="width:22px;height:22px;border-radius:6px;background:var(--green-bg);color:var(--green-ink);display:grid;place-items:center;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" style="width:12px;height:12px;stroke-width:2;"><rect x="3" y="3" width="6" height="6" rx="1"/><rect x="15" y="3" width="6" height="6" rx="1"/></svg></span>
+                System Design · d3-vx-01
+              </a>
+              <a href="lens-mapping-matter.html" style="display:flex;align-items:center;gap:8px;color:var(--ink);text-decoration:none;padding:8px;border-radius:8px;background:var(--grey-2);">
+                <span style="width:22px;height:22px;border-radius:6px;background:#231340;color:#A78BFA;display:grid;place-items:center;font-size:10px;font-weight:700;">m</span>
+                Mapping Matter · cue_stack ref
+              </a>
+              <a href="lens-aid3n.html" style="display:flex;align-items:center;gap:8px;color:var(--ink);text-decoration:none;padding:8px;border-radius:8px;background:var(--grey-2);">
+                <span style="width:22px;height:22px;border-radius:6px;background:linear-gradient(135deg,#D8B4FE,#7b2bff);color:#0a0a0c;display:grid;place-items:center;font-size:10px;font-weight:700;">Ai</span>
+                Aid3n · diag conversation
+              </a>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="ph"><h3>SLA</h3></div>
+            <div style="font-size:12px;line-height:1.6;color:var(--grey-6);">
+              L2 priority · response &lt; 2h · resolution &lt; 24h.<br>
+              Show date triggers <b style="color:var(--red-ink);">on-site dispatch</b> if not resolved 48h out.
+            </div>
+          </div>
+
+        </aside>
+
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- Aid3n FAB -->
+<a class="aid3n-fab" href="lens-aid3n.html">
+  <span class="av"><svg viewBox="0 0 13 17" fill="currentColor"><path d="M6.02832 0.00195312L10.7539 10.0332L12.0557 12.7949L6.02832 16.3164H6.02734L0 12.7949L1.30176 10.0332L6.02832 0V0.00195312ZM5.03516 9.55078L2.49316 10.543L5.03516 11.5352L6.02734 14.0771L7.01953 11.5352L9.5625 10.543L7.01953 9.55078L6.02734 7.00879L5.03516 9.55078Z"/></svg></span>
+  Aid3n
+  <span class="pulse-dot"></span>
+</a>
+
+<script src="assets/shared/sidebar.js" defer></script>
+<script src="assets/shared/launch-modal.js" defer></script>
+<script src="assets/shared/side-toggle.js" defer></script>
+</body>
+</html>
